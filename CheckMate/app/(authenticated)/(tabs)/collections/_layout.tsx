@@ -23,6 +23,13 @@ const Layout = () => {
                                //headerRight: () => (<DropdownPlus/>)
                            }}
             />
+
+            <Stack.Screen name="collection"
+                          options={{
+                              headerShown: false
+                          }}
+            />
+
             <Stack.Screen name="new-collection"
                           options={{
                               headerShown: false,
