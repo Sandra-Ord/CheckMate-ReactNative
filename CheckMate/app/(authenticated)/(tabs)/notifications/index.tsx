@@ -2,15 +2,14 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import {Colors} from "@/constants/Colors.ts";
 
-const Calendar = () => {
+const NotificationsView = () => {
     return (
         <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
             <Text>
-
-                calendar calendar
+                Notifications inside notifications
             </Text>
         </View>
     );
 };
 
-export default Calendar;
+export default NotificationsView;

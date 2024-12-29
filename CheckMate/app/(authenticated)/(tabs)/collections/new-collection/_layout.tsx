@@ -10,17 +10,11 @@ const Layout = () => {
         <Stack>
             <Stack.Screen name="index"
                           options={{
-                              title: "New Collection",
+                              title: "Create a Collection",
                               headerShown: true,
                               headerStyle: {
-                                  backgroundColor: Colors.Complementary['100'],
+                                  backgroundColor: Colors.Complementary['400'],
                               },
-
-                              /*                              headerLeft: () => (
-                                                                <TouchableOpacity onPress={() => router.back()}>
-                                                                    <Ionicons name="close" size="25" color={Colors.primaryGray}/>
-                                                                </TouchableOpacity>
-                                                            )*/
                           }}
             />
         </Stack>

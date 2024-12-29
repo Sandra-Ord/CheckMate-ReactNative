@@ -1,22 +1,33 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import CollectionCard from "@/components/CollectionCard.tsx";
 import {Colors} from "@/constants/Colors.ts";
 import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext.tsx";
-import {Collection} from "@/types/enums.ts";
+import {Collection, ModalType} from "@/types/enums.ts";
 import {useHeaderHeight} from "@react-navigation/elements";
+import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
+import AuthModal from "@/components/AuthModal.tsx";
+import NewTaskModal from "@/components/NewTaskModal.tsx";
 
 const CollectionView = () => {
 
     const { id } = useLocalSearchParams<{ id: string; bg?: string }>();
-    const [tasks, setTasks] = useState<[]>([]);
+
     // State to manage the refresh control
-    const {getCollectionInfo} = useSupabase();
-    const [collection, setCollection] = useState<Collection>();
     const [refreshing, setRefreshing] = useState(false);
+    const [collection, setCollection] = useState<Collection>();
+    const [tasks, setTasks] = useState<[]>([]);
+    const {getCollectionInfo} = useSupabase();
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
     const headerHeight = useHeaderHeight();
+    const snapPoints = useMemo(() => ["80%"], [])
+
+    const showNewTaskModal = () => {
+        bottomSheetModalRef.current?.present();
+    }
 
     // Function to load collection's tasks from Supabase
     const loadTasks = async () => {
@@ -87,52 +98,57 @@ const CollectionView = () => {
 
     return (
         <SafeAreaView>
+            <BottomSheetModalProvider>
 
-            <Stack.Screen
-                options={{
-                    header: () => <CustomHeader />,
-                    title: collection?.name,
-                    headerTransparent: false,
-                }}
-            />
+                <Stack.Screen
+                    options={{
+                        header: () => <CustomHeader />,
+                        title: collection?.name,
+                        headerTransparent: false,
+                    }}
+                />
 
-            <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
+                <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
-                <View className="flex-row w-full justify-between px-4 py-2">
-                    <View className="flex-row">
-                        <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
-                        <Text className="pl-3">Filter/Sort</Text>
+                    <View className="flex-row w-full justify-between px-4 py-2">
+                        <View className="flex-row">
+                            <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
+                            <Text className="pl-3">Filter/Sort</Text>
+                        </View>
+
+                        <TouchableOpacity className="flex-row" onPress={() => showNewTaskModal()}>
+                            <Text className="pr-2">Add Task</Text>
+                            <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
+                        </TouchableOpacity>
+
                     </View>
-                    <View className="flex-row">
-                        <Text className="pr-2">Add Task</Text>
-                        <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
+
+                    <View className="flex-1 justify-center items-center pb-3 px-4">
+                        <FlatList
+                            data={tasks}
+                            renderItem={TaskListItem}
+                            // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadBoards} />}
+                            keyExtractor={(item) => `${item}`}
+                        />
+
                     </View>
+
                 </View>
 
-                <View className="flex-1 justify-center items-center pb-3 px-4">
-                    <FlatList
-                        data={tasks}
-                        renderItem={TaskListItem}
-                        // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadBoards} />}
-                        keyExtractor={(item) => `${item}`}
-                    />
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={0}
+                    snapPoints={snapPoints}
+                >
+                    <NewTaskModal collectionId={id}/>
 
-                </View>
+                </BottomSheetModal>
 
-            </View>
+            </BottomSheetModalProvider>
         </SafeAreaView>
     );
 };
 
-const styles = StyleSheet.create({
-    headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 14,
-        paddingHorizontal: 14,
-        height: 50,
-    },
-});
 
 export default CollectionView;
 

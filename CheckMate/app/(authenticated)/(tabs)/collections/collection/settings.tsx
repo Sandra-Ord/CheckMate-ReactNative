@@ -134,10 +134,10 @@ const Settings = () => {
             <View className="pt-8">
                 <TouchableOpacity
                     className=" py-2 mx-16 rounded-lg items-center"
-                    style={{backgroundColor: Colors.primaryGray}}
+                    style={{backgroundColor: Colors.Red["700"]}}
                     onPress={onDeleteCollection}
                 >
-                    <Text className="font-bold" style={{color: Colors.danger}}>Delete Collection</Text>
+                    <Text className="font-bold" >Delete Collection</Text>
                 </TouchableOpacity>
             </View>
 
