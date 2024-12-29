@@ -16,9 +16,14 @@ export const USERS_TABLE = 'users';
 type ProviderProps = {
     userId: string | null;
     createCollection: (name: string) => Promise<any>;
-    getCollection: (collectionId: number) => Promise<any>;
     getCollections: () => Promise<any>;
+    getCollection: (collectionId: number) => Promise<any>;
+    getCollectionInfo: (collectionId: number) => Promise<any>;
+    updateCollection: (collection: Collection) => Promise<any>;
+    deleteCollection: (collectionId: number) => Promise<any>;
     getCollectionTasks: (collectionId: number) => Promise<any>;
+    addUserToCollection: (collectionId: number, userId: number) => Promise<any>;
+    getCollectionMembers: (collectionId: number) => Promise<any>;
     getBasicTaskInformation: (taskId: number) => Promise<any>;
     getTaskLogs: (taskId: number) => Promise<any>;
     setUserPushToken: (token: string) => Promise<any>;
@@ -58,6 +63,24 @@ export const SupabaseProvider = ({ children }: any) => {
         return data;
     };
 
+    const getCollections = async () => {
+        // const { data, error } = await client
+        //     .from(COLLECTIONS_TABLE)
+        //     .select(`name, id`);
+        //
+        // if (error) {
+        //     console.error('Error getting collections:', error);
+        // }
+        //
+        // return data || [];
+        const {data} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select(`boards ( title, id, background )`)
+            .eq('user_id', userId);
+        const collections = data?.map((c: any) => c.collections);
+        return collections || [];
+    }
+
     const getCollection = async (collectionId: number) => {
         const { data, error } = await client
             .from(COLLECTIONS_TABLE)
@@ -72,19 +95,51 @@ export const SupabaseProvider = ({ children }: any) => {
         console.log(data);
 
         return data || null;
-    }
+    };
 
-    const getCollections = async () => {
-        const { data, error } = await client
+    const getCollectionInfo = async (collectionId: number) => {
+        const {data, error} = await client
             .from(COLLECTIONS_TABLE)
-            .select(`name, id`);
+            .select(`*, users (first_name)`)
+            .match({id: collectionId})
+            .single();
+        return data;
+    };
 
-        if (error) {
-            console.error('Error getting collections:', error);
-        }
+    const updateCollection = async (collection: Collection) => {
+        const { data } = await client
+            .from(COLLECTIONS_TABLE)
+            .update({ name: collection.name })
+            .match({ id: collection.id })
+            .select('*')
+            .single();
 
-        return data || [];
-    }
+        return data;
+    };
+
+    const getCollectionMembers = async (collectionId: string) => {
+        const {data} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select('users(*)')
+            .eq('collection_id', collectionId);
+
+        const members = data?.map((c: any) => c.users);
+        return members;
+    };
+
+    const addUserToCollection = async (collectionId: string, userId, string) => {
+        return await client.from(COLLECTION_USERS_TABLE)
+            .insert({
+                user_id: userId,
+                collection_id: collectionId,
+            });
+    };
+
+    const deleteCollection = async (collectionId: string) => {
+        return await client.from(COLLECTIONS_TABLE).delete().match({ collectionId });
+    };
+
+
 
     const getCollectionTasks = async (collectionId: number) => {
         const { data, error } = await client
@@ -135,9 +190,14 @@ export const SupabaseProvider = ({ children }: any) => {
     const value = {
         userId,
         createCollection,
-        getCollection,
         getCollections,
+        getCollection,
+        getCollectionInfo,
+        updateCollection,
+        deleteCollection,
         getCollectionTasks,
+        addUserToCollection,
+        getCollectionMembers,
         getBasicTaskInformation,
         getTaskLogs,
         setUserPushToken,

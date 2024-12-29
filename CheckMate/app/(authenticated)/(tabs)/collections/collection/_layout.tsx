@@ -18,9 +18,21 @@ const Layout = () => {
             />
             <Stack.Screen name="log"
                           options={{
+                              headerShown: true
+                          }}
+            />
+            <Stack.Screen name="Invite"
+                          options={{
+                              headerShown: true
+                          }}
+            />
+            <Stack.Screen name="Settings"
+                          options={{
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
                               headerShown: false
                           }}
             />
+
         </Stack>
     );
 };
