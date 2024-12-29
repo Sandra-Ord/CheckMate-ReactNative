@@ -1,11 +1,14 @@
 import React from 'react';
 import { Text, View, Image } from 'react-native';
-import {Stack, Tabs} from "expo-router";
+import {Stack, Tabs, useRouter} from "expo-router";
 import {Colors} from "@/constants/Colors";
 import DropdownPlus from "@/components/DropdownPlus";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 const Layout = () => {
+    const router = useRouter();
+
     return (
         <Stack>
             <Stack.Screen name="index"
@@ -20,6 +23,14 @@ const Layout = () => {
                                    />
                                ),
                                headerTitleAlign: 'center',
+                               headerRight: () => (
+                                   <Ionicons
+                                       name='add'
+                                       size={24}
+                                       onPress={() => router.navigate('/(authenticated)/(tabs)/collections/new-collection')}
+                                       style={{color: Colors.primaryGray}}
+                                   />
+                               )
                                //headerRight: () => (<DropdownPlus/>)
                            }}
             />
