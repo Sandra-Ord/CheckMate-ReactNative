@@ -30,12 +30,18 @@ const Index = () => {
             >
             </Stack.Screen>
 
-            <View className="px-2 pt-4">
+            <View className="px-4 pb-8 pt-2" >
+                <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Collection Name</Text>
+
+                {/* Input for updating the collection name */}
                 <TextInput
-                    className="text-black text-sm border-b border-b-gray-500 pt-5 px-1"
                     value={collectionName}
-                    onChangeText={setCollectionName}
                     placeholder="New Collection Name"
+                    onChangeText={setCollectionName}
+                    className="rounded-md p-2"
+                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    returnKeyType="done"
+                    enterKeyHint="done"
                     autoFocus
                 />
             </View>

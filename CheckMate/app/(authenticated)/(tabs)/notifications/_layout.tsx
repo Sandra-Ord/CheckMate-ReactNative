@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {router, Stack, useRouter} from "expo-router";
 import {Colors} from "@/constants/Colors.ts";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,12 +26,21 @@ const Layout = () => {
                           }}
             />
 
+
             <Stack.Screen name="activity"
                           options={{
                               headerShown: true,
                               headerTitle: "Activity Feed",
-                              headerTitleAlign: 'left',
                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="arrow-back"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
                           }}
             />
         </Stack>

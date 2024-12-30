@@ -97,9 +97,8 @@ const CollectionView = () => {
 
 
     return (
-        <SafeAreaView>
-            <BottomSheetModalProvider>
-
+        <SafeAreaView className="flex-1" style={{backgroundColor: Colors.Complementary["500"]}}>
+            <View>
                 <Stack.Screen
                     options={{
                         header: () => <CustomHeader />,
@@ -107,6 +106,10 @@ const CollectionView = () => {
                         headerTransparent: false,
                     }}
                 />
+
+            <BottomSheetModalProvider>
+
+
 
                 <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
@@ -145,6 +148,7 @@ const CollectionView = () => {
                 </BottomSheetModal>
 
             </BottomSheetModalProvider>
+            </View>
         </SafeAreaView>
     );
 };

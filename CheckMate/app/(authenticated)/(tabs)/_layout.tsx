@@ -41,6 +41,8 @@ const Layout = () => {
 
             <Tabs.Screen name="collections"
                          options={{
+                             title: 'Collections',
+                             headerTitle: "Collections",
                              headerShown: false,
                              tabBarIcon: ({size, color}) => (<Image style={{width: size, height: size}} source={require('@/assets/images/logo-icon-transparent.png')}/>)
                         }}
