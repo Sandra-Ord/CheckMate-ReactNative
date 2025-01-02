@@ -12,10 +12,10 @@ const NewTaskModal = (collectionId: number) => {
     return (
         <BottomSheetView className="p-5 gap-10">
             <TextInput>
-
+                todo
             </TextInput>
         </BottomSheetView>
-    )
-}
+    );
+};
 
 export default NewTaskModal;

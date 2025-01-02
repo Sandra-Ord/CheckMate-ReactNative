@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Text, TouchableOpacity, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
-import {Colors} from "@/constants/Colors.ts";
+import {Colors} from "@/constants/Colors";
 
 const Account = () => {
     const {signOut} = useAuth();
@@ -12,7 +12,7 @@ const Account = () => {
             {/* Button to delete the collection */}
             <View className="pt-8">
                 <TouchableOpacity
-                    className=" py-2 mx-16 rounded-lg items-center"
+                    className="py-2 mx-16 rounded-lg items-center"
                     style={{backgroundColor: Colors.Blue["600"]}}
                     onPress={() => signOut()}
                 >

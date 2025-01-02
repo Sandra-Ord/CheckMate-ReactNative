@@ -8,7 +8,6 @@ import {useSupabase} from "@/context/SupabaseContext.tsx";
 import {Collection, ModalType} from "@/types/enums.ts";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
-import AuthModal from "@/components/AuthModal.tsx";
 import NewTaskModal from "@/components/NewTaskModal.tsx";
 
 const CollectionView = () => {
@@ -23,11 +22,11 @@ const CollectionView = () => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
     const headerHeight = useHeaderHeight();
-    const snapPoints = useMemo(() => ["80%"], [])
+    const snapPoints = useMemo(() => ["80%"], []);
 
     const showNewTaskModal = () => {
         bottomSheetModalRef.current?.present();
-    }
+    };
 
     // Function to load collection's tasks from Supabase
     const loadTasks = async () => {
@@ -40,7 +39,7 @@ const CollectionView = () => {
         const data = await getCollectionInfo!(id);
         console.log(data);
         setCollection(data);
-    }
+    };
 
     // Load boards when the screen gains focus
     useFocusEffect(
@@ -78,7 +77,7 @@ const CollectionView = () => {
                 </View>
 
                 {/* Icon buttons for filter, notifications, and settings */}
-                <View style={{ flexDirection: 'row', gap: 16 }}>
+                <View className="flex-row gap-4">
                     <TouchableOpacity onPress={() => {}}>
                         <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]} />
                     </TouchableOpacity>
@@ -108,8 +107,6 @@ const CollectionView = () => {
                 />
 
             <BottomSheetModalProvider>
-
-
 
                 <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 

@@ -1,8 +1,8 @@
+import "../global.css"
 import {AuthStrategy, ModalType} from "@/types/enums";
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Image, Text, TouchableOpacity} from "react-native";
 import React from "react";
-import "../global.css"
 import {useOAuth, useSignIn, useSignUp} from "@clerk/clerk-expo";
 
 const LOGIN_OPTIONS = [
@@ -37,11 +37,11 @@ const AuthModal = ({authType}: AuthModalProps) => {
     const {signIn} = useSignIn();
 
     const onSelectAuth = async (strategy: AuthStrategy) => {
-        console.log("Selected auth " + strategy)
+        console.log("Selected auth " + strategy);
 
         // Code source: https://clerk.com/docs/custom-flows/oauth-connections#o-auth-account-transfer-flows
 
-        if (!signIn || !signUp) return null
+        if (!signIn || !signUp) return null;
 
         const selectedAuth = {
             [AuthStrategy.Google]: googleAuth,
@@ -54,10 +54,10 @@ const AuthModal = ({authType}: AuthModalProps) => {
         // account to the existing user account.
         const userExistsButNeedsToSignIn =
             signUp.verifications.externalAccount.status === 'transferable' &&
-            signUp.verifications.externalAccount.error?.code === 'external_account_exists'
+            signUp.verifications.externalAccount.error?.code === 'external_account_exists';
 
         if (userExistsButNeedsToSignIn) {
-            const res = await signIn.create({transfer: true})
+            const res = await signIn.create({transfer: true});
 
             if (res.status === 'complete') {
                 setActive({
@@ -69,12 +69,12 @@ const AuthModal = ({authType}: AuthModalProps) => {
         // If the user has an OAuth account but does not yet
         // have an account in your app, you can create an account
         // for them using the OAuth information.
-        const userNeedsToBeCreated = signIn.firstFactorVerification.status === 'transferable'
+        const userNeedsToBeCreated = signIn.firstFactorVerification.status === 'transferable';
 
         if (userNeedsToBeCreated) {
             const res = await signUp.create({
                 transfer: true,
-            })
+            });
 
             if (res.status === 'complete') {
                 setActive({
@@ -97,14 +97,10 @@ const AuthModal = ({authType}: AuthModalProps) => {
             }
 
         }
-    }
+    };
 
     return (
         <BottomSheetView className="p-5 gap-10">
-            {/*<TouchableOpacity>*/}
-            {/*    <Ionicons name="mail-outline" size={24} color="black"/>*/}
-            {/*    <Text>{authType == ModalType.Login ? "Log in" : "Sign up"} with email</Text>*/}
-            {/*</TouchableOpacity>*/}
             {LOGIN_OPTIONS.map((option, index) => (
                 <TouchableOpacity key={index}
                                   className="flex-row gap-5"
@@ -115,7 +111,7 @@ const AuthModal = ({authType}: AuthModalProps) => {
                 </TouchableOpacity>
             ))}
         </BottomSheetView>
-    )
-}
+    );
+};
 
 export default AuthModal;

@@ -96,3 +96,28 @@ export interface TaskNotification {
     notification_type: TaskNotificationType,
     sent_at: Date
 }
+
+export interface ToDoTask {
+    id: ID,
+    user_id: UserID,
+    name: string,
+    comment: string | null,
+    due_date: Date,
+    created_at: Date,
+    completed_at: Date | null,
+}
+
+export interface Tag {
+    id: ID,
+    user_id: UserID,
+    tag: string,
+    tag_icon: string | null
+    created_at: Date,
+    archived_at: Date | null,
+}
+
+export interface ToDoTag {
+    id: ID,
+    to_to_task_id: ID,
+    tag_id: ID,
+}

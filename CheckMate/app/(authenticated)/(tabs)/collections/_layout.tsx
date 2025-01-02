@@ -31,7 +31,6 @@ const Layout = () => {
                                        style={{color: Colors.primaryGray}}
                                    />
                                )
-                               //headerRight: () => (<DropdownPlus/>)
                            }}
             />
 

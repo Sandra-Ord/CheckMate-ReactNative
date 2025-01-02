@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, Image } from 'react-native';
 import {Tabs} from "expo-router";
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
-import {Colors} from "@/constants/Colors.ts";
+import {Colors} from "@/constants/Colors";
 
 const Layout = () => {
     return (
@@ -30,7 +30,7 @@ const Layout = () => {
             <Tabs.Screen name="todo"
                          options={{
                              title: 'To Do',
-                             headerShown: true,
+                             headerShown: false,
                              headerTitle: "To Do",
                              headerTitleAlign: 'left',
                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
@@ -44,7 +44,12 @@ const Layout = () => {
                              title: 'Collections',
                              headerTitle: "Collections",
                              headerShown: false,
-                             tabBarIcon: ({size, color}) => (<Image style={{width: size, height: size}} source={require('@/assets/images/logo-icon-transparent.png')}/>)
+                             tabBarIcon: ({size, color}) => (
+                                 <Image
+                                     style={{width: size, height: size}}
+                                     source={require('@/assets/images/logo-icon-transparent.png')}
+                                 />
+                             )
                         }}
             />
 
