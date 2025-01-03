@@ -166,10 +166,12 @@ export const SupabaseProvider = ({ children }: any) => {
     const getCollectionTasks = async (collectionId: number) => {
         const { data, error } = await client
             .from(TASKS_TABLE)
-            .select(`id, name, users (first_name)`)
+            .select(`id, name, next_due_at, users (first_name)`)
             .match({ collection_id: collectionId });
-        console.log(data);
 
+        if (error) {
+            console.error('Error creating to do task:', error);
+        }
 
         return data;
     };

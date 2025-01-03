@@ -1,12 +1,12 @@
 import {ImageBackground, Text, TouchableOpacity, View} from "react-native";
-import {Colors} from "@/constants/Colors";
 import React, {useMemo, useRef, useState} from "react";
 import {useActionSheet} from "@expo/react-native-action-sheet";
 import * as WebBrowser from "expo-web-browser";
-import {ModalType} from "@/types/enums";
 import {BottomSheetModal, BottomSheetModalProvider, BottomSheetView} from "@gorhom/bottom-sheet";
 import AuthModal from "@/components/AuthModal"
 import authLogo from "@/assets/images/authentication_screen.png"
+import {ModalType} from "@/types/enums";
+import {Colors} from "@/constants/Colors";
 
 export default function Index() {
 

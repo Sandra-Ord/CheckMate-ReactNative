@@ -1,8 +1,7 @@
 import React from 'react';
-import {Text, View, Image, TouchableOpacity} from 'react-native';
-import {Stack, Tabs, useRouter} from "expo-router";
-import {Colors} from "@/constants/Colors";
-import DropdownPlus from "@/components/DropdownPlus";
+import {View, TouchableOpacity} from 'react-native';
+import {Stack, useRouter} from "expo-router";
+import {Colors} from "@/constants/Colors"
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 

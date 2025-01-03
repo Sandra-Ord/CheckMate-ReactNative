@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, StyleSheet, TextInput, TouchableOpacity, FlatList} from 'react-native';
-import {Link, router, Stack, useLocalSearchParams, useRouter} from "expo-router";
-import {useSupabase} from "@/context/SupabaseContext";
-import {Collection, User} from "@/types/enums";
-import {Colors} from "@/constants/Colors";
+import {Text, View, TextInput, TouchableOpacity, FlatList} from 'react-native';
+import {Link, Stack, useLocalSearchParams, useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
-import UserListItem from "@/components/UserListItem";
 import {useHeaderHeight} from "@react-navigation/elements";
+import {useSupabase} from "@/context/SupabaseContext";
+import UserListItem from "@/components/UserListItem";
+import {Colors} from "@/constants/Colors";
+import {Collection, User} from "@/types/enums";
 
 const Settings = () => {
     // Extract the 'id' parameter from the URL

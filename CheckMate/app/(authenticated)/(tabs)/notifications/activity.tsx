@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
+import {Colors} from "@/constants/Colors";
 
 const ActivityFeedView = () => {
     return (

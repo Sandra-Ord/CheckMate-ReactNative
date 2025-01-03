@@ -1,8 +1,8 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
 import {Href, Link} from "expo-router";
-import {Collection} from "@/types/enums.ts";
+import {Collection} from "@/types/enums";
+import {Colors} from "@/constants/Colors";
 
 const CollectionCard = (collection: Collection) => {
     return (

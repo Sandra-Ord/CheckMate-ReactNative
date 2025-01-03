@@ -1,19 +1,18 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
-import {useFocusEffect, useLocalSearchParams} from "expo-router";
-import {Collection} from "@/types/enums.ts";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
+import {useFocusEffect} from "expo-router";
 import {BottomSheetModal} from "@gorhom/bottom-sheet";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {Ionicons} from "@expo/vector-icons";
+import {useSupabase} from "@/context/SupabaseContext";
+import {Collection} from "@/types/enums";
+import {Colors} from "@/constants/Colors";
 
 const NotificationsView = () => {
 
     // State to manage the refresh control
     const [refreshing, setRefreshing] = useState(false);
     const [notifications, setNotifications] = useState<[]>([]);
-
 
     // Function to load notifications from Supabase
     const loadNotifications = async () => {

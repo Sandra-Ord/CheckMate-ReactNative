@@ -1,12 +1,12 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
-import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
+import { useFocusEffect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
-import NewToDoTaskModal from "@/components/NewToDoTaskModal";
+import {useSupabase} from "@/context/SupabaseContext";
+import {Colors} from "@/constants/Colors";
 import ToDoListItem from "@/components/ToDoListItem";
+import NewToDoTaskModal from "@/components/NewToDoTaskModal";
 
 const ToDoView = () => {
 
@@ -46,8 +46,6 @@ const ToDoView = () => {
                                 <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
                                 <Text className="pl-3">Filter/Sort</Text>
                             </View>
-
-
 
                             <TouchableOpacity className="flex-row" onPress={() => showNewTaskModal()}>
                                 <Text className="pr-2">Add Task</Text>

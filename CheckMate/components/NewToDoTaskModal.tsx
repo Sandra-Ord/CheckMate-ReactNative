@@ -2,8 +2,8 @@ import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useState} from "react";
 import "../global.css"
-import {Colors} from "@/constants/Colors.ts";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
+import {useSupabase} from "@/context/SupabaseContext";
+import {Colors} from "@/constants/Colors";
 
 
 const NewToDoTaskModal = ({ onToDoTaskCreated }: { onToDoTaskCreated: () => void }) => {
@@ -86,7 +86,6 @@ const NewToDoTaskModal = ({ onToDoTaskCreated }: { onToDoTaskCreated: () => void
                     <Text style={{color: Colors.Complementary["100"]}}>Create Task</Text>
                 </TouchableOpacity>
             </View>
-
 
         </BottomSheetView>
     );

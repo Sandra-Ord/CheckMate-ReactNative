@@ -1,8 +1,6 @@
 import "../global.css";
 import {Stack, useSegments, useRouter} from "expo-router";
 import {ActionSheetProvider} from "@expo/react-native-action-sheet";
-import { MenuProvider } from 'zeego/dropdown-menu';
-
 import React, {useEffect} from "react";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import * as SecureStorage from "expo-secure-store";

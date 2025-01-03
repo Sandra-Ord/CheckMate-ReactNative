@@ -1,10 +1,9 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, SafeAreaView, Text, View} from 'react-native';
+import {FlatList, RefreshControl, SafeAreaView, Text, View} from 'react-native';
+import {useFocusEffect} from "expo-router";
+import {useSupabase} from "@/context/SupabaseContext";
 import CollectionCard from "@/components/CollectionCard";
 import {Colors} from "@/constants/Colors";
-import {useFocusEffect, useLocalSearchParams} from "expo-router";
-import {useSupabase} from "@/context/SupabaseContext";
-
 
 const Index = () => {
 
@@ -12,14 +11,6 @@ const Index = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [collections, setCollections] = useState<[]>();
     const {getCollections} = useSupabase();
-
-
-
-    // Function to load collection's tasks from Supabase
-    const loadTasks = async () => {
-        const data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        setTasks(data);
-    };
 
     const loadCollections = async () => {
         const data = await getCollections!();
@@ -42,7 +33,7 @@ const Index = () => {
                     <FlatList
                         data={collections}
                         renderItem={({ item }) => <CollectionCard {...item} />}
-                        // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadBoards} />}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadCollections} />}
                         keyExtractor={(item) => item.id.toString()}
                     />
 

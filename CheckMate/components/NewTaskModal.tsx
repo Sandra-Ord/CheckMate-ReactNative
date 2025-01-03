@@ -3,9 +3,6 @@ import {Image, Text, TextInput, TouchableOpacity} from "react-native";
 import React from "react";
 import "../global.css"
 
-
-
-
 const NewTaskModal = (collectionId: number) => {
 
 

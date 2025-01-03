@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {Tag} from "@/types/enums";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
+import {Tag} from "@/types/enums";
 
 const TagListItem = (tag: Tag) => {
 

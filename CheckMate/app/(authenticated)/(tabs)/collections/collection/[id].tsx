@@ -1,14 +1,13 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-import CollectionCard from "@/components/CollectionCard.tsx";
-import {Colors} from "@/constants/Colors.ts";
+import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
-import {Collection, ModalType} from "@/types/enums.ts";
-import {useHeaderHeight} from "@react-navigation/elements";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
-import NewTaskModal from "@/components/NewTaskModal.tsx";
+import {useSupabase} from "@/context/SupabaseContext";
+import NewTaskModal from "@/components/NewTaskModal";
+import TaskListItem from "@/components/TaskListItem";
+import {Collection} from "@/types/enums";
+import {Colors} from "@/constants/Colors";
 
 const CollectionView = () => {
 
@@ -18,19 +17,19 @@ const CollectionView = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [collection, setCollection] = useState<Collection>();
     const [tasks, setTasks] = useState<[]>([]);
-    const {getCollectionInfo} = useSupabase();
+    const {getCollectionInfo, getCollectionTasks} = useSupabase();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const headerHeight = useHeaderHeight();
     const snapPoints = useMemo(() => ["80%"], []);
 
     const showNewTaskModal = () => {
         bottomSheetModalRef.current?.present();
     };
 
+
     // Function to load collection's tasks from Supabase
     const loadTasks = async () => {
-        const data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const data = await getCollectionTasks(id);
         setTasks(data);
     };
 
@@ -47,18 +46,6 @@ const CollectionView = () => {
             loadCollectionInfo();
             loadTasks();
         }, [])
-    );
-
-    const TaskListItem = ({id}) => (
-        <View className="py-1">
-            <TouchableOpacity className="rounded-3xl w-full px-6 py-4" style={{backgroundColor: Colors.Complementary["50"], aspectRatio: 9/2}}>
-                <View className="border-b border-b-gray-500 pb-2">
-                    <Text className="text-xl font-bold px-1" style={{color: Colors.Primary["800"]}}>
-                        Task
-                    </Text>
-                </View>
-            </TouchableOpacity>
-        </View>
     );
 
     // Custom header component
@@ -126,9 +113,9 @@ const CollectionView = () => {
                     <View className="flex-1 justify-center items-center pb-3 px-4">
                         <FlatList
                             data={tasks}
-                            renderItem={TaskListItem}
-                            // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadBoards} />}
-                            keyExtractor={(item) => `${item}`}
+                            renderItem={({ item }) => <TaskListItem {...item} />}
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks} />}
+                            keyExtractor={(item) => `${item.id.toString()}`}
                         />
 
                     </View>

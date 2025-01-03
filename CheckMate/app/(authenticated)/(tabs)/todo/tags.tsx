@@ -1,12 +1,12 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-import {Colors} from "@/constants/Colors";
-import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
+import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {useFocusEffect, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {useSupabase} from "@/context/SupabaseContext";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
+import {useSupabase} from "@/context/SupabaseContext";
 import NewTagModal from "@/components/NewTagModal";
 import TagListItem from "@/components/TagListItem";
+import {Colors} from "@/constants/Colors";
 
 const ToDoView = () => {
 
@@ -54,7 +54,6 @@ const ToDoView = () => {
                 <BottomSheetModalProvider>
 
                     <View className="w-full h-full">
-
 
                         <View className="flex-1 pb-3 px-4 pt-2">
                             <FlatList

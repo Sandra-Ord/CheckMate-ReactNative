@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
 import {Colors} from "@/constants/Colors";
 

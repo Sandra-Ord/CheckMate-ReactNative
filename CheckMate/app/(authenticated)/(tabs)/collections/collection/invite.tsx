@@ -3,8 +3,8 @@ import { FlatList, Text, View } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { DefaultTheme } from '@react-navigation/native';
 import { useSupabase } from '@/context/SupabaseContext';
-import { User } from '@/types/enums';
 import UserListItem from '@/components/UserListItem';
+import { User } from '@/types/enums';
 
 // If this doesn't work, enable the pg_trgm extension in Supabase extensions
 const Invite = () => {

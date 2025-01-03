@@ -1,8 +1,6 @@
 import React from 'react';
-import { Text, View, Image } from 'react-native';
-import {Stack, Tabs} from "expo-router";
-import {Colors} from "@/constants/Colors.ts";
-import DropdownPlus from "@/components/DropdownPlus.tsx";
+import {Stack} from "expo-router";
+import {Colors} from "@/constants/Colors";
 
 
 const Layout = () => {

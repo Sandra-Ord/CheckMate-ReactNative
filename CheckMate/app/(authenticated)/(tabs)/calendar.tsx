@@ -1,7 +1,7 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import {Colors} from "@/constants/Colors";
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 
 
 const CalendarView = () => {
@@ -11,19 +11,9 @@ const CalendarView = () => {
                 onDayPress={day => {
                     console.log('selected day', day);
                 }}
+
             />
 
-            {/* CalendarList configured for a week view */}
-            <CalendarList
-                onDayPress={(day) => {
-                    console.log("selected day", day);
-                }}
-                pastScrollRange={1} // Limit past scrolling range
-                futureScrollRange={1} // Limit future scrolling range
-                horizontal={true} // Enable horizontal scrolling
-                pagingEnabled={true} // Snap to week
-                calendarWidth={400} // Adjust for better week view display
-            />
         </View>
     );
 };

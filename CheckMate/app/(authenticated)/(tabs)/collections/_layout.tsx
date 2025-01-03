@@ -1,10 +1,8 @@
 import React from 'react';
-import { Text, View, Image } from 'react-native';
-import {Stack, Tabs, useRouter} from "expo-router";
-import {Colors} from "@/constants/Colors";
-import DropdownPlus from "@/components/DropdownPlus";
+import { Image } from 'react-native';
+import {Stack, useRouter} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import {Colors} from "@/constants/Colors";
 
 const Layout = () => {
     const router = useRouter();

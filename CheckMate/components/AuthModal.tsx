@@ -1,9 +1,9 @@
 import "../global.css"
-import {AuthStrategy, ModalType} from "@/types/enums";
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Image, Text, TouchableOpacity} from "react-native";
 import React from "react";
 import {useOAuth, useSignIn, useSignUp} from "@clerk/clerk-expo";
+import {AuthStrategy, ModalType} from "@/types/enums";
 
 const LOGIN_OPTIONS = [
     {
