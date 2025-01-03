@@ -76,7 +76,6 @@ const NewToDoTaskModal = ({ onToDoTaskCreated }: { onToDoTaskCreated: () => void
                 />
             </View>
 
-
             <View className="items-center pt-10 pb-10">
                 <TouchableOpacity
                     className="py-2 px-8 mx-16 rounded-xl items-center"

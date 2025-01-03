@@ -54,39 +54,14 @@ const Settings = () => {
         router.dismissAll(); // Dismisses all modals or screens after deletion
     };
 
-
-    // Custom header component
-    const CustomHeader = () => (
-        <View className="" style={{backgroundColor: Colors.Complementary["400"]}}>
-            <View className="flex-row items-center justify-between bg-complementary-400 px-4 py-3">
-                {/* Close button */}
-                <TouchableOpacity className="pr-2" onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={24} color={Colors.Complementary["900"]} />
-                </TouchableOpacity>
-
-                {/* Collection name */}
-                <View style={{ flex: 1 }}>
-                    <Text style={{ color: Colors.Complementary["900"], fontSize: 20 }}>{collection?.name} Settings</Text>
-                </View>
-
-            </View>
-        </View>
-    );
-
-
-
-
     return (
         <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
             <Stack.Screen
                 options={{
-                    header: () => <CustomHeader />,
-                    title: collection?.name,
-                    headerTransparent: false,
+                    headerTitle: `${collection?.name} Settings`,
                 }}
             />
-
 
             <View className="px-4 pb-8 pt-2" >
                 <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Collection Name</Text>
@@ -102,8 +77,6 @@ const Settings = () => {
                     onEndEditing={onUpdateCollection}
                 />
             </View>
-
-
 
             <View className="px-4 pt-4 pb-32 border-b" style={{borderColor: Colors.Complementary["500"]}}>
 

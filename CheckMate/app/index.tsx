@@ -13,10 +13,10 @@ export default function Index() {
     const {showActionSheetWithOptions} = useActionSheet();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [authType, setAuthType] = useState<ModalType | null>(null);
-    const snapPoints = useMemo(() => ["45%"], [])
+    const snapPoints = useMemo(() => ["45%"], []);
 
     const openActionSheet = async () => {
-        const options = ["View docs", "Contact support", "Cancel"]
+        const options = ["View docs", "Contact support", "Cancel"];
 
         showActionSheetWithOptions(
             {
@@ -32,12 +32,12 @@ export default function Index() {
                 }
             }
         );
-    }
+    };
 
     const showAuthModal = (type: ModalType) => {
         setAuthType(type);
         bottomSheetModalRef.current?.present();
-    }
+    };
 
     return (
         <BottomSheetModalProvider>
@@ -110,4 +110,4 @@ export default function Index() {
 
         </BottomSheetModalProvider>
     );
-}
+};

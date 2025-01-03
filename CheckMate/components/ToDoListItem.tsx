@@ -26,14 +26,13 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
         await completeToDoTask(data.task);
         console.log("Task " + data.task.name + " Completed");
         setIsCompleted(true);
-
-    }
+    };
 
     const onUnCompleteTask = async () => {
         await unCompleteToDoTask(data.task);
         console.log("Task " + data.task.name + " UnCompleted");
         setIsCompleted(false);
-    }
+    };
 
     return (
         <View className="flex-row justify-between py-3 px-1">

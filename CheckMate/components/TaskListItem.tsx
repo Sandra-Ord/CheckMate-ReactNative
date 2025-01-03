@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
+import {Href, Link} from "expo-router";
 
 const TaskListItem = (task: Task) => {
     const formatDate = (dateString) => {
@@ -32,14 +33,20 @@ const TaskListItem = (task: Task) => {
                             </View>
                         </View>
 
-                        {/* aligned to the left */}
+                        {/* aligned to the right */}
                         <View className="flex-row items-center">
                             <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
                                 <Ionicons name="pencil" size={20} style={{ color: Colors.Primary["800"] }} />
                             </TouchableOpacity>
-                            <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
-                                <Ionicons name="time-outline" size={20} style={{ color: Colors.Primary["800"] }} />
-                            </TouchableOpacity>
+                            <Link
+                                href={`/(authenticated)/(tabs)/collections/collection/task/${task.id}` as Href}
+                                key={`1}`}
+                                asChild
+                            >
+                                <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
+                                    <Ionicons name="time-outline" size={20} style={{ color: Colors.Primary["800"] }} />
+                                </TouchableOpacity>
+                            </Link>
                         </View>
 
                     </View>

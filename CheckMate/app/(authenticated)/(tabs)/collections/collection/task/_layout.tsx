@@ -1,35 +1,20 @@
 import React from 'react';
+import { Text, View } from 'react-native';
 import {Stack, useRouter} from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const Layout = () => {
     const router = useRouter();
 
     return (
         <Stack>
-            <Stack.Screen name="index"
+            <Stack.Screen name="[id]"
                           options={{
+                              headerTitle: "Task Log",
                               headerShown: true,
                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                              headerTitle: "Notifications",
                               headerTitleAlign: 'left',
-                              headerRight: () => (
-                                  <Ionicons
-                                      name='time-outline'
-                                      size={24}
-                                      onPress={() => router.navigate('/(authenticated)/(tabs)/notifications/activity')}
-                                      style={{color: Colors.primaryGray}}
-                                  />
-                              )
-                          }}
-            />
-
-            <Stack.Screen name="activity"
-                          options={{
-                              headerShown: true,
-                              headerTitle: "Activity Feed",
-                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
                               headerLeft: () => (
                                   <Ionicons
                                       name="arrow-back"
@@ -41,6 +26,12 @@ const Layout = () => {
                               )
                           }}
             />
+
+            {/*<Stack.Screen name="statistics"*/}
+            {/*              options={{*/}
+            {/*                  headerShown: false*/}
+            {/*              }}*/}
+            {/*/>*/}
         </Stack>
     );
 };

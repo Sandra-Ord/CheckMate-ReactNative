@@ -1,8 +1,8 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, {useState} from "react";
-import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
+import {useSupabase} from "@/context/SupabaseContext";
 
 
 const NewTagModal = ({ onTagCreated }: { onTagCreated: () => void }) => {

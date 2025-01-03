@@ -62,7 +62,7 @@ const AuthModal = ({authType}: AuthModalProps) => {
             if (res.status === 'complete') {
                 setActive({
                     session: res.createdSessionId,
-                })
+                });
             }
         }
 
@@ -79,7 +79,7 @@ const AuthModal = ({authType}: AuthModalProps) => {
             if (res.status === 'complete') {
                 setActive({
                     session: res.createdSessionId,
-                })
+                });
             }
         } else {
             // If the user has an account in your application
@@ -90,7 +90,7 @@ const AuthModal = ({authType}: AuthModalProps) => {
                 if (createdSessionId) {
                     setActive!({
                         session: createdSessionId,
-                    })
+                    });
                 }
             } catch (err) {
                 console.log("OAuth error", err);

@@ -5,13 +5,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import NewTaskModal from "@/components/NewTaskModal";
-import TaskListItem from "@/components/TaskListItem";
-import {Collection} from "@/types/enums";
+import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
+import TaskListItem from "@/components/TaskListItem.tsx";
 
 const CollectionView = () => {
 
-    const { id } = useLocalSearchParams<{ id: string; bg?: string }>();
+    const { id } = useLocalSearchParams<{ id: string }>();
 
     // State to manage the refresh control
     const [refreshing, setRefreshing] = useState(false);
@@ -48,47 +48,39 @@ const CollectionView = () => {
         }, [])
     );
 
-    // Custom header component
-    const CustomHeader = () => (
-        <View className="" style={{backgroundColor: Colors.Complementary["400"]}}>
-            <View className="flex-row items-center justify-between bg-complementary-400 px-4 py-3">
-                {/* Close button */}
-                <TouchableOpacity className="pr-2" onPress={() => router.back()}>
-                    <Ionicons name="close" size={24} color={Colors.Complementary["900"]} />
-                </TouchableOpacity>
-
-                {/* Collection name and user information */}
-                <View style={{ flex: 1 }}>
-                    <Text style={{ color: Colors.Complementary["900"], fontSize: 16 }}>{collection?.name}</Text>
-                    <Text style={{ color: Colors.Complementary["900"], fontSize: 12 }}>Collection of {collection?.users.first_name}</Text>
-                </View>
-
-                {/* Icon buttons for filter, notifications, and settings */}
-                <View className="flex-row gap-4">
-                    <TouchableOpacity onPress={() => {}}>
-                        <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {}}>
-                        <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]} />
-                    </TouchableOpacity>
-                    <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
-                        <TouchableOpacity>
-                            <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]} />
-                        </TouchableOpacity>
-                    </Link>
-                </View>
-            </View>
-        </View>
-    );
-
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: 'numeric', month: 'short', year: '2-digit' };
+        return date.toLocaleDateString(undefined, options);
+    };
 
     return (
         <SafeAreaView className="flex-1" style={{backgroundColor: Colors.Complementary["500"]}}>
             <View>
+
                 <Stack.Screen
                     options={{
-                        header: () => <CustomHeader />,
-                        title: collection?.name,
+                        headerTitle: () => (
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ color: Colors.Complementary["900"], fontSize: 16 }}>{collection?.name}</Text>
+                                <Text style={{ color: Colors.Complementary["900"], fontSize: 12 }}>Collection of {collection?.users.first_name}</Text>
+                            </View>
+                        ),
+                        headerRight: () => (
+                            <View className="flex-row gap-4">
+                                <TouchableOpacity onPress={() => {}}>
+                                    <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {}}>
+                                    <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]} />
+                                </TouchableOpacity>
+                                <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
+                                    <TouchableOpacity>
+                                        <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]} />
+                                    </TouchableOpacity>
+                                </Link>
+                            </View>
+                        ),
                         headerTransparent: false,
                     }}
                 />
@@ -139,5 +131,3 @@ const CollectionView = () => {
 
 
 export default CollectionView;
-
-

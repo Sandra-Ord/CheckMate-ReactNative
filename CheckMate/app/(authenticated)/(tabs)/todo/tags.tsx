@@ -19,7 +19,7 @@ const ToDoView = () => {
 
     const showNewTagModal = () => {
         bottomSheetModalRef.current?.present();
-    }
+    };
 
     // Function to load tags from Supabase
     const loadTags = async () => {

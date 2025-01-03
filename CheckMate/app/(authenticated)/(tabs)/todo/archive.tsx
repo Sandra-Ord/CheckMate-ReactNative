@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";

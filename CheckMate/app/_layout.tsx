@@ -13,27 +13,27 @@ const tokenCache = {
     // Code source: https://clerk.com/docs/quickstarts/expo#configure-the-token-cache-with-expo
     async getToken(key: string) {
         try {
-            const item = await SecureStorage.getItemAsync(key)
+            const item = await SecureStorage.getItemAsync(key);
             if (item) {
-                console.log(`${key} was used 🔐 \n`)
+                console.log(`${key} was used 🔐 \n`);
             } else {
-                console.log('No values stored under key: ' + key)
+                console.log('No values stored under key: ' + key);
             }
-            return item
+            return item;
         } catch (error) {
-            console.error('SecureStore get item error: ', error)
-            await SecureStorage.deleteItemAsync(key)
-            return null
+            console.error('SecureStore get item error: ', error);
+            await SecureStorage.deleteItemAsync(key);
+            return null;
         }
     },
     async saveToken(key: string, value: string) {
         try {
-            return SecureStorage.setItemAsync(key, value)
+            return SecureStorage.setItemAsync(key, value);
         } catch (err) {
-            return
+            return;
         }
     },
-}
+};
 
 const InitialLayout = () => {
 
@@ -46,7 +46,7 @@ const InitialLayout = () => {
     useEffect(() => {
         if (!isLoaded) return;
 
-        console.log('segments: ', segments)
+        console.log('segments: ', segments);
         const inAuthGroup = segments[0] === '(authenticated)';
 
         if (isSignedIn && !inAuthGroup) {
@@ -65,7 +65,7 @@ const InitialLayout = () => {
             </Stack>
         </SupabaseProvider>
     );
-}
+};
 
 export default function RootLayout() {
     return (
@@ -76,5 +76,5 @@ export default function RootLayout() {
                 </GestureHandlerRootView>
             </ActionSheetProvider>
         </ClerkProvider>
-    )
-}
+    );
+};

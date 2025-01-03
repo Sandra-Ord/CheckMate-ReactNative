@@ -11,7 +11,6 @@ const CalendarView = () => {
                 onDayPress={day => {
                     console.log('selected day', day);
                 }}
-
             />
 
         </View>

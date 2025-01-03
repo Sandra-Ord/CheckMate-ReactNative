@@ -191,7 +191,7 @@ export const SupabaseProvider = ({ children }: any) => {
     const getTaskLogs = async (taskId: number) => {
         const { data, error } = await client
             .from(TASK_LOGS_TABLE)
-            .select(`id, comment, completed_at, due_at, users (first_name), tasks (name)`)
+            .select(`id, comment, completed_at, due_at, users (id, first_name)`)
             .match({ task_id: taskId });
         return data;
     };
