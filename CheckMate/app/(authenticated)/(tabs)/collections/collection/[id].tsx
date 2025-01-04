@@ -4,10 +4,9 @@ import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-ro
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
-import NewTaskModal from "@/components/NewTaskModal";
 import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
-import TaskListItem from "@/components/TaskListItem.tsx";
+import TaskListItem from "@/components/TaskListItem";
 
 const CollectionView = () => {
 
@@ -20,7 +19,7 @@ const CollectionView = () => {
     const {getCollectionInfo, getCollectionTasks} = useSupabase();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const snapPoints = useMemo(() => ["80%"], []);
+    const snapPoints = useMemo(() => ["100%"], []);
 
     const showNewTaskModal = () => {
         bottomSheetModalRef.current?.present();
@@ -85,8 +84,6 @@ const CollectionView = () => {
                     }}
                 />
 
-            <BottomSheetModalProvider>
-
                 <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
                     <View className="flex-row w-full justify-between px-4 py-2">
@@ -95,10 +92,12 @@ const CollectionView = () => {
                             <Text className="pl-3">Filter/Sort</Text>
                         </View>
 
-                        <TouchableOpacity className="flex-row" onPress={() => showNewTaskModal()}>
-                            <Text className="pr-2">Add Task</Text>
-                            <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
-                        </TouchableOpacity>
+                        <Link href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${id}`} asChild>
+                            <TouchableOpacity className="flex-row">
+                                <Text className="pr-2">Add Task</Text>
+                                <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
+                            </TouchableOpacity>
+                        </Link>
 
                     </View>
 
@@ -114,16 +113,6 @@ const CollectionView = () => {
 
                 </View>
 
-                <BottomSheetModal
-                    ref={bottomSheetModalRef}
-                    index={0}
-                    snapPoints={snapPoints}
-                >
-                    <NewTaskModal collectionId={id}/>
-
-                </BottomSheetModal>
-
-            </BottomSheetModalProvider>
             </View>
         </SafeAreaView>
     );

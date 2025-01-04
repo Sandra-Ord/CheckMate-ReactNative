@@ -3,7 +3,7 @@ import {Button, Text, TouchableOpacity, View} from 'react-native';
 import {useRouter} from "expo-router";
 import * as DropDownMenu from 'zeego/dropdown-menu';
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {Colors} from "@/constants/Colors.ts";
+import {Colors} from "@/constants/Colors";
 
 const DropdownPlus = () => {
 

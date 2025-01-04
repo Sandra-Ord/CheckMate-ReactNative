@@ -39,6 +39,9 @@ export const Colors = {
     "900": "#1f2327"
   },
   Complementary: {
+    "5": "#fdf9f3",
+    "10": "#fcf4eb",
+    "25": "#fef9f3",
     "50": "#fffaf4",
     "100": "#faf5ef",
     "200": "#f5f0ea",

@@ -13,15 +13,8 @@ const ArchiveView = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [tasks, setTasks] = useState<[]>([]);
     const {getArchivedToDoTasks} = useSupabase();
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const snapPoints = useMemo(() => ["80%"], []);
-
-    const showNewTaskModal = () => {
-        bottomSheetModalRef.current?.present();
-    };
-
-    // Function to load to do tasks from Supabase
+    // Function to load archived to do tasks from Supabase
     const loadTasks = async () => {
         const data = await getArchivedToDoTasks();
         setTasks(data);
@@ -37,7 +30,6 @@ const ArchiveView = () => {
     return (
         <SafeAreaView className="flex-1" style={{backgroundColor: Colors.Complementary["300"]}}>
             <View>
-                <BottomSheetModalProvider>
 
                     <View className="w-full h-full">
 
@@ -46,11 +38,6 @@ const ArchiveView = () => {
                                 <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
                                 <Text className="pl-3">Filter/Sort</Text>
                             </View>
-
-                            <TouchableOpacity className="flex-row" onPress={() => showNewTaskModal()}>
-                                <Text className="pr-2">Add Task</Text>
-                                <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
-                            </TouchableOpacity>
                         </View>
 
                         <View className="flex-1 pb-3 px-4">
@@ -72,15 +59,6 @@ const ArchiveView = () => {
 
                     </View>
 
-                    <BottomSheetModal
-                        ref={bottomSheetModalRef}
-                        index={0}
-                        snapPoints={snapPoints}
-                    >
-                        <NewToDoTaskModal onToDoTaskCreated={() => bottomSheetModalRef.current?.dismiss()} />
-                    </BottomSheetModal>
-
-                </BottomSheetModalProvider>
             </View>
         </SafeAreaView>
     );

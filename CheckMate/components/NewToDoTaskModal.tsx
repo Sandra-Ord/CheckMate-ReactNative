@@ -8,6 +8,8 @@ import {Colors} from "@/constants/Colors";
 
 const NewToDoTaskModal = ({ onToDoTaskCreated }: { onToDoTaskCreated: () => void }) => {
 
+    // todo: add tag inputs
+
     const [taskName, setTaskName] = useState();
     const [comment, setComment] = useState();
     const [dueDate, setDueDate] = useState();
@@ -26,7 +28,9 @@ const NewToDoTaskModal = ({ onToDoTaskCreated }: { onToDoTaskCreated: () => void
     };
 
     return (
-        <BottomSheetView className="px-5 ">
+        <BottomSheetView className="px-5">
+
+            <Text className="pt-5 text-2xl font-bold" style={{color: Colors.Complementary["800"]}}>New Task To Do:</Text>
 
             {/*Task Name Input*/}
             <View className="pt-5">

@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {TaskLog} from "@/types/enums";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
 
 const TaskLogListItem = (log: TaskLog) => {
 

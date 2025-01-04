@@ -1,12 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Link, router, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
-import {Task} from "@/types/enums.ts";
-import {Colors} from "@/constants/Colors.ts";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ToDoListItem from "@/components/ToDoListItem.tsx";
-import TaskLogListItem from "@/components/TaskLogListItem.tsx";
+import {useSupabase} from "@/context/SupabaseContext";
+import TaskLogListItem from "@/components/TaskLogListItem";
+import {Task} from "@/types/enums";
+import {Colors} from "@/constants/Colors";
 
 const TaskLogView = () => {
 

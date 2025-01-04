@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Stack, router} from "expo-router";
 import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
+import {useSupabase} from "@/context/SupabaseContext";
+import {Colors} from "@/constants/Colors";
 
 const Index = () => {
 

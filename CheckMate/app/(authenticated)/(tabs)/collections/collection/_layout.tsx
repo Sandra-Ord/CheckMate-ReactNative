@@ -53,6 +53,24 @@ const Layout = () => {
                           }}
             />
 
+            <Stack.Screen name="new_task"
+                          options={{
+                              headerTitle: "New Task",
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleAlign: 'left',
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="close"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
+                          }}
+            />
+
             <Stack.Screen name="task"
                           options={{
                               headerShown: false

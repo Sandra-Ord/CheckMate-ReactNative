@@ -76,12 +76,11 @@ const TaskListItem = (task: Task) => {
                                 ) : (
                                     <Text>Not Assigned</Text>
                                 )}
-
                             </View>
                         </View>
 
+                        {/* aligned to the right*/}
                         <View className="flex-col">
-                            {/* aligned to the right*/}
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="timer-outline" size={16} style={{ color: Colors.Primary["800"] }} />
                                 <Text>Every other interval</Text>
@@ -89,10 +88,9 @@ const TaskListItem = (task: Task) => {
                             <View></View>
                         </View>
 
-
                     </View>
-                </View>
 
+                </View>
             </TouchableOpacity>
         </View>
     );

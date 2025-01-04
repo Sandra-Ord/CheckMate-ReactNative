@@ -16,6 +16,7 @@ const Layout = () => {
                 tabBarInactiveTintColor: Colors.primaryGray,
             }}
         >
+
             <Tabs.Screen name="calendar"
                          options={{
                              title: 'Calendar',
@@ -38,7 +39,6 @@ const Layout = () => {
                          }}
             />
 
-
             <Tabs.Screen name="collections"
                          options={{
                              title: 'Collections',
@@ -55,7 +55,7 @@ const Layout = () => {
 
             <Tabs.Screen name="notifications"
                          options={{
-                             title: 'Notifcations',
+                             title: 'Notifications',
                              headerShown: false,
                              tabBarIcon: ({size, color}) => (<Ionicons name="notifications-outline" size={size} color={color}/>)
                          }}
@@ -71,6 +71,7 @@ const Layout = () => {
                              tabBarIcon: ({size, color}) => (<FontAwesome name="user-circle" size={size} color={color}/>)
                          }}
             />
+
         </Tabs>
     );
 };
