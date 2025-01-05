@@ -42,6 +42,7 @@ type ProviderProps = {
     getArchivedToDoTasks: () => Promise<any>;
     createToDoTask: (taskName: string, dueDate: Date) => Promise<any>;
     updateToDoTask: (task: ToDoTask) => Promise<any>;
+    deleteToDoTask: (toDoTaskId: number) => Promise<any>;
     completeToDoTask: (task: ToDoTask) => Promise<any>;
     unCompleteToDoTask: (task: ToDoTask) => Promise<any>;
     // TAGS
@@ -234,7 +235,7 @@ export const SupabaseProvider = ({ children }: any) => {
     const getCollectionTasks = async (collectionId: number) => {
         const { data, error } = await client
             .from(TASKS_TABLE)
-            .select(`id, name, next_due_at, users (first_name)`)
+            .select(`*, users (first_name)`)
             .match({ collection_id: collectionId });
 
         if (error) {
@@ -430,6 +431,15 @@ export const SupabaseProvider = ({ children }: any) => {
         return data;
     };
 
+
+    const deleteToDoTask = async (toDoTaskId: number) => {
+        return client
+            .from(TO_DO_TASKS_TABLE)
+            .delete()
+            .match({ id: toDoTaskId })
+            .single();
+    };
+
     const completeToDoTask = async (task: ToDoTask) => {
         const { data } = await client
             .from(TO_DO_TASKS_TABLE)
@@ -505,6 +515,7 @@ export const SupabaseProvider = ({ children }: any) => {
         getArchivedToDoTasks,
         createToDoTask,
         updateToDoTask,
+        deleteToDoTask,
         completeToDoTask,
         unCompleteToDoTask,
         //User

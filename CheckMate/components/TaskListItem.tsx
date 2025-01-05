@@ -1,16 +1,13 @@
 import React from 'react';
+import {Href, Link} from "expo-router";
 import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
-import {Href, Link} from "expo-router";
+import {formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
 
 const TaskListItem = (task: Task) => {
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
+
 
     return (
         <View className="py-1">
@@ -67,7 +64,7 @@ const TaskListItem = (task: Task) => {
                         <View className="flex-col w-1/2">
                             <View className="flex-row items-center pb-1">
                                 <Ionicons className="pr-2" name="calendar-outline" size={16} style={{ color: Colors.Primary["800"] }} />
-                                <Text>Due {formatDate(task.next_due_at)}</Text>
+                                <Text>Due {formatShortDate(task.next_due_at)}</Text>
                             </View>
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="person-circle-outline" size={16} style={{ color: Colors.Primary["800"] }} />
@@ -80,12 +77,11 @@ const TaskListItem = (task: Task) => {
                         </View>
 
                         {/* aligned to the right*/}
-                        <View className="flex-col">
+                        <View className="flex-col w-1/2">
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="timer-outline" size={16} style={{ color: Colors.Primary["800"] }} />
-                                <Text>Every other interval</Text>
+                                <Text>{getBasicRecurrenceDescriptions(task.interval_value, task.interval_unit, task.day_of_week, task.day_of_month, task.month_of_year)}</Text>
                             </View>
-                            <View></View>
                         </View>
 
                     </View>

@@ -1,16 +1,21 @@
 import React, {useCallback, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {Href, Link, useFocusEffect} from "expo-router";
+import {Ionicons} from "@expo/vector-icons";
+import {useHeaderHeight} from "@react-navigation/elements";
+import {useSupabase} from "@/context/SupabaseContext";
 import {Collection} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
-import {Ionicons} from "@expo/vector-icons";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
 
 const CollectionCard = (collection: Collection) => {
     const [members, setMembers] = useState();
     const [tasks, setTasks] = useState();
     const [pendingTasks, setPendingTasks] = useState();
     const {userId, getAcceptedUsersCount, getActiveTasksCount, getPendingTaskCount} = useSupabase();
+
+    const { width, height } = useWindowDimensions();
+    const headerHeight = useHeaderHeight();
+
 
     const loadMemberCount = async () => {
         const data = await getAcceptedUsersCount!(collection.id);
@@ -35,7 +40,7 @@ const CollectionCard = (collection: Collection) => {
     );
 
     return (
-        <View className="px-8">
+        <View className="px-8 items-center">
             <Link
                 href={`/(authenticated)/(tabs)/collections/collection/${collection.id}` as Href} // Hack for faster loading
                 key={`1}`}
@@ -43,7 +48,12 @@ const CollectionCard = (collection: Collection) => {
             >
                 <TouchableOpacity
                     className="rounded-3xl w-full px-6 py-4"
-                    style={{backgroundColor: Colors.Complementary["50"], aspectRatio: 4/5}}>
+                    style={{
+                        backgroundColor: Colors.Complementary["50"],
+                        width: width*0.9,
+                        height: (height-headerHeight)*0.75
+                    }}
+                >
                     <View className="border-b border-b-gray-500 pb-2">
                         <Text className="text-xl font-bold px-1" style={{color: Colors.Primary["800"]}}>
                             {collection.name}

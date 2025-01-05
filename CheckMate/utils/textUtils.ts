@@ -20,13 +20,14 @@ export const getRecurrenceDescription = (intervalValue, intervalUnit, dayOfWeek,
 };
 
 export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayOfWeek, dateOfMonth, monthOfYear, base_text = "Every ") => {
+
     if (!intervalValue || !intervalUnit) {
         return "One-time task";
     }
 
     let description = base_text
 
-    if (intervalValue === "1") {
+    if (intervalValue == "1") {
         // 1 - no number and singular unit
         description += intervalUnit;
     } else {
@@ -56,3 +57,15 @@ export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayO
 
     return description;
 }
+
+export const formatShortDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'short', year: '2-digit' };
+    return date.toLocaleDateString(undefined, options);
+};
+
+export const formatDateWithDay = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: 'long', day: 'numeric', month: 'short', year: '2-digit' };
+    return date.toLocaleDateString(undefined, options);
+};

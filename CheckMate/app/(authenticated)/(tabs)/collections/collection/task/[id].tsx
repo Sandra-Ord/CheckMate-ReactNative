@@ -23,12 +23,6 @@ const TaskLogView = () => {
         setTask(data);
     };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
-
     const loadTaskLogs = async () => {
         if (!id) return;
         const data = await getTaskLogs!(id);

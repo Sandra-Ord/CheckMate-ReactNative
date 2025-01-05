@@ -2,7 +2,6 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
@@ -17,14 +16,6 @@ const CollectionView = () => {
     const [collection, setCollection] = useState<Collection>();
     const [tasks, setTasks] = useState<[]>([]);
     const {getCollectionInfo, getCollectionTasks} = useSupabase();
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-    const snapPoints = useMemo(() => ["100%"], []);
-
-    const showNewTaskModal = () => {
-        bottomSheetModalRef.current?.present();
-    };
-
 
     // Function to load collection's tasks from Supabase
     const loadTasks = async () => {
@@ -46,12 +37,6 @@ const CollectionView = () => {
             loadTasks();
         }, [])
     );
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
 
     return (
         <SafeAreaView className="flex-1">

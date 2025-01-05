@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {TaskLog} from "@/types/enums";
+import {formatShortDate} from "@/utils/textUtils";
 
 const TaskLogListItem = (log: TaskLog) => {
 
@@ -11,12 +12,6 @@ const TaskLogListItem = (log: TaskLog) => {
 
     // todo: add task log (comment and completed_at date) and deleting?
     const {userId} = useSupabase();
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
 
     const toggleCommentVisibility = () => {
         setShowComment(!showComment);
@@ -30,7 +25,7 @@ const TaskLogListItem = (log: TaskLog) => {
                 <View className="flex-row justify-between items-center pb-2">
                     <View className="flex-row items-center">
                         <Ionicons className="pr-2" name="calendar-outline" size={20} style={{ color: Colors.Primary["800"] }} />
-                        <Text>Completed at: {formatDate(log.completed_at)}</Text>
+                        <Text>Completed at: {formatShortDate(log.completed_at)}</Text>
                     </View>
                     {log.comment && log.comment.trim() !== "" && (
                         <TouchableOpacity className="items-center" onPress={toggleCommentVisibility}>

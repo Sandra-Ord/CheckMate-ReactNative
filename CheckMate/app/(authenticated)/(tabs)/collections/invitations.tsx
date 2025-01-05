@@ -7,6 +7,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Collection, CollectionUser} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
+import {formatShortDate} from "@/utils/textUtils.ts";
 
 const InvitationsView = () => {
 
@@ -46,12 +47,6 @@ const InvitationsView = () => {
             loadInvitations();
         }, [])
     );
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
 
     const InvitationListItem = (invitation: CollectionUser) => (
         <View className="py-1">
@@ -99,7 +94,7 @@ const InvitationsView = () => {
                             </View>
                         </View>
 
-                        <Text>{formatDate(invitation.invited_at)}</Text>
+                        <Text>{formatShortDate(invitation.invited_at)}</Text>
 
                     </View>
 

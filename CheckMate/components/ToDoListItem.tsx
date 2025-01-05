@@ -4,6 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
+import {formatDateWithDay} from "@/utils/textUtils";
 
 interface ToDoListItemInterface {
     task: ToDoTask,
@@ -15,12 +16,6 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
     const [isCompleted, setIsCompleted] = useState<boolean>(data.task.completed_at !== null);
 
     const {completeToDoTask, unCompleteToDoTask} = useSupabase();
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const options = { weekday: 'long', day: 'numeric', month: 'short', year: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
-    };
 
     const onCompleteTask = async () => {
         await completeToDoTask(data.task);
@@ -58,11 +53,11 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
 
                 {data.showDueDate ? (
                     <Text className="text-sm text-primary-800 mr-3">
-                        {formatDate(data.task.due_date)}
+                        {formatDateWithDay(data.task.due_date)}
                     </Text>
                 ) : (
                     <Text className="text-sm text-primary-800 mr-3">
-                        {formatDate(data.task.completed_at)}
+                        {formatDateWithDay(data.task.completed_at)}
                     </Text>
                 )}
 

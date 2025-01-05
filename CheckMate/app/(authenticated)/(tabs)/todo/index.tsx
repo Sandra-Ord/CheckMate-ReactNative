@@ -7,17 +7,26 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import ToDoListItem from "@/components/ToDoListItem";
 import NewToDoTaskModal from "@/components/NewToDoTaskModal";
+import {ToDoTask} from "@/types/enums.ts";
 
 const ToDoView = () => {
 
     const [refreshing, setRefreshing] = useState(false);
     const [tasks, setTasks] = useState<[]>([]);
+    const [selectedTask, setSelectedTask] = useState<ToDoTask | null>(null);
     const {getToDoTasks} = useSupabase();
+
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const snapPoints = useMemo(() => ["80%"], []);
+    const snapPoints = useMemo(() => ["100%"], []);
 
     const showNewTaskModal = () => {
+        setSelectedTask(null);
+        bottomSheetModalRef.current?.present();
+    };
+
+    const showEditTaskModal = (task: ToDoTask) => {
+        setSelectedTask(task); // Set the selected task to edit
         bottomSheetModalRef.current?.present();
     };
 
@@ -56,7 +65,11 @@ const ToDoView = () => {
                         <View className="flex-1 pb-3 px-4">
                             <FlatList
                                 data={tasks}
-                                renderItem={({ item }) => <ToDoListItem task={item} showDueDate={true} />}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => showEditTaskModal(item)}>
+                                        <ToDoListItem task={item} showDueDate={true} />
+                                    </TouchableOpacity>
+                                )}
                                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks} />}
                                 keyExtractor={(item) => `${item.id.toString()}`}
                                 ItemSeparatorComponent={() => (
@@ -74,10 +87,17 @@ const ToDoView = () => {
 
                     <BottomSheetModal
                         ref={bottomSheetModalRef}
+                        onDismiss={() => setSelectedTask(null)}
                         index={0}
                         snapPoints={snapPoints}
                     >
-                        <NewToDoTaskModal onToDoTaskCreated={() => bottomSheetModalRef.current?.dismiss()} />
+                        <NewToDoTaskModal
+                            task={selectedTask}
+                            closeModal={() => {
+                                bottomSheetModalRef.current?.dismiss();
+                            }}
+                            reload={() => loadTasks()}
+                        />
                     </BottomSheetModal>
 
                 </BottomSheetModalProvider>

@@ -1,4 +1,3 @@
-import "../global.css"
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Image, Text, TouchableOpacity} from "react-native";
 import React from "react";
