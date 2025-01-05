@@ -18,7 +18,12 @@ export const USERS_TABLE = 'users';
 type ProviderProps = {
     userId: string | null;
     createCollection: (name: string) => Promise<any>;
+    // COLLECTION LIST VIEW FUNCTIONS
     getCollections: () => Promise<any>;
+    getAcceptedUsersCount: (collectionId) => Promise<any>;
+    getActiveTasksCount: (collectionId) => Promise<any>;
+    getPendingTaskCount: (collectionId) => Promise<any>;
+    //
     getCollection: (collectionId: number) => Promise<any>;
     getCollectionInfo: (collectionId: number) => Promise<any>;
     updateCollection: (collection: Collection) => Promise<any>;
@@ -28,17 +33,24 @@ type ProviderProps = {
     getCollectionMembers: (collectionId: number) => Promise<any>;
     getBasicTaskInformation: (taskId: number) => Promise<any>;
     getTaskLogs: (taskId: number) => Promise<any>;
+    // INVITATIONS
+    getPendingInvitations: () => Promise<any>;
+    acceptInvitation: (invitationId) => Promise<any>;
+    rejectInvitation: (invitationId) => Promise<any>;
+    // TO DO TASKS
     getToDoTasks: () => Promise<any>;
     getArchivedToDoTasks: () => Promise<any>;
     createToDoTask: (taskName: string, dueDate: Date) => Promise<any>;
     updateToDoTask: (task: ToDoTask) => Promise<any>;
     completeToDoTask: (task: ToDoTask) => Promise<any>;
     unCompleteToDoTask: (task: ToDoTask) => Promise<any>;
+    // TAGS
     getTags: () => Promise<any>;
     createTag: (tagName: string) => Promise<any>;
     archiveTag: (tag: Tag) => Promise<any>;
     unarchiveTag: (tag: Tag) => Promise<any>;
     updateTag: (tag: Tag) => Promise<any>;
+    // USER
     setUserPushToken: (token: string) => Promise<any>;
 };
 
@@ -76,33 +88,91 @@ export const SupabaseProvider = ({ children }: any) => {
         return data;
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------- FUNCTIONS FOR THE COLLECTION LIST VIEW ----------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const getCollections = async () => {
-        // const { data, error } = await client
-        //     .from(COLLECTIONS_TABLE)
-        //     .select(`name, id`);
-        //
-        // if (error) {
-        //     console.error('Error getting collections:', error);
-        // }
-        //
-        // return data || [];
-        //test todo: change into gettings all tables from Collection_users_table
-        console.log(userId);
-        const {data} = await client
-            .from(COLLECTIONS_TABLE)
-            .select(`name, id, owner_id`)
-            .eq('owner_id', userId);
-        console.log("data:" + data);
-        //const collections = data?.map((c: any) => c.collections);
-        return data || [];
-        // const {data} = await client
-        //     .from(COLLECTION_USERS_TABLE)
-        //     .select(`collections ( name, id, owner_id )`)
-        //     .eq('user_id', userId);
-        // console.log("data:" + data);
-        // const collections = data?.map((c: any) => c.collections);
-        // return collections || [];
+        const { data, error } = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select('collections(id, name, owner_id, users(id, first_name))')
+            .eq('user_id', userId)
+            .eq('status', 'ACCEPTED');
+
+        if (error) {
+            console.error('Error fetching person\'s collections:', error);
+            return [];
+        }
+
+        const result = data?.map((row: any) => row.collections) || [];
+        return result || [];
     }
+
+    const getAcceptedUsersCount = async (collectionId) => {
+        const { data, error } = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select('user_id, status')
+            .eq('collection_id', collectionId)
+            .eq('status', 'ACCEPTED');
+
+        if (error) {
+            console.error('Error fetching accepted users:', error);
+            return 0;
+        }
+        const uniqueUserIds = new Set();
+        data.forEach(row => {
+            uniqueUserIds.add(row.user_id);
+        });
+
+        return uniqueUserIds.size;
+    };
+
+    const getActiveTasksCount = async (collectionId) => {
+        const currentTime = new Date().toISOString(); // Current time in ISO format
+
+        const { data, error } = await client
+            .from(TASKS_TABLE)
+            .select('id')
+            .eq('collection_id', collectionId)
+            .is('archived_at', null)
+            .or(
+                `and(season_start.lte.${currentTime},season_end.gte.${currentTime}),and(season_start.is.null,season_end.is.null)`
+            );
+
+        if (error) {
+            console.error('Error fetching active tasks:', error);
+            return 0;
+        }
+        console.log(data.length)
+        return data.length;
+    };
+
+    const getPendingTaskCount = async (collectionId) => {
+        const currentTime = new Date().toISOString(); // Current time in ISO format
+
+        const { data, error } = await client
+            .from('tasks')
+            .select('id, name')
+            .eq('collection_id', collectionId)
+            .is('archived_at', null)
+            .or(
+                `and(completion_start.lte.${currentTime},next_due_at.gte.${currentTime}),and(completion_start.is.null,next_due_at.gte.${currentTime})`
+            );
+
+        if (error) {
+            console.error('Error fetching pending tasks:', error);
+            return 0;
+        }
+
+        console.log(data);
+
+        return data?.length;
+    };
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const getCollection = async (collectionId: number) => {
         const { data, error } = await client
@@ -193,6 +263,44 @@ export const SupabaseProvider = ({ children }: any) => {
             .from(TASK_LOGS_TABLE)
             .select(`id, comment, completed_at, due_at, users (id, first_name)`)
             .match({ task_id: taskId });
+        return data;
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------- INVITATIONS-------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const getPendingInvitations = async () => {
+        const { data, error } = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select('id, collections (name, users (first_name)), users!collection_users_invited_by_id_fkey (id, first_name), invited_by_email, invited_at, responded_at')
+            .match({user_id: userId})
+            .is('status', null);
+
+        if (error) {
+            console.error('Error fetching pending invitations:', error);
+        }
+
+        return data;
+    };
+
+    const acceptInvitation = async (invitationId) => {
+        const {data ,error} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .update({responded_at: new Date().toISOString(), status: "ACCEPTED"})
+            .match({id: invitationId})
+            .select('*')
+            .single();
+        return data;
+    };
+
+    const rejectInvitation = async (invitationId) => {
+        const {data ,error} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .update({responded_at: new Date().toISOString(), status: "REJECTED"})
+            .match({id: invitationId})
+            .select('*')
+            .single();
         return data;
     };
 
@@ -369,7 +477,12 @@ export const SupabaseProvider = ({ children }: any) => {
     const value = {
         userId,
         createCollection,
+        // COLLECTION LIST VIEW FUNCTIONS
         getCollections,
+        getAcceptedUsersCount,
+        getActiveTasksCount,
+        getPendingTaskCount,
+        //
         getCollection,
         getCollectionInfo,
         updateCollection,
@@ -379,17 +492,24 @@ export const SupabaseProvider = ({ children }: any) => {
         getCollectionMembers,
         getBasicTaskInformation,
         getTaskLogs,
+        // INVITATIONS
+        getPendingInvitations,
+        acceptInvitation,
+        rejectInvitation,
+        // TAGS
         getTags,
         createTag,
         archiveTag,
         unArchiveTag,
         updateTag,
+        // TO DO TASKS
         getToDoTasks,
         getArchivedToDoTasks,
         createToDoTask,
         updateToDoTask,
         completeToDoTask,
         unCompleteToDoTask,
+        //User
         setUserPushToken,
     };
 

@@ -14,7 +14,7 @@ const TaskListItem = (task: Task) => {
 
     return (
         <View className="py-1">
-            <TouchableOpacity className="rounded-3xl w-full px-6 py-4" style={{backgroundColor: Colors.Complementary["50"]}}>
+            <TouchableOpacity className="rounded-3xl w-full px-4 py-4" style={{backgroundColor: Colors.Complementary["50"]}}>
                 <View className="flex-col">
 
                     {/* on top of the separator line */}

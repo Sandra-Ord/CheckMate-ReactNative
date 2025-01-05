@@ -36,7 +36,7 @@ const TaskLogView = () => {
         setLogs(data);
     };
 
-    // Load boards when the screen gains focus
+    // Load tasks when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadTask();

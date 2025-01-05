@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from 'react-native';
+import {Image, Text, View} from 'react-native';
 import {Tabs} from "expo-router";
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import {Colors} from "@/constants/Colors";
@@ -21,7 +21,12 @@ const Layout = () => {
                          options={{
                              title: 'Calendar',
                              headerShown: true,
-                             headerTitle: "Calendar",
+                             headerTitle: () => (
+                                 <View className="flex-row items-center gap-x-2">
+                                     <Ionicons name="calendar-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                     <Text className="font-semibold text-xl">Calendar</Text>
+                                 </View>
+                             ),
                              headerTitleAlign: 'left',
                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
                              tabBarIcon: ({size, color}) => (<FontAwesome name="calendar" size={size} color={color}/>)
@@ -65,7 +70,12 @@ const Layout = () => {
                          options={{
                              title: 'Account',
                              headerShown: true,
-                             headerTitle: "Account",
+                             headerTitle: () => (
+                                 <View className="flex-row items-center gap-x-2">
+                                     <Ionicons name="person-circle-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                     <Text className="font-semibold text-xl">Account</Text>
+                                 </View>
+                             ),
                              headerTitleAlign: 'left',
                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
                              tabBarIcon: ({size, color}) => (<FontAwesome name="user-circle" size={size} color={color}/>)

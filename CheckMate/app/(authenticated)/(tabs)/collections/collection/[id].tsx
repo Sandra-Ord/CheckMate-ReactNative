@@ -54,8 +54,7 @@ const CollectionView = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1" style={{backgroundColor: Colors.Complementary["500"]}}>
-            <View>
+        <SafeAreaView className="flex-1">
 
                 <Stack.Screen
                     options={{
@@ -86,14 +85,14 @@ const CollectionView = () => {
 
                 <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
-                    <View className="flex-row w-full justify-between px-4 py-2">
-                        <View className="flex-row">
+                    <View className="flex-row w-full items-center justify-between px-4 py-2">
+                        <View className="flex-row items-center">
                             <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
                             <Text className="pl-3">Filter/Sort</Text>
                         </View>
 
                         <Link href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${id}`} asChild>
-                            <TouchableOpacity className="flex-row">
+                            <TouchableOpacity className="flex-row items-center">
                                 <Text className="pr-2">Add Task</Text>
                                 <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
                             </TouchableOpacity>
@@ -101,7 +100,7 @@ const CollectionView = () => {
 
                     </View>
 
-                    <View className="flex-1 justify-center items-center pb-3 px-4">
+                    <View className="flex-1 justify-center pb-3 px-5">
                         <FlatList
                             data={tasks}
                             renderItem={({ item }) => <TaskListItem {...item} />}
@@ -113,7 +112,6 @@ const CollectionView = () => {
 
                 </View>
 
-            </View>
         </SafeAreaView>
     );
 };

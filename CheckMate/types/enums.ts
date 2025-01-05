@@ -48,7 +48,9 @@ export interface User {
 export interface CollectionUser {
     id: ID,
     collection_id: ID,
+    invited_by_id: UserID,
     user_id: UserID,
+    invited_by_email: string,
     role: CollectionRole,
     invited_at: Date,
     responded_at: Date,

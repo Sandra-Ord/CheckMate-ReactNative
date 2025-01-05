@@ -10,11 +10,10 @@ const Index = () => {
     // State to manage the refresh control
     const [refreshing, setRefreshing] = useState(false);
     const [collections, setCollections] = useState<[]>();
-    const {getCollections} = useSupabase();
+    const {userId, getCollections} = useSupabase();
 
     const loadCollections = async () => {
         const data = await getCollections!();
-        console.log(data);
         setCollections(data);
     };
 

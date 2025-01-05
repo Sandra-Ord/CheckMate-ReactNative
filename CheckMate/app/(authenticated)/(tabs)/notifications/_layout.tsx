@@ -2,6 +2,7 @@ import React from 'react';
 import {Stack, useRouter} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
+import {Text, View} from "react-native";
 
 const Layout = () => {
     const router = useRouter();
@@ -12,7 +13,12 @@ const Layout = () => {
                           options={{
                               headerShown: true,
                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                              headerTitle: "Notifications",
+                              headerTitle: () => (
+                                  <View className="flex-row items-center gap-x-2">
+                                      <Ionicons name="notifications-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                      <Text className="font-semibold text-xl">Notifications</Text>
+                                  </View>
+                              ),
                               headerTitleAlign: 'left',
                               headerRight: () => (
                                   <Ionicons

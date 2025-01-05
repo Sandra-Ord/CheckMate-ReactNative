@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import {Stack, useRouter} from "expo-router";
 import {Colors} from "@/constants/Colors"
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -14,7 +14,12 @@ const Layout = () => {
                                headerShown: true,
                                headerStyle: {backgroundColor: Colors.Complementary["400"]},
                                headerTitleStyle: {color: Colors.Complementary["900"]},
-                               headerTitle: "To Do List",
+                               headerTitle: () => (
+                                   <View className="flex-row items-center gap-x-2">
+                                       <Ionicons name="checkbox-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                        <Text className="font-semibold text-xl">To Do List</Text>
+                                   </View>
+                               ),
                                headerTitleAlign: 'left',
                                headerRight: () => (
                                    <View className="flex-row gap-4">

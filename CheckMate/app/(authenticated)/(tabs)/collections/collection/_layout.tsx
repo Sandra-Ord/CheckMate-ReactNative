@@ -16,7 +16,7 @@ const Layout = () => {
                                headerTitleAlign: 'left',
                                headerLeft: () => (
                                    <Ionicons
-                                       name="close"
+                                       name="arrow-back"
                                        size={24}
                                        color={Colors.Complementary["900"]}
                                        onPress={() => router.back()}

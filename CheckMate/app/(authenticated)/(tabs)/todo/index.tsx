@@ -41,13 +41,13 @@ const ToDoView = () => {
 
                     <View className="w-full h-full">
 
-                        <View className="flex-row w-full justify-between px-4 py-2">
-                            <View className="flex-row">
+                        <View className="flex-row w-full items-center justify-between px-4 py-2">
+                            <View className="flex-row items-center">
                                 <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
                                 <Text className="pl-3">Filter/Sort</Text>
                             </View>
 
-                            <TouchableOpacity className="flex-row" onPress={() => showNewTaskModal()}>
+                            <TouchableOpacity className="flex-row items-center" onPress={() => showNewTaskModal()}>
                                 <Text className="pr-2">Add Task</Text>
                                 <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
                             </TouchableOpacity>
