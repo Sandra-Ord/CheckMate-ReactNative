@@ -143,7 +143,7 @@ export const SupabaseProvider = ({ children }: any) => {
             console.error('Error fetching active tasks:', error);
             return 0;
         }
-        console.log(data.length)
+
         return data.length;
     };
 
@@ -163,8 +163,6 @@ export const SupabaseProvider = ({ children }: any) => {
             console.error('Error fetching pending tasks:', error);
             return 0;
         }
-
-        console.log(data);
 
         return data?.length;
     };
