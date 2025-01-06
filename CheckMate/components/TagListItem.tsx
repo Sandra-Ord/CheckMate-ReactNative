@@ -27,7 +27,7 @@ const TagListItem = (tag: Tag) => {
             {/* Left Section: Icon + Tag Name */}
             <View className="flex-row items-center">
                 <TouchableOpacity>
-                    <Ionicons name="pricetag-outline" size={24} style={{ color: Colors.Primary["800"] }} />
+                    <Ionicons name="pricetag-outline" size={24} style={{color: Colors.Primary["800"]}}/>
                 </TouchableOpacity>
                 <Text className="text-base text-primary-800 font-medium ml-3">
                     {tag.tag}
@@ -42,12 +42,12 @@ const TagListItem = (tag: Tag) => {
                             Archived
                         </Text>
                         <TouchableOpacity onPress={() => onUnArchiveTag()}>
-                            <Ionicons name="arrow-up-circle-outline" size={24} style={{ color: Colors.Primary["800"] }} />
+                            <Ionicons name="arrow-up-circle-outline" size={24} style={{color: Colors.Primary["800"]}}/>
                         </TouchableOpacity>
                     </>
                 ) : (
                     <TouchableOpacity onPress={() => onArchiveTag()}>
-                        <Ionicons name="archive" size={24} style={{ color: Colors.Primary["800"] }} />
+                        <Ionicons name="archive" size={24} style={{color: Colors.Primary["800"]}}/>
                     </TouchableOpacity>
                 )}
             </View>

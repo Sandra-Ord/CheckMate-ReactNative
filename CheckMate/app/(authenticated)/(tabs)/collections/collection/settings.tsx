@@ -2,35 +2,27 @@ import React, {useEffect, useState} from 'react';
 import {Text, View, TextInput, TouchableOpacity, FlatList} from 'react-native';
 import {Link, Stack, useLocalSearchParams, useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
-import {useHeaderHeight} from "@react-navigation/elements";
 import {useSupabase} from "@/context/SupabaseContext";
 import UserListItem from "@/components/UserListItem";
 import {Colors} from "@/constants/Colors";
 import {Collection, User} from "@/types/enums";
 
 const Settings = () => {
-    // Extract the 'id' parameter from the URL
-    const { id } = useLocalSearchParams<{ id?: string }>();
-
-    // Supabase methods for getting, updating, and deleting collection information
-    const { getCollectionInfo, updateCollection, deleteCollection, getCollectionMembers } = useSupabase();
-    const headerHeight = useHeaderHeight();
-
     const router = useRouter();
 
-    // State to hold the collection information
-    const [collection, setCollection] = useState<Collection>();
+    const {id} = useLocalSearchParams<{ id?: string }>();
 
-    // State to hold the members of the collection
+    const [collection, setCollection] = useState<Collection>();
     const [members, setMembers] = useState<User[]>([]);
 
-    // Load collection  information when the component mounts
+    const {getCollectionInfo, updateCollection, deleteCollection, getCollectionMembers} = useSupabase();
+
+
     useEffect(() => {
         if (!id) return;
         loadCollectionInfo();
     }, []);
 
-    // Function to fetch collection information and members from Supabase
     const loadCollectionInfo = async () => {
         if (!id) return;
         const data = await getCollectionInfo!(id);
@@ -40,14 +32,12 @@ const Settings = () => {
         setMembers(members);
     };
 
-    // Function to update the collection's name
     const onUpdateCollection = async () => {
         const updated = await updateCollection!(collection!);
         setCollection(updated);
         router.dismissAll(); // Dismisses all modals or screens after updating
     };
 
-    // Function to delete the collection
     const onDeleteCollection = async () => {
         if (!id) return;
         await deleteCollection!(id);
@@ -63,7 +53,7 @@ const Settings = () => {
                 }}
             />
 
-            <View className="px-4 pb-8 pt-2" >
+            <View className="px-4 pb-8 pt-2">
                 <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Collection Name</Text>
 
                 {/* Input for updating the collection name */}
@@ -71,7 +61,7 @@ const Settings = () => {
                     value={collection?.name}
                     onChangeText={(text) => setCollection({...collection!, name: text})}
                     className="rounded-md p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                     onEndEditing={onUpdateCollection}
@@ -80,24 +70,26 @@ const Settings = () => {
 
             <View className="px-4 pt-4 pb-32 border-b" style={{borderColor: Colors.Complementary["500"]}}>
 
-                <View className="flex-row items-center" >
-                    <Ionicons name={'person-outline'} size={18} color={Colors.Primary["900"]} />
-                    <Text className="pl-2 font-bold text-lg" style={{color: Colors.Primary["900"] }}>Members</Text>
+                <View className="flex-row items-center">
+                    <Ionicons name={'person-outline'} size={18} color={Colors.Primary["900"]}/>
+                    <Text className="pl-2 font-bold text-lg" style={{color: Colors.Primary["900"]}}>Members</Text>
                 </View>
 
                 {/* FlatList to display the members of the collection */}
                 <FlatList
                     data={members}
                     keyExtractor={(item) => `${item.id}`}
-                    renderItem={(item) => <UserListItem onPress={() => {}} element={item} />}
-                    contentContainerStyle={{ gap: 8 }}
-                    style={{ marginVertical: 12 }}
+                    renderItem={(item) => <UserListItem onPress={() => {
+                    }} element={item}/>}
+                    contentContainerStyle={{gap: 8}}
+                    style={{marginVertical: 12}}
                 />
 
                 {/* Link to invite a new member to the collection */}
                 <Link href={`/(authenticated)/(tabs)/collections/collection/invite?id=${id}`} asChild>
-                    <TouchableOpacity className="py-2 mx-20 rounded-2xl items-center" style={{backgroundColor: Colors.Complementary["600"]}} >
-                        <Text className="text-lg" style={{ color: Colors.fontLight }}>Invite...</Text>
+                    <TouchableOpacity className="py-2 mx-20 rounded-2xl items-center"
+                                      style={{backgroundColor: Colors.Complementary["600"]}}>
+                        <Text className="text-lg" style={{color: Colors.fontLight}}>Invite...</Text>
                     </TouchableOpacity>
                 </Link>
 
@@ -110,12 +102,11 @@ const Settings = () => {
                     style={{backgroundColor: Colors.Red["700"]}}
                     onPress={onDeleteCollection}
                 >
-                    <Text className="font-bold" >Delete Collection</Text>
+                    <Text className="font-bold">Delete Collection</Text>
                 </TouchableOpacity>
             </View>
 
         </View>
-
     );
 };
 

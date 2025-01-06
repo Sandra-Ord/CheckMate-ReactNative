@@ -12,7 +12,8 @@ const TaskListItem = (task: Task) => {
 
     return (
         <View className="py-1">
-            <TouchableOpacity className="rounded-3xl w-full px-4 py-4" style={{backgroundColor: Colors.Complementary["50"]}}>
+            <TouchableOpacity className="rounded-3xl w-full px-4 py-4"
+                              style={{backgroundColor: Colors.Complementary["50"]}}>
                 <View className="flex-col">
 
                     {/* on top of the separator line */}
@@ -21,10 +22,11 @@ const TaskListItem = (task: Task) => {
                         {/*aligned to the left*/}
                         <View className="flex-row items-center">
                             <TouchableOpacity className="px-1" onPress={() => console.log("check box")}>
-                                <Ionicons name="square-outline" size={20} style={{ color: Colors.Primary["800"] }} />
+                                <Ionicons name="square-outline" size={20} style={{color: Colors.Primary["800"]}}/>
                             </TouchableOpacity>
                             <View className="flex-row items-center pl-1">
-                                <Ionicons name="notifications-outline" size={18} style={{ color: Colors.Primary["800"] }} />
+                                <Ionicons name="notifications-outline" size={18}
+                                          style={{color: Colors.Primary["800"]}}/>
                                 <Text className="text-xl font-bold px-1" style={{color: Colors.Primary["800"]}}>
                                     {task.name}
                                 </Text>
@@ -39,7 +41,7 @@ const TaskListItem = (task: Task) => {
                                 asChild
                             >
                                 <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
-                                    <Ionicons name="pencil" size={20} style={{ color: Colors.Primary["800"] }} />
+                                    <Ionicons name="pencil" size={20} style={{color: Colors.Primary["800"]}}/>
                                 </TouchableOpacity>
                             </Link>
                             <Link
@@ -48,7 +50,7 @@ const TaskListItem = (task: Task) => {
                                 asChild
                             >
                                 <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
-                                    <Ionicons name="time-outline" size={20} style={{ color: Colors.Primary["800"] }} />
+                                    <Ionicons name="time-outline" size={20} style={{color: Colors.Primary["800"]}}/>
                                 </TouchableOpacity>
                             </Link>
                         </View>
@@ -70,11 +72,13 @@ const TaskListItem = (task: Task) => {
                         {/* aligned to the left */}
                         <View className="flex-col w-1/2">
                             <View className="flex-row items-center pb-1">
-                                <Ionicons className="pr-2" name="calendar-outline" size={16} style={{ color: Colors.Primary["800"] }} />
+                                <Ionicons className="pr-2" name="calendar-outline" size={16}
+                                          style={{color: Colors.Primary["800"]}}/>
                                 <Text>Due {formatShortDate(task.next_due_at)}</Text>
                             </View>
                             <View className="flex-row items-center">
-                                <Ionicons className="pr-2" name="person-circle-outline" size={16} style={{ color: Colors.Primary["800"] }} />
+                                <Ionicons className="pr-2" name="person-circle-outline" size={16}
+                                          style={{color: Colors.Primary["800"]}}/>
                                 {task.users && task.users.first_name ? (
                                     <Text>Assigned to {task.users.first_name}</Text>
                                 ) : (
@@ -86,7 +90,8 @@ const TaskListItem = (task: Task) => {
                         {/* aligned to the right*/}
                         <View className="flex-col w-1/2">
                             <View className="flex-row items-center">
-                                <Ionicons className="pr-2" name="timer-outline" size={16} style={{ color: Colors.Primary["800"] }} />
+                                <Ionicons className="pr-2" name="timer-outline" size={16}
+                                          style={{color: Colors.Primary["800"]}}/>
                                 <Text>{getBasicRecurrenceDescriptions(task.interval_value, task.interval_unit, task.day_of_week, task.day_of_month, task.month_of_year)}</Text>
                             </View>
                         </View>

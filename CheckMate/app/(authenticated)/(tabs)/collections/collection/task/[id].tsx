@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import {Link, router, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
+import {FlatList, RefreshControl, SafeAreaView, TouchableOpacity, View} from 'react-native';
+import {Link, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import TaskLogListItem from "@/components/TaskLogListItem";
@@ -9,15 +9,18 @@ import {Colors} from "@/constants/Colors";
 
 const TaskLogView = () => {
 
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const {id} = useLocalSearchParams<{ id: string }>();
 
     // State to manage the refresh control
     const [refreshing, setRefreshing] = useState(false);
     const [task, setTask] = useState<Task>();
     const [logs, setLogs] = useState<[]>([]);
-    const {getBasicTaskInformation, getTaskLogs } = useSupabase();
+    const {getBasicTaskInformation, getTaskLogs} = useSupabase();
 
-    // Function to load collection's tasks from Supabase
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadTask = async () => {
         const data = await getBasicTaskInformation(id);
         setTask(data);
@@ -30,7 +33,6 @@ const TaskLogView = () => {
         setLogs(data);
     };
 
-    // Load tasks when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadTask();
@@ -38,19 +40,18 @@ const TaskLogView = () => {
         }, [])
     );
 
-
     return (
         <SafeAreaView className="flex-1">
             <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
                 <Stack.Screen options={{
-                            headerTitle: task?.name ? `${task.name} Log` : "Task Log",
-                            headerRight: () => (
-                                <Link href={`/(authenticated)/(tabs)/collections/collection/task/statistics?id=${id}`} asChild>
-                                    <TouchableOpacity>
-                                        <Ionicons name="stats-chart-outline" size={24} color={Colors.Complementary["900"]} />
-                                    </TouchableOpacity>
-                                </Link>
+                    headerTitle: task?.name ? `${task.name} Log` : "Task Log",
+                    headerRight: () => (
+                        <Link href={`/(authenticated)/(tabs)/collections/collection/task/statistics?id=${id}`} asChild>
+                            <TouchableOpacity>
+                                <Ionicons name="stats-chart-outline" size={24} color={Colors.Complementary["900"]}/>
+                            </TouchableOpacity>
+                        </Link>
                     )
                 }}
                 />
@@ -58,8 +59,8 @@ const TaskLogView = () => {
                 <View className="flex-1 pb-3 px-4 pt-2">
                     <FlatList
                         data={logs}
-                        renderItem={({ item }) => <TaskLogListItem {...item} />}
-                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTaskLogs} />}
+                        renderItem={({item}) => <TaskLogListItem {...item} />}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTaskLogs}/>}
                         keyExtractor={(item) => `${item.id.toString()}`}
                         ItemSeparatorComponent={() => (
                             <View
@@ -71,6 +72,7 @@ const TaskLogView = () => {
                         )}
                     />
                 </View>
+
             </View>
         </SafeAreaView>
     );

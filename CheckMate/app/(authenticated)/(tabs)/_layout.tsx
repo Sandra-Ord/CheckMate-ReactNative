@@ -23,7 +23,8 @@ const Layout = () => {
                              headerShown: true,
                              headerTitle: () => (
                                  <View className="flex-row items-center gap-x-2">
-                                     <Ionicons name="calendar-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                     <Ionicons name="calendar-outline" size={24}
+                                               style={{color: Colors.Complementary["900"]}}/>
                                      <Text className="font-semibold text-xl">Calendar</Text>
                                  </View>
                              ),
@@ -40,7 +41,7 @@ const Layout = () => {
                              headerTitle: "To Do",
                              headerTitleAlign: 'left',
                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                             tabBarIcon: ({size, color}) => (<Ionicons name="list-outline" size={size} color={color} />)
+                             tabBarIcon: ({size, color}) => (<Ionicons name="list-outline" size={size} color={color}/>)
                          }}
             />
 
@@ -55,14 +56,15 @@ const Layout = () => {
                                      source={require('@/assets/images/logo-icon-transparent.png')}
                                  />
                              )
-                        }}
+                         }}
             />
 
             <Tabs.Screen name="notifications"
                          options={{
                              title: 'Notifications',
                              headerShown: false,
-                             tabBarIcon: ({size, color}) => (<Ionicons name="notifications-outline" size={size} color={color}/>)
+                             tabBarIcon: ({size, color}) => (
+                                 <Ionicons name="notifications-outline" size={size} color={color}/>)
                          }}
             />
 
@@ -72,13 +74,15 @@ const Layout = () => {
                              headerShown: true,
                              headerTitle: () => (
                                  <View className="flex-row items-center gap-x-2">
-                                     <Ionicons name="person-circle-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                     <Ionicons name="person-circle-outline" size={24}
+                                               style={{color: Colors.Complementary["900"]}}/>
                                      <Text className="font-semibold text-xl">Account</Text>
                                  </View>
                              ),
                              headerTitleAlign: 'left',
                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                             tabBarIcon: ({size, color}) => (<FontAwesome name="user-circle" size={size} color={color}/>)
+                             tabBarIcon: ({size, color}) => (
+                                 <FontAwesome name="user-circle" size={size} color={color}/>)
                          }}
             />
 

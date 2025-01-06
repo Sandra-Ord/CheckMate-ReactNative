@@ -7,10 +7,10 @@ import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
 
 const ToDoTaskModal = ({
-                              closeModal,
-                              reload,
-                              task
-                          }: {
+                           closeModal,
+                           reload,
+                           task
+                       }: {
     closeModal: () => void,
     reload: () => void,
     task?: ToDoTask
@@ -54,7 +54,6 @@ const ToDoTaskModal = ({
         reload();
     }
 
-    // Modal opened in edit more
     useEffect(() => {
         if (task) {
             setTaskName(task.name);
@@ -62,7 +61,6 @@ const ToDoTaskModal = ({
             setDueDate(task.due_date || '');
         }
     }, [task]);
-
 
     return (
         <BottomSheetView className="px-5">
@@ -72,7 +70,8 @@ const ToDoTaskModal = ({
                 <Text className="pt-5 text-2xl font-bold" style={{color: Colors.Complementary["800"]}}>
                     {task == null ? 'New To Do Task:' : 'Edit To Do Task:'}
                 </Text>
-                <Ionicons onPress={() => closeModal()} name="close" size={20} style={{color: Colors.Complementary["800"]}}/>
+                <Ionicons onPress={() => closeModal()} name="close" size={20}
+                          style={{color: Colors.Complementary["800"]}}/>
             </View>
 
 
@@ -84,7 +83,7 @@ const ToDoTaskModal = ({
                     placeholder="New Task's Name"
                     onChangeText={setTaskName}
                     className="rounded-lg p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                     autoFocus
@@ -93,13 +92,14 @@ const ToDoTaskModal = ({
 
             {/* Task Comment Input */}
             <View className="pt-5">
-                <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Task Description (Optional):</Text>
+                <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Task Description
+                    (Optional):</Text>
                 <TextInput
                     value={comment}
                     placeholder="Additional Information About the Task"
                     onChangeText={setComment}
                     className="rounded-lg p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                 />
@@ -113,21 +113,22 @@ const ToDoTaskModal = ({
                     placeholder="Select Due Date"
                     onChangeText={setDueDate}
                     className="rounded-lg flex-1 p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                 />
             </View>
 
             {task ?
-                 // Update and Delete Button
+                // Update and Delete Button
                 <View className="flex-row items-center justify-between px-5 py-10">
                     <TouchableOpacity
                         className="py-2 px-8  rounded-xl items-center flex-row gap-x-2"
                         style={{backgroundColor: Colors.Yellow["600"]}}
                         onPress={() => onUpdateToDoTask()}
                     >
-                        <Ionicons name="checkmark-circle-outline" size={20} style={{color: Colors.Complementary["100"]}}/>
+                        <Ionicons name="checkmark-circle-outline" size={20}
+                                  style={{color: Colors.Complementary["100"]}}/>
                         <Text style={{color: Colors.Complementary["100"]}}>Update</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -139,7 +140,7 @@ const ToDoTaskModal = ({
                         <Text style={{color: Colors.Complementary["100"]}}>Delete</Text>
                     </TouchableOpacity>
                 </View>
-            :
+                :
                 // Create Button
                 <View className="items-center pt-10 pb-10">
                     <TouchableOpacity

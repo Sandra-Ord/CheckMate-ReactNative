@@ -9,13 +9,15 @@ const Layout = () => {
 
     return (
         <Stack>
+
             <Stack.Screen name="index"
                           options={{
                               headerShown: true,
                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
                               headerTitle: () => (
                                   <View className="flex-row items-center gap-x-2">
-                                      <Ionicons name="notifications-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
+                                      <Ionicons name="notifications-outline" size={24}
+                                                style={{color: Colors.Complementary["900"]}}/>
                                       <Text className="font-semibold text-xl">Notifications</Text>
                                   </View>
                               ),
@@ -47,6 +49,7 @@ const Layout = () => {
                               )
                           }}
             />
+
         </Stack>
     );
 };

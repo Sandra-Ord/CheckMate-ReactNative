@@ -16,7 +16,7 @@ const Account = () => {
                     style={{backgroundColor: Colors.Blue["600"]}}
                     onPress={() => signOut()}
                 >
-                    <Text className="font-bold" >Sign Out</Text>
+                    <Text className="font-bold">Sign Out</Text>
                 </TouchableOpacity>
             </View>
         </View>

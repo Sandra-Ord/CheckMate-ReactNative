@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, RefreshControl, SafeAreaView, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
@@ -12,11 +12,12 @@ import {Tag} from "@/types/enums.ts";
 const ToDoView = () => {
 
     const [refreshing, setRefreshing] = useState(false);
+
     const [selectedTag, setSelectedTag] = useState();
     const [tags, setTags] = useState<[]>([]);
     const {getTags} = useSupabase();
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["80%"], []);
 
     const showNewTagModal = () => {
@@ -29,13 +30,11 @@ const ToDoView = () => {
         bottomSheetModalRef.current?.present();
     };
 
-    // Function to load tags from Supabase
     const loadTags = async () => {
         const data = await getTags();
         setTags(data);
     };
 
-    // Load boards when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadTags();
@@ -46,16 +45,16 @@ const ToDoView = () => {
         <SafeAreaView className="flex-1" style={{backgroundColor: Colors.Complementary["300"]}}>
 
             <Stack.Screen options={{
-                            headerRight: () => (
-                                <Ionicons
-                                name="add"
-                                size={24}
-                                          color={Colors.Complementary["900"]}
-                                          onPress={() => showNewTagModal()}
-                                          className="pr-2"
-                                />
-                            ),
-                        }}
+                headerRight: () => (
+                    <Ionicons
+                        name="add"
+                        size={24}
+                        color={Colors.Complementary["900"]}
+                        onPress={() => showNewTagModal()}
+                        className="pr-2"
+                    />
+                ),
+            }}
             />
 
             <View>
@@ -66,12 +65,12 @@ const ToDoView = () => {
                         <View className="flex-1 pb-3 px-4 pt-2">
                             <FlatList
                                 data={tags}
-                                renderItem={({ item }) => (
+                                renderItem={({item}) => (
                                     <TouchableOpacity onPress={() => showEditTagModal(item)}>
                                         <TagListItem {...item} />
                                     </TouchableOpacity>
                                 )}
-                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTags} />}
+                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTags}/>}
                                 keyExtractor={(item) => `${item.id.toString()}`}
                                 ItemSeparatorComponent={() => (
                                     <View
@@ -102,6 +101,7 @@ const ToDoView = () => {
 
                 </BottomSheetModalProvider>
             </View>
+
         </SafeAreaView>
     );
 };

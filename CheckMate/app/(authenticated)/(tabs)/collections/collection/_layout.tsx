@@ -8,33 +8,37 @@ const Layout = () => {
 
     return (
         <Stack>
+
             <Stack.Screen name="[id]"
-                           options={{
-                               headerTitle: "Collection",
-                               headerShown: true,
-                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                               headerTitleAlign: 'left',
-                               headerLeft: () => (
-                                   <Ionicons
-                                       name="arrow-back"
-                                       size={24}
-                                       color={Colors.Complementary["900"]}
-                                       onPress={() => router.back()}
-                                       className="pr-2"
-                                   />
-                               )
-                           }}
+                          options={{
+                              headerTitle: "Collection",
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleAlign: 'left',
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="arrow-back"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
+                          }}
             />
+
             <Stack.Screen name="log"
                           options={{
                               headerShown: true
                           }}
             />
+
             <Stack.Screen name="invite"
                           options={{
                               headerShown: true
                           }}
             />
+
             <Stack.Screen name="settings"
                           options={{
                               headerTitle: "Collection Settings",

@@ -1,13 +1,13 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import { useFocusEffect } from "expo-router";
+import {useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
+import {ToDoTask} from "@/types/enums";
 import ToDoListItem from "@/components/ToDoListItem";
-import ToDoTaskModal from "@/components/ToDoTaskModal.tsx";
-import {ToDoTask} from "@/types/enums.ts";
+import ToDoTaskModal from "@/components/ToDoTaskModal";
 
 const ToDoView = () => {
 
@@ -65,12 +65,12 @@ const ToDoView = () => {
                         <View className="flex-1 pb-3 px-4">
                             <FlatList
                                 data={tasks}
-                                renderItem={({ item }) => (
+                                renderItem={({item}) => (
                                     <TouchableOpacity onPress={() => showEditTaskModal(item)}>
-                                        <ToDoListItem task={item} showDueDate={true} />
+                                        <ToDoListItem task={item} showDueDate={true}/>
                                     </TouchableOpacity>
                                 )}
-                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks} />}
+                                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
                                 keyExtractor={(item) => `${item.id.toString()}`}
                                 ItemSeparatorComponent={() => (
                                     <View

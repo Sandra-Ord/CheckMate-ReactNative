@@ -10,28 +10,33 @@ const Layout = () => {
     return (
         <Stack>
             <Stack.Screen name="index"
-                           options={{
-                               headerShown: true,
-                               headerStyle: {backgroundColor: Colors.Complementary["400"]},
-                               headerTitleStyle: {color: Colors.Complementary["900"]},
-                               headerTitle: () => (
-                                   <View className="flex-row items-center gap-x-2">
-                                       <Ionicons name="checkbox-outline" size={24} style={{color: Colors.Complementary["900"]}}/>
-                                        <Text className="font-semibold text-xl">To Do List</Text>
-                                   </View>
-                               ),
-                               headerTitleAlign: 'left',
-                               headerRight: () => (
-                                   <View className="flex-row gap-4">
-                                       <TouchableOpacity onPress={() => router.navigate('/(authenticated)/(tabs)/todo/tags')}>
-                                           <Ionicons name='pricetag-outline' size={24} style={{color: Colors.Complementary["900"]}}/>
-                                       </TouchableOpacity>
-                                       <TouchableOpacity onPress={() => router.navigate('/(authenticated)/(tabs)/todo/archive')}>
-                                           <Ionicons name='archive' size={24} style={{color: Colors.Complementary["900"]}}/>
-                                       </TouchableOpacity>
-                                   </View>
-                               ),
-                           }}
+                          options={{
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleStyle: {color: Colors.Complementary["900"]},
+                              headerTitle: () => (
+                                  <View className="flex-row items-center gap-x-2">
+                                      <Ionicons name="checkbox-outline" size={24}
+                                                style={{color: Colors.Complementary["900"]}}/>
+                                      <Text className="font-semibold text-xl">To Do List</Text>
+                                  </View>
+                              ),
+                              headerTitleAlign: 'left',
+                              headerRight: () => (
+                                  <View className="flex-row gap-4">
+                                      <TouchableOpacity
+                                          onPress={() => router.navigate('/(authenticated)/(tabs)/todo/tags')}>
+                                          <Ionicons name='pricetag-outline' size={24}
+                                                    style={{color: Colors.Complementary["900"]}}/>
+                                      </TouchableOpacity>
+                                      <TouchableOpacity
+                                          onPress={() => router.navigate('/(authenticated)/(tabs)/todo/archive')}>
+                                          <Ionicons name='archive' size={24}
+                                                    style={{color: Colors.Complementary["900"]}}/>
+                                      </TouchableOpacity>
+                                  </View>
+                              ),
+                          }}
             />
 
             <Stack.Screen name="archive"

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from "react
 import { Colors } from "@/constants/Colors";
 
 const IntervalDropdown = () => {
+
     const [intervalUnit, setIntervalUnit] = useState("days");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ListRenderItemInfo, Text, TouchableOpacity, View, Image } from 'react-native';
-import { User } from '@/types/enums';
-import { Colors } from '@/constants/Colors';
+import {ListRenderItemInfo, Text, TouchableOpacity, View, Image} from 'react-native';
+import {User} from '@/types/enums';
+import {Colors} from '@/constants/Colors';
 
 // Define the props interface for the UserListItem component
 interface UserListItemProps {
@@ -10,7 +10,7 @@ interface UserListItemProps {
 }
 
 // Functional component to display a single user item
-const UserListItem = ({ element: { item }, onPress }: UserListItemProps) => (
+const UserListItem = ({element: {item}, onPress}: UserListItemProps) => (
     <TouchableOpacity
         style={{
             flexDirection: 'row', // Align items in a row
@@ -22,7 +22,7 @@ const UserListItem = ({ element: { item }, onPress }: UserListItemProps) => (
     >
         {/* Display user avatar */}
         <Image
-            source={{ uri: item.avatar_url }}
+            source={{uri: item.avatar_url}}
             style={{
                 width: 30, // Set avatar width
                 height: 30, // Set avatar height
@@ -31,9 +31,9 @@ const UserListItem = ({ element: { item }, onPress }: UserListItemProps) => (
         />
         <View>
             {/* Display user's first name */}
-            <Text style={{ fontSize: 16, fontWeight: 'semibold' }}>{item.first_name}</Text>
+            <Text style={{fontSize: 16, fontWeight: 'semibold'}}>{item.first_name}</Text>
             {/* Display user's email */}
-            <Text style={{ color: Colors.grey }}>{item.email}</Text>
+            <Text style={{color: Colors.grey}}>{item.email}</Text>
         </View>
     </TouchableOpacity>
 );

@@ -2,7 +2,7 @@ import {ImageBackground, Text, TouchableOpacity, View} from "react-native";
 import React, {useMemo, useRef, useState} from "react";
 import {useActionSheet} from "@expo/react-native-action-sheet";
 import * as WebBrowser from "expo-web-browser";
-import {BottomSheetModal, BottomSheetModalProvider, BottomSheetView} from "@gorhom/bottom-sheet";
+import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import AuthModal from "@/components/AuthModal"
 import authLogo from "@/assets/images/authentication_screen.png"
 import {ModalType} from "@/types/enums";

@@ -68,7 +68,8 @@ const NewTagModal = ({
                 <Text className="pt-5 text-2xl font-bold" style={{color: Colors.Complementary["800"]}}>
                     {tag == null ? 'New Tag:' : 'Edit Tag:'}
                 </Text>
-                <Ionicons onPress={() => closeModal()} name="close" size={20} style={{color: Colors.Complementary["800"]}}/>
+                <Ionicons onPress={() => closeModal()} name="close" size={20}
+                          style={{color: Colors.Complementary["800"]}}/>
             </View>
 
             {/*Tag Name Input*/}
@@ -80,7 +81,7 @@ const NewTagModal = ({
                     placeholder="New Tag's Name"
                     onChangeText={setTagName}
                     className="rounded-lg p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                     autoFocus
@@ -96,7 +97,7 @@ const NewTagModal = ({
                     placeholder="Select Tag Icon"
                     onChangeText={setTagIcon}
                     className="rounded-lg flex-1 p-2"
-                    style={{ backgroundColor: Colors.Complementary["50"] }}
+                    style={{backgroundColor: Colors.Complementary["50"]}}
                     returnKeyType="done"
                     enterKeyHint="done"
                 />
@@ -111,7 +112,8 @@ const NewTagModal = ({
                         style={{backgroundColor: Colors.Yellow["600"]}}
                         onPress={() => onUpdateTag()}
                     >
-                        <Ionicons name="checkmark-circle-outline" size={20} style={{color: Colors.Complementary["100"]}}/>
+                        <Ionicons name="checkmark-circle-outline" size={20}
+                                  style={{color: Colors.Complementary["100"]}}/>
                         <Text style={{color: Colors.Complementary["100"]}}>Update</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

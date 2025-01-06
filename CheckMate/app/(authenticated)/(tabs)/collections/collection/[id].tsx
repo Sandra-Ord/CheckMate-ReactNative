@@ -1,16 +1,16 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View, Animated} from 'react-native';
-import {Link, router, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
+import React, {useCallback, useState} from 'react';
+import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Link, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
-import {Collection, Task, User} from "@/types/enums";
+import {Collection} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
 
 const CollectionView = () => {
 
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const {id} = useLocalSearchParams<{ id: string }>();
 
     const [refreshing, setRefreshing] = useState(false);
     const [filterMenuVisible, setFilterMenuVisible] = useState(false);
@@ -61,7 +61,7 @@ const CollectionView = () => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const toggleFilter = (filterKey: string) => {
-        setFilters((prev) => ({ ...prev, [filterKey]: !prev[filterKey] }));
+        setFilters((prev) => ({...prev, [filterKey]: !prev[filterKey]}));
     };
 
     const toggleUserFilter = (userId: number) => {
@@ -145,93 +145,90 @@ const CollectionView = () => {
     return (
         <SafeAreaView className="flex-1">
 
-                <Stack.Screen
-                    options={{
-                        headerTitle: () => (
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ color: Colors.Complementary["900"], fontSize: 16 }}>{collection?.name}</Text>
-                                <Text style={{ color: Colors.Complementary["900"], fontSize: 12 }}>Collection of {collection?.users.first_name}</Text>
-                            </View>
-                        ),
-                        headerRight: () => (
-                            <View className="flex-row gap-4">
-                                <TouchableOpacity onPress={() => setFilterMenuVisible(true)}>
-                                    <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]} />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => {}}>
-                                    <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]} />
-                                </TouchableOpacity>
-                                <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
-                                    <TouchableOpacity>
-                                        <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]} />
-                                    </TouchableOpacity>
-                                </Link>
-                            </View>
-                        ),
-                        headerTransparent: false,
-                    }}
-                />
-
-                <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
-
-                    <View className="flex-row w-full items-center justify-between px-4 py-2">
-                        <TouchableOpacity className="flex-row items-center" onPress={() => setFilterMenuVisible(true)}>
-                            <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
-                            <Text className="pl-3">Filter/Sort</Text>
-                        </TouchableOpacity>
-
-                        <Link href={`/(authenticated)/(tabs)/collections/collection/new_task`} asChild>
-                            <TouchableOpacity className="flex-row items-center">
-                                <Text className="pr-2">Add Task</Text>
-                                <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
+            <Stack.Screen
+                options={{
+                    headerTitle: () => (
+                        <View style={{flex: 1}}>
+                            <Text style={{color: Colors.Complementary["900"], fontSize: 16}}>{collection?.name}</Text>
+                            <Text style={{color: Colors.Complementary["900"], fontSize: 12}}>Collection
+                                of {collection?.users.first_name}</Text>
+                        </View>
+                    ),
+                    headerRight: () => (
+                        <View className="flex-row gap-4">
+                            <TouchableOpacity onPress={() => setFilterMenuVisible(true)}>
+                                <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]}/>
                             </TouchableOpacity>
-                        </Link>
+                            <TouchableOpacity onPress={() => {
+                            }}>
+                                <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]}/>
+                            </TouchableOpacity>
+                            <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
+                                <TouchableOpacity>
+                                    <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]}/>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
+                    ),
+                    headerTransparent: false,
+                }}
+            />
 
-                    </View>
+            <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
-                    <View className="flex-1 justify-center pb-3 px-5">
-                        <FlatList
-                            data={filteredTasks}
-                            renderItem={({ item }) =>
-                                    <TaskListItem {...item} />
-                            }
-                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks} />}
-                            keyExtractor={(item) => `${item.id.toString()}`}
+                <View className="flex-row w-full items-center justify-between px-4 py-2">
+                    <TouchableOpacity className="flex-row items-center" onPress={() => setFilterMenuVisible(true)}>
+                        <Ionicons name='filter' size={20} style={{color: Colors.primaryGray}}/>
+                        <Text className="pl-3">Filter/Sort</Text>
+                    </TouchableOpacity>
+
+                    <Link href={`/(authenticated)/(tabs)/collections/collection/new_task`} asChild>
+                        <TouchableOpacity className="flex-row items-center">
+                            <Text className="pr-2">Add Task</Text>
+                            <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+
+                <View className="flex-1 justify-center pb-3 px-5">
+                    <FlatList
+                        data={filteredTasks}
+                        renderItem={({item}) =>
+                            <TaskListItem {...item} />
+                        }
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
+                        keyExtractor={(item) => `${item.id.toString()}`}
+                    />
+                </View>
+
+                <Modal
+                    animationType="none"
+                    transparent={true}
+                    visible={filterMenuVisible}
+                    onRequestClose={() => setFilterMenuVisible(false)}
+                >
+                    <View style={{flex: 1, flexDirection: "row"}}>
+                        {/* Transparent Overlay */}
+                        <TouchableOpacity
+                            style={{flex: 1, backgroundColor: "rgba(0,0,0,0.1)"}}
+                            onPress={() => setFilterMenuVisible(false)}
                         />
 
+                        {/* Filter Menu */}
+                        <FilterMenu
+                            onClose={() => setFilterMenuVisible(false)}
+                            users={users}
+                            filters={filters}
+                            toggleFilter={toggleFilter}
+                            toggleUserFilter={toggleUserFilter}
+                        />
                     </View>
+                </Modal>
 
-                    <Modal
-                        animationType="none"
-                        transparent={true}
-                        visible={filterMenuVisible}
-                        onRequestClose={() => setFilterMenuVisible(false)}
-                    >
-                        <View style={{ flex: 1, flexDirection: "row" }}>
-                            {/* Transparent Overlay */}
-                            <TouchableOpacity
-                                style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}
-                                onPress={() => setFilterMenuVisible(false)}
-                            />
-
-
-                            {/* Filter Menu */}
-                            <FilterMenu
-                                onClose={() => setFilterMenuVisible(false)}
-                                users={users}
-                                filters={filters}
-                                toggleFilter={toggleFilter}
-                                toggleUserFilter={toggleUserFilter}
-                            />
-
-                </View>
-                    </Modal>
-
-                </View>
+            </View>
 
         </SafeAreaView>
     );
 };
-
 
 export default CollectionView;

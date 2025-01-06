@@ -8,14 +8,15 @@ import {Collection} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 
 const CollectionCard = (collection: Collection) => {
+
     const [members, setMembers] = useState();
     const [tasks, setTasks] = useState();
     const [pendingTasks, setPendingTasks] = useState();
+
     const {userId, getAcceptedUsersCount, getActiveTasksCount, getPendingTaskCount} = useSupabase();
 
-    const { width, height } = useWindowDimensions();
+    const {width, height} = useWindowDimensions();
     const headerHeight = useHeaderHeight();
-
 
     const loadMemberCount = async () => {
         const data = await getAcceptedUsersCount!(collection.id);
@@ -30,7 +31,6 @@ const CollectionCard = (collection: Collection) => {
         setPendingTasks(data);
     };
 
-    // Load collections when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadMemberCount();
@@ -50,8 +50,8 @@ const CollectionCard = (collection: Collection) => {
                     className="rounded-3xl w-full px-6 py-4"
                     style={{
                         backgroundColor: Colors.Complementary["50"],
-                        width: width*0.9,
-                        height: (height-headerHeight)*0.75
+                        width: width * 0.9,
+                        height: (height - headerHeight) * 0.75
                     }}
                 >
                     <View className="border-b border-b-gray-500 pb-2">
@@ -61,11 +61,11 @@ const CollectionCard = (collection: Collection) => {
                     </View>
                     <View className="mx-2 py-4 gap-y-5">
                         <View className="flex-row items-center gap-x-4">
-                            <Ionicons name="people-circle-outline" size={24} color={Colors.Primary["800"]} />
+                            <Ionicons name="people-circle-outline" size={24} color={Colors.Primary["800"]}/>
                             <Text>{members} Members</Text>
                         </View>
                         <View className="flex-row items-center gap-x-4">
-                            <Ionicons name="shield-checkmark-outline" size={24} color={Colors.Primary["800"]} />
+                            <Ionicons name="shield-checkmark-outline" size={24} color={Colors.Primary["800"]}/>
                             <Text>
                                 {collection.owner_id === userId
                                     ? "You are the owner"
@@ -75,13 +75,13 @@ const CollectionCard = (collection: Collection) => {
                             </Text>
                         </View>
                         <View className="flex-row items-center gap-x-4">
-                            <Ionicons name="checkbox-outline" size={24} color={Colors.Primary["800"]} />
+                            <Ionicons name="checkbox-outline" size={24} color={Colors.Primary["800"]}/>
                             <Text>
                                 {pendingTasks} Pending Tasks
                             </Text>
                         </View>
                         <View className="flex-row items-center gap-x-4">
-                            <Ionicons name="list" size={24} color={Colors.Primary["800"]} />
+                            <Ionicons name="list" size={24} color={Colors.Primary["800"]}/>
                             <Text>
                                 {tasks} Active Tasks
                             </Text>

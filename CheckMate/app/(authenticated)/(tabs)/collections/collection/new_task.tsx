@@ -1,18 +1,17 @@
-import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {
     FlatList,
-    Image, KeyboardAvoidingView,
+    KeyboardAvoidingView,
     Modal, Platform,
     SafeAreaView,
-    ScrollView, StyleSheet,
+    ScrollView,
     Switch,
     Text,
     TextInput,
     TouchableOpacity,
     View
 } from "react-native";
-import React, {useCallback, useEffect, useState} from "react";
-import {useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {useLocalSearchParams, useRouter, Stack} from "expo-router";
 import {useSupabase} from "@/context/SupabaseContext";
 import {getRecurrenceDescription} from "@/utils/textUtils";
 import {Colors} from "@/constants/Colors";
@@ -47,10 +46,13 @@ const NewTaskView = () => {
     const [lastCompletedAt, setLastCompletedAt] = useState("");
     const [completionWindow, setCompletionWindow] = useState();
 
-
     const [isIntervalUnitDropdownOpen, setIsIntervalUnitDropdownOpen] = useState(false);
     const [isWeekdayDropdownOpen, setIsWeekdayDropdownOpen] = useState(false);
     const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- TEMP CONSTANTS -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const days = "day";
     const weeks = "week";
@@ -61,6 +63,10 @@ const NewTaskView = () => {
     const weekdayOptions = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const dateOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
     const monthOptions = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ CLOSE MODALS ---------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const handleSelectIntervalUnit = (value) => {
         setIntervalUnit(value);
@@ -75,6 +81,9 @@ const NewTaskView = () => {
         setIsMonthDropdownOpen(false);
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------------- HANDLE CRUD METHODS ------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const onCreateTask = async () => {
         if (!taskName.trim()) {
@@ -164,6 +173,14 @@ const NewTaskView = () => {
 
     return (
         <SafeAreaView className="flex-1">
+
+
+            <Stack.Screen
+                options={{
+                    headerTitle: task == null ? 'New Task:' : `Edit ${task.name}:`,
+                }}
+            />
+
             {/* Use KeyboardAvoidingView to adjust the layout when keyboard is visible */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}  // Adjust behavior based on platform
@@ -178,8 +195,10 @@ const NewTaskView = () => {
                         <View className="px-5">
 
 
-                            <Text className="pt-5 text-2xl font-bold" style={{color: Colors.Complementary["800"]}}>New
-                                Task:</Text>
+                            <Text className="pt-5 text-2xl font-bold" style={{color: Colors.Complementary["800"]}}>
+                                {`${task === null ? "New Task:" : "Edit Task:"}`}
+
+                            </Text>
 
                             {/* Task Name Input */}
                             <View className="pt-2">
