@@ -6,9 +6,7 @@ import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
 import {formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
 
-const TaskListItem = (task: Task) => {
-    const router = useRouter();
-
+const TaskListItem = ({task, onTaskComplete} : {task: Task, onTaskComplete: (task: Task) => void }) => {
 
     return (
         <View className="py-1">
@@ -21,7 +19,7 @@ const TaskListItem = (task: Task) => {
 
                         {/*aligned to the left*/}
                         <View className="flex-row items-center">
-                            <TouchableOpacity className="px-1" onPress={() => console.log("check box")}>
+                            <TouchableOpacity className="px-1" onPress={() => onTaskComplete(task)}>
                                 <Ionicons name="square-outline" size={20} style={{color: Colors.Primary["800"]}}/>
                             </TouchableOpacity>
                             <View className="flex-row items-center pl-1">

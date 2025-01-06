@@ -1,5 +1,5 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, RefreshControl, SafeAreaView, Text, useWindowDimensions, View} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {SafeAreaView, useWindowDimensions, View} from 'react-native';
 import {useFocusEffect} from "expo-router";
 import Carousel, {ICarouselInstance} from "react-native-reanimated-carousel";
 import {useSupabase} from "@/context/SupabaseContext";

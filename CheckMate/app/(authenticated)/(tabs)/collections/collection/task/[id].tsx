@@ -11,7 +11,6 @@ const TaskLogView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
 
-    // State to manage the refresh control
     const [refreshing, setRefreshing] = useState(false);
     const [task, setTask] = useState<Task>();
     const [logs, setLogs] = useState<[]>([]);

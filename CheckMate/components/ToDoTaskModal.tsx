@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
+import ActionButton from "@/components/ActionButton.tsx";
 
 const ToDoTaskModal = ({
                            closeModal,
@@ -122,34 +123,31 @@ const ToDoTaskModal = ({
             {task ?
                 // Update and Delete Button
                 <View className="flex-row items-center justify-between px-5 py-10">
-                    <TouchableOpacity
-                        className="py-2 px-8  rounded-xl items-center flex-row gap-x-2"
-                        style={{backgroundColor: Colors.Yellow["600"]}}
-                        onPress={() => onUpdateToDoTask()}
-                    >
-                        <Ionicons name="checkmark-circle-outline" size={20}
-                                  style={{color: Colors.Complementary["100"]}}/>
-                        <Text style={{color: Colors.Complementary["100"]}}>Update</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        className="py-2 px-8 rounded-xl items-center flex-row gap-x-2"
-                        style={{backgroundColor: Colors.Red["600"]}}
-                        onPress={() => onDeleteToDoTask()}
-                    >
-                        <Ionicons name="trash-bin-outline" size={20} style={{color: Colors.Complementary["100"]}}/>
-                        <Text style={{color: Colors.Complementary["100"]}}>Delete</Text>
-                    </TouchableOpacity>
+                    <ActionButton
+                        onPress={onUpdateToDoTask}
+                        iconName={"checkmark-circle-outline"}
+                        text={"Update"}
+                        textColor={Colors.Complementary["100"]}
+                        buttonColor={Colors.Yellow["600"]}
+                    />
+                    <ActionButton
+                        onPress={onDeleteToDoTask}
+                        iconName={"trash-bin-outline"}
+                        text={"Delete"}
+                        textColor={Colors.Complementary["100"]}
+                        buttonColor={Colors.Red["600"]}
+                    />
                 </View>
                 :
                 // Create Button
                 <View className="items-center pt-10 pb-10">
-                    <TouchableOpacity
-                        className="py-2 px-8 mx-16 rounded-xl items-center"
-                        style={{backgroundColor: Colors.Complementary["700"]}}
-                        onPress={() => onCreateToDoTask()}
-                    >
-                        <Text style={{color: Colors.Complementary["100"]}}>Create Task</Text>
-                    </TouchableOpacity>
+                    <ActionButton
+                        onPress={onCreateToDoTask}
+                        iconName={"add-outline"}
+                        text={"Create Task"}
+                        textColor={Colors.Complementary["100"]}
+                        buttonColor={Colors.Complementary["600"]}
+                    />
                 </View>
             }
 

@@ -17,8 +17,11 @@ import {getRecurrenceDescription} from "@/utils/textUtils";
 import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums.ts";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import ActionButton from "@/components/ActionButton.tsx";
 
 const NewTaskView = () => {
+
+    // todo get collection id from search params for new task
 
     const router = useRouter();
     const {id} = useLocalSearchParams<{ id?: string }>()
@@ -626,32 +629,26 @@ const NewTaskView = () => {
                             {/*</View>*/}
 
                             {task ?
-                                <>
-                                    <View className="flex-row items-center justify-between px-5 py-10">
-                                        <TouchableOpacity
-                                            className="py-2 px-8 rounded-xl items-center flex-row gap-x-2"
-                                            style={{backgroundColor: Colors.Yellow["600"]}}
-                                            onPress={() => onUpdateTask()}
-                                        >
-                                            <Ionicons name="checkmark-circle-outline" size={20}
-                                                      style={{color: Colors.Complementary["100"]}}/>
-                                            <Text style={{color: Colors.Complementary["100"]}}>Update</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            className="py-2 px-8 rounded-xl items-center flex-row gap-x-2"
-                                            style={{backgroundColor: Colors.Red["600"]}}
-                                            onPress={() => onDeleteTask()}
-                                        >
-                                            <Ionicons name="trash-bin-outline" size={20}
-                                                      style={{color: Colors.Complementary["100"]}}/>
-                                            <Text style={{color: Colors.Complementary["100"]}}>Delete</Text>
-                                        </TouchableOpacity>
+                                <View className="gap-y-5">
+                                    <View className="flex-row items-center justify-between px-5 pt-10">
+                                        <ActionButton
+                                            onPress={onUpdateTask}
+                                            iconName={"checkmark-circle-outline"}
+                                            text={"Update"}
+                                            textColor={Colors.Complementary["100"]}
+                                            buttonColor={Colors.Yellow["600"]}
+                                        />
+                                        <ActionButton
+                                            onPress={onDeleteTask}
+                                            iconName={"trash-bin-outline"}
+                                            text={"Delete"}
+                                            textColor={Colors.Complementary["100"]}
+                                            buttonColor={Colors.Red["600"]}
+                                        />
                                     </View>
 
                                     <View className="flex-row items-center justify-center px-5 pb-10">
-                                        <TouchableOpacity
-                                            className="py-2 px-12 rounded-xl items-center flex-row gap-x-2"
-                                            style={{backgroundColor: Colors.Blue["600"]}}
+                                        <ActionButton
                                             onPress={() => {
                                                 if (task.archived_at === null) {
                                                     onArchiveTask();
@@ -659,25 +656,23 @@ const NewTaskView = () => {
                                                     onUnarchiveTask();
                                                 }
                                             }}
-                                        >
-                                            <Ionicons
-                                                name={task.archived_at === null ? "archive-outline" : "arrow-up-circle-outline"}
-                                                size={20} style={{color: Colors.Complementary["100"]}}/>
-                                            <Text
-                                                style={{color: Colors.Complementary["100"]}}>{task.archived_at === null ? "Archive" : "Unarchive"}</Text>
-                                        </TouchableOpacity>
+                                            iconName={task.archived_at === null ? "archive-outline" : "arrow-up-circle-outline"}
+                                            text={task.archived_at === null ? "Archive" : "Unarchive"}
+                                            textColor={Colors.Complementary["100"]}
+                                            buttonColor={Colors.Blue["600"]}
+                                        />
                                     </View>
 
-                                </>
+                                </View>
                                 :
                                 <View className="items-center pt-10 pb-10">
-                                    <TouchableOpacity
-                                        className="py-2 px-8 mx-16 rounded-xl items-center"
-                                        style={{backgroundColor: Colors.Complementary["700"]}}
-                                        onPress={() => onCreateTask()}
-                                    >
-                                        <Text style={{color: Colors.Complementary["100"]}}>Create Task</Text>
-                                    </TouchableOpacity>
+                                    <ActionButton
+                                        onPress={onCreateTask}
+                                        iconName={"add-outline"}
+                                        text={"Create Task"}
+                                        textColor={Colors.Complementary["100"]}
+                                        buttonColor={Colors.Complementary["600"]}
+                                    />
                                 </View>
                             }
 

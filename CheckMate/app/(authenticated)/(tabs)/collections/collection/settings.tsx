@@ -6,6 +6,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import UserListItem from "@/components/UserListItem";
 import {Colors} from "@/constants/Colors";
 import {Collection, User} from "@/types/enums";
+import ActionButton from "@/components/ActionButton.tsx";
 
 const Settings = () => {
     const router = useRouter();
@@ -96,14 +97,14 @@ const Settings = () => {
             </View>
 
             {/* Button to delete the collection */}
-            <View className="pt-8">
-                <TouchableOpacity
-                    className=" py-2 mx-16 rounded-lg items-center"
-                    style={{backgroundColor: Colors.Red["700"]}}
+            <View className="items-center pt-8">
+                <ActionButton
                     onPress={onDeleteCollection}
-                >
-                    <Text className="font-bold">Delete Collection</Text>
-                </TouchableOpacity>
+                    iconName={"trash-bin-outline"}
+                    text={"Delete Collection"}
+                    textColor={Colors.Complementary["100"]}
+                    buttonColor={Colors.Red["600"]}
+                />
             </View>
 
         </View>

@@ -1,18 +1,17 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import {Href, Link, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
+import {useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {BottomSheetModal} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import {CollectionUser} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import {formatShortDate} from "@/utils/textUtils.ts";
+import ActionButton from "@/components/ActionButton.tsx";
 
 const InvitationsView = () => {
 
-    const [refreshing, setRefreshing] = useState(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
     const [invitations, setInvitations] = useState<[]>([]);
-    const snapPoints = useMemo(() => ["100%"], []);
 
     const [collectionName, setCollectionName] = useState<string>("");
     const [invitationId, setInvitationId] = useState<string>("");
@@ -153,21 +152,21 @@ const InvitationsView = () => {
                                 </Text>
                             </View>
 
-                            <View className="flex-row justify-between px-2">
-                                <TouchableOpacity
-                                    onPress={() => onAcceptInvitation(invitationId)}
-                                    className="py-2 rounded-lg items-center"
-                                    style={{backgroundColor: Colors.Green["600"]}}
-                                >
-                                    <Text className="px-12 text-white text-sm">Accept</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => onRejectInvitation(invitationId)}
-                                    className="py-2 rounded-lg items-center"
-                                    style={{backgroundColor: Colors.Red["600"]}}
-                                >
-                                    <Text className="px-12 text-white text-sm">Reject</Text>
-                                </TouchableOpacity>
+                            <View className="flex-row items-center justify-between px-4">
+                                <ActionButton
+                                    onPress={onAcceptInvitation}
+                                    iconName="checkmark-circle-outline"
+                                    text="Accept"
+                                    textColor={Colors.Complementary["100"]}
+                                    buttonColor={Colors.Green["600"]}
+                                />
+                                <ActionButton
+                                    onPress={onRejectInvitation}
+                                    iconName="close-circle-outline"
+                                    text="Reject"
+                                    textColor={Colors.Complementary["100"]}
+                                    buttonColor={Colors.Red["600"]}
+                                />
                             </View>
 
                         </View>

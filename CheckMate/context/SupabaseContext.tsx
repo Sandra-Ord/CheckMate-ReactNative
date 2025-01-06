@@ -23,6 +23,7 @@ type ProviderProps = {
     getAcceptedUsersCount: (collectionId) => Promise<any>;
     getActiveTasksCount: (collectionId) => Promise<any>;
     getPendingTaskCount: (collectionId) => Promise<any>;
+    completeTask: (taskId) => Promise<any>;
     //
     getCollection: (collectionId: number) => Promise<any>;
     getCollectionInfo: (collectionId: number) => Promise<any>;
@@ -177,6 +178,10 @@ export const SupabaseProvider = ({ children }: any) => {
         }
 
         return data?.length;
+    };
+
+    const completeTask = async (taskId: number) => {
+      return;
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -657,6 +662,7 @@ export const SupabaseProvider = ({ children }: any) => {
         getAcceptedUsersCount,
         getActiveTasksCount,
         getPendingTaskCount,
+        completeTask,
         //
         getCollection,
         getCollectionInfo,

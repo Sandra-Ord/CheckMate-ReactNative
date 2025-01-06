@@ -3,23 +3,43 @@ import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, V
 import {Link, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
-import {Collection} from "@/types/enums";
+import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
+import ActionButton from "@/components/ActionButton.tsx";
 
 const CollectionView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
 
-    const [refreshing, setRefreshing] = useState(false);
-    const [filterMenuVisible, setFilterMenuVisible] = useState(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const [collection, setCollection] = useState<Collection>();
     const [tasks, setTasks] = useState<[]>([]);
     const [users, setUsers] = useState<[]>([]);
 
-    const {getCollectionInfo, getCollectionTasks, getCollectionUsers} = useSupabase();
+    const {getCollectionInfo, getCollectionTasks, getCollectionUsers, completeTask} = useSupabase();
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ COMPLETE A TASK ------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const [completeTaskModalVisible, setCompleteTaskModalVisible] = useState<boolean>(false);
+    const [taskToComplete, setTaskToComplete] = useState<Task>(null);  // the task selected for completion
+    const [completeTaskDate, setCompleteTaskDate] = useState("");
+    const [assignTaskToUserId, setAssignTaskToUserId] = useState("");
+
+    const handleTaskCompletion = (task: Task) => {
+        setTaskToComplete(task);
+        setCompleteTaskModalVisible(true);
+    };
+
+    const onCompleteTask = async () => {
+        if (taskToComplete == null) return;
+        const data = await taskToComplete(taskToComplete.id, completeTaskDate, assignTaskToUserId);
+        await loadTasks();
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
@@ -27,7 +47,6 @@ const CollectionView = () => {
 
     const loadCollectionUsers = async () => {
         const data = await getCollectionUsers(id);
-        console.log(users)
         setUsers(data);
         setFilters((prev) => ({
             ...prev,
@@ -43,11 +62,9 @@ const CollectionView = () => {
     const loadCollectionInfo = async () => {
         if (!id) return;
         const data = await getCollectionInfo!(id);
-        console.log(data);
         setCollection(data);
     };
 
-    // Start loading info when focused
     useFocusEffect(
         useCallback(() => {
             loadCollectionInfo();
@@ -59,6 +76,8 @@ const CollectionView = () => {
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- TOGGLE FILTER ------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
+
+    const [filterMenuVisible, setFilterMenuVisible] = useState<boolean>(false);
 
     const toggleFilter = (filterKey: string) => {
         setFilters((prev) => ({...prev, [filterKey]: !prev[filterKey]}));
@@ -193,14 +212,74 @@ const CollectionView = () => {
                 <View className="flex-1 justify-center pb-3 px-5">
                     <FlatList
                         data={filteredTasks}
-                        renderItem={({item}) =>
-                            <TaskListItem {...item} />
-                        }
+                        renderItem={({item}) => (
+                            <TaskListItem
+                                task={item}
+                                onTaskComplete={handleTaskCompletion}
+                            />
+                        )}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
                         keyExtractor={(item) => `${item.id.toString()}`}
                     />
                 </View>
 
+                {/* Modal for Responding */}
+                <Modal
+                    visible={completeTaskModalVisible}
+                    transparent
+                    animationType="fade"
+                    onRequestClose={() => setCompleteTaskModalVisible(false)}
+                >
+                    <TouchableOpacity
+                        className="justify-center  flex-1"
+                        style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}
+                        onPress={() => setCompleteTaskModalVisible(false)}
+                    >
+
+                        <View className="rounded-lg p-4 mx-4" style={{backgroundColor: Colors.Complementary["100"]}}>
+
+                            <View className="flex-row justify-between items-center">
+                                <Text className="text-2xl font-bold">
+                                    Complete {taskToComplete?.name}:
+                                </Text>
+                                <TouchableOpacity onPress={() => setCompleteTaskModalVisible(false)}>
+                                    <Ionicons name="close" size={28} style={{color: Colors.Primary["800"]}}/>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* separator line */}
+                            <View
+                                style={{
+                                    height: 1,
+                                    backgroundColor: Colors.Complementary["800"],
+                                }}
+                                className="mt-2"
+                            />
+
+                            <Text>
+                                this is a place holder text. this modal will contain fields to mark a task as complete
+                                the user needs ot input the completion date (by default the time of marking as complete)
+                                the user can assign the task to the next person, by default null,
+
+                            </Text>
+
+                            <View className="flex-row items-center justify-center px-5 py-5">
+                                <ActionButton
+                                    onPress={() => console.log("yolo")}
+                                    iconName="checkbox-outline"
+                                    text="Complete"
+                                    textColor={Colors.Complementary["100"]}
+                                    buttonColor={Colors.Complementary["600"]}
+                                />
+                            </View>
+
+                        </View>
+
+                    </TouchableOpacity>
+                </Modal>
+
+
+                {/* Filter and sort side menu modal */}
                 <Modal
                     animationType="none"
                     transparent={true}
@@ -213,7 +292,6 @@ const CollectionView = () => {
                             style={{flex: 1, backgroundColor: "rgba(0,0,0,0.1)"}}
                             onPress={() => setFilterMenuVisible(false)}
                         />
-
                         {/* Filter Menu */}
                         <FilterMenu
                             onClose={() => setFilterMenuVisible(false)}
