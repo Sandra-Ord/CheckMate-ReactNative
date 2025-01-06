@@ -97,7 +97,7 @@ const InvitationsView = () => {
     )
 
     return (
-        <SaFeAreaView className="flex-1">
+        <SafeAreaView className="flex-1">
             <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
                 <View className="flex-1 justify-center pt-2 pb-3 px-5">
@@ -176,7 +176,7 @@ const InvitationsView = () => {
                 </Modal>
 
             </View>
-        </SaFeAreaView>
+        </SafeAreaView>
     );
 };
 
