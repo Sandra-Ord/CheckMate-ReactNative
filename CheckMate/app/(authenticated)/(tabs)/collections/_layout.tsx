@@ -3,6 +3,7 @@ import {Image, TouchableOpacity, View} from 'react-native';
 import {Stack, useRouter} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
+import * as DropDownMenu from "zeego/dropdown-menu";
 
 const Layout = () => {
     const router = useRouter();

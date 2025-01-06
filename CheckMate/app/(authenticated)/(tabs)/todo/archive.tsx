@@ -4,7 +4,7 @@ import {useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
-import NewToDoTaskModal from "@/components/NewToDoTaskModal";
+import ToDoTaskModal from "@/components/ToDoTaskModal.tsx";
 import ToDoListItem from "@/components/ToDoListItem";
 import {Colors} from "@/constants/Colors";
 

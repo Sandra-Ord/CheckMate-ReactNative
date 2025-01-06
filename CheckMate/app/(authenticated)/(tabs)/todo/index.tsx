@@ -6,7 +6,7 @@ import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import ToDoListItem from "@/components/ToDoListItem";
-import NewToDoTaskModal from "@/components/NewToDoTaskModal";
+import ToDoTaskModal from "@/components/ToDoTaskModal.tsx";
 import {ToDoTask} from "@/types/enums.ts";
 
 const ToDoView = () => {
@@ -91,7 +91,7 @@ const ToDoView = () => {
                         index={0}
                         snapPoints={snapPoints}
                     >
-                        <NewToDoTaskModal
+                        <ToDoTaskModal
                             task={selectedTask}
                             closeModal={() => {
                                 bottomSheetModalRef.current?.dismiss();

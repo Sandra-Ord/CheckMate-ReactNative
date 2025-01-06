@@ -6,7 +6,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
 
-const NewToDoTaskModal = ({
+const ToDoTaskModal = ({
                               closeModal,
                               reload,
                               task
@@ -103,7 +103,6 @@ const NewToDoTaskModal = ({
                     style={{ backgroundColor: Colors.Complementary["50"] }}
                     returnKeyType="done"
                     enterKeyHint="done"
-                    autoFocus
                 />
             </View>
 
@@ -118,7 +117,6 @@ const NewToDoTaskModal = ({
                     style={{ backgroundColor: Colors.Complementary["50"] }}
                     returnKeyType="done"
                     enterKeyHint="done"
-                    autoFocus
                 />
             </View>
 
@@ -159,4 +157,4 @@ const NewToDoTaskModal = ({
     );
 };
 
-export default NewToDoTaskModal;
+export default ToDoTaskModal;

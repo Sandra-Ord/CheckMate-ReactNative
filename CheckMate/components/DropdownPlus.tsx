@@ -10,7 +10,6 @@ const DropdownPlus = () => {
     const router = useRouter();
 
     return (
-        <View>
             <DropDownMenu.Root>
 
                 <DropDownMenu.Trigger>
@@ -32,7 +31,6 @@ const DropdownPlus = () => {
                 </DropDownMenu.Content>
 
             </DropDownMenu.Root>
-        </View>
 
     );
 };

@@ -13,6 +13,7 @@ export enum AuthStrategy {
     Apple = 'oauth_apple',
 }
 
+
 export enum TaskNotificationType {
     TaskAssigned,
     TaskWindowOpen,
@@ -79,6 +80,7 @@ export interface Task {
     season_end: Date | null,
     last_completed_at: Date | null,
     next_due_at: Date | null,
+    completion_start: Date | null,
     completion_window_days: number | null,
 }
 

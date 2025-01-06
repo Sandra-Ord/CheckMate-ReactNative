@@ -33,6 +33,8 @@ type ProviderProps = {
     getCollectionMembers: (collectionId: number) => Promise<any>;
     getBasicTaskInformation: (taskId: number) => Promise<any>;
     getTaskLogs: (taskId: number) => Promise<any>;
+
+    getCollectionUsers: (collectionId: number) => Promise<any>;
     // INVITATIONS
     getPendingInvitations: () => Promise<any>;
     acceptInvitation: (invitationId) => Promise<any>;
@@ -47,10 +49,12 @@ type ProviderProps = {
     unCompleteToDoTask: (task: ToDoTask) => Promise<any>;
     // TAGS
     getTags: () => Promise<any>;
+    getActiveTags: () => Promise<any>;
     createTag: (tagName: string) => Promise<any>;
     archiveTag: (tag: Tag) => Promise<any>;
     unarchiveTag: (tag: Tag) => Promise<any>;
     updateTag: (tag: Tag) => Promise<any>;
+    deleteTag: (tagId: number) => Promise<any>;
     // USER
     setUserPushToken: (token: string) => Promise<any>;
 };
@@ -232,10 +236,45 @@ export const SupabaseProvider = ({ children }: any) => {
         return await client.from(COLLECTIONS_TABLE).delete().match({ collectionId });
     };
 
+
+
+    const getTaskLogs = async (taskId: number) => {
+        const { data, error } = await client
+            .from(TASK_LOGS_TABLE)
+            .select(`id, comment, completed_at, due_at, users (id, first_name)`)
+            .match({ task_id: taskId });
+        return data;
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ COLLECTION VIEW FUNCTIONS --------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const getActiveCollectionTasks = async (collectionId) => {
+        const currentTime = new Date().toISOString();
+
+        const { data, error } = await client
+            .from(TASKS_TABLE)
+            .select('id')
+            .eq('collection_id', collectionId)
+            .is('archived_at', null)
+            .or(
+                `and(season_start.lte.${currentTime},season_end.gte.${currentTime}),and(season_start.is.null,season_end.is.null)`
+            );
+
+        if (error) {
+            console.error('Error fetching active tasks:', error);
+            return [];
+        }
+
+        return data;
+    };
+
+
     const getCollectionTasks = async (collectionId: number) => {
         const { data, error } = await client
             .from(TASKS_TABLE)
-            .select(`*, users (first_name)`)
+            .select(`*, users (id, first_name, email)`)
             .match({ collection_id: collectionId });
 
         if (error) {
@@ -257,12 +296,21 @@ export const SupabaseProvider = ({ children }: any) => {
         return data;
     };
 
-    const getTaskLogs = async (taskId: number) => {
+
+    const getCollectionUsers = async (collectionId) => {
         const { data, error } = await client
-            .from(TASK_LOGS_TABLE)
-            .select(`id, comment, completed_at, due_at, users (id, first_name)`)
-            .match({ task_id: taskId });
-        return data;
+            .from(COLLECTION_USERS_TABLE)
+            .select('users!collection_users_user_id_fkey (id, first_name, email)')
+            .eq('collection_id', collectionId)
+            .eq('status', 'ACCEPTED');
+
+        if (error) {
+            console.error('Error fetching collection users:', error);
+            return [];
+        }
+
+        const result = data?.map((row: any) => row.users) || [];
+        return result || [];
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -315,6 +363,22 @@ export const SupabaseProvider = ({ children }: any) => {
         return data;
     };
 
+    const getActiveTags = async () => {
+        const { data, error } = await client
+            .from(TAGS_TABLE)
+            .select(`*`)
+            .eq('user_id', userId)
+            .is('archived_at', null);
+
+        if (error) {
+            console.error('Error getting active tags:', error);
+
+        }
+
+        return data;
+    };
+
+
     const createTag = async (tagName: string) => {
         const { data, error } = await client
             .from(TAGS_TABLE)
@@ -365,6 +429,14 @@ export const SupabaseProvider = ({ children }: any) => {
             .single();
 
         return data;
+    };
+
+    const deleteTag = async (tagId: number) => {
+        return client
+            .from(TAGS_TABLE)
+            .delete()
+            .match({ id: tagId })
+            .single();
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -500,16 +572,19 @@ export const SupabaseProvider = ({ children }: any) => {
         getCollectionMembers,
         getBasicTaskInformation,
         getTaskLogs,
+        getCollectionUsers,
         // INVITATIONS
         getPendingInvitations,
         acceptInvitation,
         rejectInvitation,
         // TAGS
         getTags,
+        getActiveTags,
         createTag,
         archiveTag,
         unArchiveTag,
         updateTag,
+        deleteTag,
         // TO DO TASKS
         getToDoTasks,
         getArchivedToDoTasks,

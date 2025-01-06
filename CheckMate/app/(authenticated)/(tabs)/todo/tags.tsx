@@ -7,10 +7,12 @@ import {useSupabase} from "@/context/SupabaseContext";
 import NewTagModal from "@/components/NewTagModal";
 import TagListItem from "@/components/TagListItem";
 import {Colors} from "@/constants/Colors";
+import {Tag} from "@/types/enums.ts";
 
 const ToDoView = () => {
 
     const [refreshing, setRefreshing] = useState(false);
+    const [selectedTag, setSelectedTag] = useState();
     const [tags, setTags] = useState<[]>([]);
     const {getTags} = useSupabase();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -18,6 +20,12 @@ const ToDoView = () => {
     const snapPoints = useMemo(() => ["80%"], []);
 
     const showNewTagModal = () => {
+        setSelectedTag(null);
+        bottomSheetModalRef.current?.present();
+    };
+
+    const showEditTagModal = (tag: Tag) => {
+        setSelectedTag(tag);
         bottomSheetModalRef.current?.present();
     };
 
@@ -58,7 +66,11 @@ const ToDoView = () => {
                         <View className="flex-1 pb-3 px-4 pt-2">
                             <FlatList
                                 data={tags}
-                                renderItem={({ item }) => <TagListItem {...item} />}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => showEditTagModal(item)}>
+                                        <TagListItem {...item} />
+                                    </TouchableOpacity>
+                                )}
                                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTags} />}
                                 keyExtractor={(item) => `${item.id.toString()}`}
                                 ItemSeparatorComponent={() => (
@@ -76,10 +88,16 @@ const ToDoView = () => {
 
                     <BottomSheetModal
                         ref={bottomSheetModalRef}
+                        onDismiss={() => setSelectedTag(null)}
                         index={0}
                         snapPoints={snapPoints}
                     >
-                        <NewTagModal onTagCreated={() => bottomSheetModalRef.current?.dismiss()} />
+                        <NewTagModal
+
+                            tag={selectedTag}
+                            closeModal={() => bottomSheetModalRef.current?.dismiss()}
+                            reload={() => loadTags()}
+                        />
                     </BottomSheetModal>
 
                 </BottomSheetModalProvider>
