@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Link, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
