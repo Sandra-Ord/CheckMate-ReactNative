@@ -1,5 +1,5 @@
 import React from 'react';
-import {Href, Link} from "expo-router";
+import {Href, Link, useRouter} from "expo-router";
 import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
@@ -7,6 +7,7 @@ import {Task} from "@/types/enums";
 import {formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
 
 const TaskListItem = (task: Task) => {
+    const router = useRouter();
 
 
     return (
@@ -32,12 +33,18 @@ const TaskListItem = (task: Task) => {
 
                         {/* aligned to the right */}
                         <View className="flex-row items-center">
-                            <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
-                                <Ionicons name="pencil" size={20} style={{ color: Colors.Primary["800"] }} />
-                            </TouchableOpacity>
+                            <Link
+                                href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${task.id}` as Href}
+                                key={`new-task-${task.id}`}
+                                asChild
+                            >
+                                <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>
+                                    <Ionicons name="pencil" size={20} style={{ color: Colors.Primary["800"] }} />
+                                </TouchableOpacity>
+                            </Link>
                             <Link
                                 href={`/(authenticated)/(tabs)/collections/collection/task/${task.id}` as Href}
-                                key={`1}`}
+                                key={`task-log-${task.id}`}
                                 asChild
                             >
                                 <TouchableOpacity className="px-1" onPress={() => console.log("edit")}>

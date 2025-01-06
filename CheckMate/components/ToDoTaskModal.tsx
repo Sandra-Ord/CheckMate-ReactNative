@@ -25,7 +25,6 @@ const ToDoTaskModal = ({
 
     const {createToDoTask, updateToDoTask, deleteToDoTask} = useSupabase();
 
-    // Create a new board and return to Collections page
     const onCreateToDoTask = async () => {
         if (!taskName.trim()) {
             alert('Please enter a task name.');
@@ -55,7 +54,7 @@ const ToDoTaskModal = ({
         reload();
     }
 
-    // If the modal is opened in edit more
+    // Modal opened in edit more
     useEffect(() => {
         if (task) {
             setTaskName(task.name);

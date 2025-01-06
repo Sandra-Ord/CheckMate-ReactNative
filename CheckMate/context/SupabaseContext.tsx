@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect } from 'react';
 import { client } from '@/utils/supabaseClient';
 import { useAuth } from '@clerk/clerk-expo';
-import {Collection, Tag, ToDoTask} from '@/types/enums';
+import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 import { decode } from 'base64-arraybuffer';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -28,12 +28,19 @@ type ProviderProps = {
     getCollectionInfo: (collectionId: number) => Promise<any>;
     updateCollection: (collection: Collection) => Promise<any>;
     deleteCollection: (collectionId: number) => Promise<any>;
-    getCollectionTasks: (collectionId: number) => Promise<any>;
     addUserToCollection: (collectionId: number, userId: number) => Promise<any>;
     getCollectionMembers: (collectionId: number) => Promise<any>;
-    getBasicTaskInformation: (taskId: number) => Promise<any>;
     getTaskLogs: (taskId: number) => Promise<any>;
-
+    // NEW TASK VIEW FUNCTIONS
+    getTaskInformation: (taskId: number) => Promise<any>;
+    createTask: (taskId: number) => Promise<any>;
+    updateTask: (task: Task) => Promise<any>;
+    deleteTask: (taskId: number) => Promise<any>;
+    archiveTask: (taskId: number) => Promise<any>;
+    unArchiveTask: (taskId: number) => Promise<any>;
+    // COLLECTION VIEW FUNCTIONS
+    getCollectionTasks: (collectionId: number) => Promise<any>;
+    getBasicTaskInformation: (taskId: number) => Promise<any>;
     getCollectionUsers: (collectionId: number) => Promise<any>;
     // INVITATIONS
     getPendingInvitations: () => Promise<any>;
@@ -81,6 +88,10 @@ export const SupabaseProvider = ({ children }: any) => {
         client.realtime.setAuth(clerkToken!);
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // --------------------------------- FUNCTIONS FOR THE COLLECTION LIST VIEW ----------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const createCollection = async (name: string) => {
         const { data, error } = await client
             .from(COLLECTIONS_TABLE)
@@ -92,10 +103,6 @@ export const SupabaseProvider = ({ children }: any) => {
 
         return data;
     };
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------- FUNCTIONS FOR THE COLLECTION LIST VIEW ----------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
 
     const getCollections = async () => {
         const { data, error } = await client
@@ -172,7 +179,6 @@ export const SupabaseProvider = ({ children }: any) => {
         return data?.length;
     };
 
-
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -247,28 +253,115 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     // -----------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ COLLECTION VIEW FUNCTIONS --------------------------------------------
+    // ------------------------------------------ NEW TASK VIEW FUNCTIONS ----------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
-    const getActiveCollectionTasks = async (collectionId) => {
-        const currentTime = new Date().toISOString();
 
+    const getTaskInformation = async (taskId: number) => {
         const { data, error } = await client
             .from(TASKS_TABLE)
-            .select('id')
-            .eq('collection_id', collectionId)
-            .is('archived_at', null)
-            .or(
-                `and(season_start.lte.${currentTime},season_end.gte.${currentTime}),and(season_start.is.null,season_end.is.null)`
-            );
+            .select(`*`)
+            .match({ id: taskId })
+            .single();
 
         if (error) {
-            console.error('Error fetching active tasks:', error);
+            console.error('Error fetching task information:', error);
             return [];
         }
 
         return data;
     };
+
+    const createTask = async (collection_id: number,
+                              name: string,
+                              description: string,
+                              recurring: boolean,
+                              interval_value: number | null,
+                              interval_unit: number | null,
+                              day_of_week: number | null,
+                              day_of_month: number | null,
+                              month_of_year: number | null,
+                              season_start: Date | null,
+                              season_end: Date | null,
+                              last_completed_at: Date | null,
+                              next_due_at: Date | null,
+                              completion_start: Date | null,
+                              completion_window_days: number | null
+        ) => {
+        const { data, error } = await client
+            .from(TAGS_TABLE)
+            .insert({ "tag": tagName, "user_id": userId, "created_at": new Date().toISOString() });
+
+        if (error) {
+            console.error('Error creating to do task:', error);
+        }
+
+        return data;
+    };
+
+    const updateTask = async (task: Task) => {
+        const { data } = await client
+            .from(TASKS_TABLE)
+            .update({
+                name: task.name,
+                description: task.description,
+                recurring: task.recurring,
+                interval_value: task.interval_value,
+                interval_unit: task.interval_unit,
+                day_of_week: task.day_of_week,
+                day_of_month: task.day_of_month,
+                month_of_year: task.month_of_year,
+                season_start: task.season_start,
+                season_end: task.season_end,
+                last_completed_at: task.last_completed_at,
+                next_due_at: task.next_due_at,
+                completion_start: task.completion_start,
+                completion_window_days: task.completion_window_days,
+            })
+            .match({ id: task.id })
+            .select('*')
+            .single();
+
+        return data;
+    };
+
+    const deleteTask = async (taskId: number) => {
+        return client
+            .from(TASKS_TABLE)
+            .delete()
+            .match({ id: taskId })
+            .single();
+    };
+
+    const archiveTask = async (taskId: number) => {
+        const { data } = await client
+            .from(TASKS_TABLE)
+            .update({
+                archived_at: new Date().toISOString(),
+            })
+            .match({ id: taskId })
+            .select('*')
+            .single();
+
+        return data;
+    };
+
+    const unArchiveTask = async (taskId: number) => {
+        const { data } = await client
+            .from(TASKS_TABLE)
+            .update({
+                archived_at: null,
+            })
+            .match({ id: taskId })
+            .select('*')
+            .single();
+
+        return data;
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ COLLECTION VIEW FUNCTIONS --------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
 
     const getCollectionTasks = async (collectionId: number) => {
@@ -291,8 +384,10 @@ export const SupabaseProvider = ({ children }: any) => {
             .match({ id: taskId })
             .single();
 
-        console.log("Basic Task Info: ", data);
-
+        if (error) {
+            console.error('Error fetching basic task information:', error);
+            return [];
+        }
         return data;
     };
 
@@ -556,8 +651,8 @@ export const SupabaseProvider = ({ children }: any) => {
 
     const value = {
         userId,
-        createCollection,
         // COLLECTION LIST VIEW FUNCTIONS
+        createCollection,
         getCollections,
         getAcceptedUsersCount,
         getActiveTasksCount,
@@ -572,6 +667,17 @@ export const SupabaseProvider = ({ children }: any) => {
         getCollectionMembers,
         getBasicTaskInformation,
         getTaskLogs,
+        getCollectionUsers,
+        // NEW TASK VIEW FUNCTIONS
+        getTaskInformation,
+        createTask,
+        updateTask,
+        deleteTask,
+        archiveTask,
+        unArchiveTask,
+        // COLLECTION VIEW FUNCTIONS
+        getCollectionTasks,
+        getBasicTaskInformation,
         getCollectionUsers,
         // INVITATIONS
         getPendingInvitations,

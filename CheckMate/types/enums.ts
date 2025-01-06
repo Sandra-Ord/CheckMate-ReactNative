@@ -70,6 +70,7 @@ export interface Task {
     collection_id: ID,
     assigned_to_user_id: UserID,
     name: string,
+    description: string,
     recurring: boolean,
     interval_value: number | null,
     interval_unit: IntervalUnit | null,
