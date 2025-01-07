@@ -4,6 +4,7 @@ import {useAuth} from '@clerk/clerk-expo';
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 import {decode} from 'base64-arraybuffer';
 import {RealtimePostgresChangesPayload} from '@supabase/supabase-js';
+import {calculateNextDueDate} from "@/utils/taskDateUtils.ts";
 
 export const COLLECTIONS_TABLE = 'collections';
 export const COLLECTION_USERS_TABLE = 'collection_users'
@@ -23,7 +24,6 @@ type ProviderProps = {
     getAcceptedUsersCount: (collectionId) => Promise<any>;
     getActiveTasksCount: (collectionId) => Promise<any>;
     getPendingTaskCount: (collectionId) => Promise<any>;
-    completeTask: (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => Promise<any>;
     //
     getCollection: (collectionId: number) => Promise<any>;
     getCollectionInfo: (collectionId: number) => Promise<any>;
@@ -40,6 +40,7 @@ type ProviderProps = {
     archiveTask: (taskId: number) => Promise<any>;
     unArchiveTask: (taskId: number) => Promise<any>;
     // COLLECTION VIEW FUNCTIONS
+    completeTask: (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => Promise<any>;
     getCollectionTasks: (collectionId: number) => Promise<any>;
     getBasicTaskInformation: (taskId: number) => Promise<any>;
     getCollectionUsers: (collectionId: number) => Promise<any>;
@@ -178,60 +179,6 @@ export const SupabaseProvider = ({children}: any) => {
         }
 
         return data?.length;
-    };
-
-    const completeTask = async (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => {
-        const {logData, logError} = await client
-            .from(TASK_LOGS_TABLE)
-            .insert({
-                "task_id": task.id,
-                "user_id": userId,
-                "completed_at": completionDate.toISOString(),
-                "due_at": task.next_due_at,
-                "comment": logComment
-            });
-
-        if (logError) {
-            console.error('Error logging task:', logError);
-            return;
-        }
-
-        let updates = {
-            last_completed_at: completionDate.toISOString(),
-        };
-
-        if (!task.recurring) {
-            // Non-recurring task: archive it
-            updates = {
-                ...updates,
-                assigned_to_user_id: null,
-                completion_start: null,
-                next_due_at: null,
-                archived_at: new Date().toISOString(),
-            };
-        } else {
-            // Recurring task: calculate the next due date
-            updates.assigned_to_user_id = nextAssignedToUserId;
-
-
-
-
-        }
-
-
-        const { data: taskData, error: taskError } = await client
-            .from(TASKS_TABLE)
-            .update(updates)
-            .match({ id: task.id })
-            .select("*")
-            .single();
-
-        if (taskError) {
-            console.error("Error updating task:", taskError);
-            return null;
-        }
-
-        return taskData;
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -416,7 +363,65 @@ export const SupabaseProvider = ({children}: any) => {
     // -----------------------------------------------------------------------------------------------------------------
     // ------------------------------------------ COLLECTION VIEW FUNCTIONS --------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
+    
+    const completeTask = async (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => {
+        const {logData, logError} = await client
+            .from(TASK_LOGS_TABLE)
+            .insert({
+                "task_id": task.id,
+                "user_id": userId,
+                "completed_at": completionDate.toISOString(),
+                "due_at": task.next_due_at,
+                "comment": logComment
+            });
 
+        if (logError) {
+            console.error('Error logging task:', logError);
+            return;
+        }
+
+        let updates = {};
+
+        if (!task.recurring) {
+            // Non-recurring task: archive it
+            updates = {
+                ...updates,
+                assigned_to_user_id: null,
+                last_completed_at: completionDate.toISOString(),
+                completion_start: null,
+                next_due_at: null,
+                archived_at: new Date().toISOString(),
+            };
+        } else {
+            const nextDueDate = calculateNextDueDate(task, completionDate);
+            let completionStart = null;
+            if (task.completion_window_days !== null) {
+                completionStart = new Date(nextDueDate);
+                completionStart.setDate(completionStart.getDate() - task.completion_window_days);
+            }
+
+            updates = {
+                assigned_to_user_id: nextAssignedToUserId,
+                completion_start: completionStart ? completionStart.toISOString() : null,
+                next_due_at: calculateNextDueDate(task),
+                last_completed_at: completionDate.toISOString(),
+            }
+        }
+
+        const { taskData, taskError } = await client
+            .from(TASKS_TABLE)
+            .update(updates)
+            .match({ id: task.id })
+            .select("*")
+            .single();
+
+        if (taskError) {
+            console.error("Error updating task:", taskError);
+            return null;
+        }
+
+        return taskData;
+    };
 
     const getCollectionTasks = async (collectionId: number) => {
         const {data, error} = await client
@@ -444,7 +449,6 @@ export const SupabaseProvider = ({children}: any) => {
         }
         return data;
     };
-
 
     const getCollectionUsers = async (collectionId) => {
         const {data, error} = await client
@@ -477,7 +481,7 @@ export const SupabaseProvider = ({children}: any) => {
             console.error('Error fetching pending invitations:', error);
         }
 
-        return data;
+        return data || [];
     };
 
     const acceptInvitation = async (invitationId) => {
@@ -505,10 +509,16 @@ export const SupabaseProvider = ({children}: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const getTags = async () => {
-        const {data} = await client
+        const {data, error} = await client
             .from(TAGS_TABLE)
             .select(`*`)
             .eq('user_id', userId);
+
+        if (error) {
+            console.error('Error getting tags:', error);
+            return [];
+        }
+
         return data;
     };
 
@@ -521,12 +531,10 @@ export const SupabaseProvider = ({children}: any) => {
 
         if (error) {
             console.error('Error getting active tags:', error);
-
         }
 
         return data;
     };
-
 
     const createTag = async (tagName: string) => {
         const {data, error} = await client
@@ -717,7 +725,6 @@ export const SupabaseProvider = ({children}: any) => {
         getAcceptedUsersCount,
         getActiveTasksCount,
         getPendingTaskCount,
-        completeTask,
         //
         getCollection,
         getCollectionInfo,
@@ -737,6 +744,7 @@ export const SupabaseProvider = ({children}: any) => {
         archiveTask,
         unArchiveTask,
         // COLLECTION VIEW FUNCTIONS
+        completeTask,
         getCollectionTasks,
         getBasicTaskInformation,
         getCollectionUsers,

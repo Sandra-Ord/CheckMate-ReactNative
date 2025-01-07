@@ -1,67 +1,14 @@
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 
-
-export const calculateNextDueDate = (task, completionDate) => {
+const calculateNextDueDate = (task, completionDate) => {
 
     if (!task.recurring) {
         // Non-recurring task: no next due date
         return null;
     }
 
-    // if (
-    //     task.interval_value &&
-    //     task.interval_unit &&
-    //     !task.day_of_week &&
-    //     !task.day_of_month &&
-    //     !task.month_of_year
-    // ) {
-    //     // If only the interval value and unit are set, then the next due date depends completely on the completion date
-    //     let nextDueDate = new Date(completionDate);
-    //
-    //     switch (task.interval_unit) {
-    //         case "day":
-    //             nextDueDate.setDate(nextDueDate.getDate() + task.interval_value);
-    //             break;
-    //         case "week":
-    //             nextDueDate.setDate(nextDueDate.getDate() + task.interval_value * 7);
-    //             break;
-    //         case "month":
-    //             nextDueDate.setMonth(nextDueDate.getMonth() + task.interval_value);
-    //             break;
-    //         case "year":
-    //             nextDueDate.setFullYear(nextDueDate.getFullYear() + task.interval_value);
-    //             break;
-    //         default:
-    //             console.error("Invalid interval_unit:", task.interval_unit);
-    //             return null;
-    //     }
-    //
-    //     // Handle due date if the task is seasonal (due date might fall out of season)
-    //     if (task.season_start && task.season_end) {
-    //         const seasonStart = new Date(task.season_start);
-    //         const seasonEnd = new Date(task.season_end);
-    //         seasonStart.setFullYear(nextDueDate.getFullYear());
-    //         seasonEnd.setFullYear(nextDueDate.getFullYear());
-    //         if (seasonStart > seasonEnd) {
-    //             if (nextDueDate < seasonStart) {
-    //                 seasonStart.setFullYear(seasonStart.getFullYear() - 1);
-    //             } else {
-    //                 seasonEnd.setFullYear(seasonEnd.getFullYear() + 1);
-    //             }
-    //         }
-    //         if (nextDueDate < seasonStart || nextDueDate > seasonEnd) {
-    //             nextDueDate.setTime(seasonStart.getTime());
-    //         }
-    //     }
-    //
-    //     return nextDueDate.toISOString();
-    //
-    // } else if (!task.interval_value || !task.interval_unit) {
-    //     console.error("Missing interval_value or interval_unit for recurring task.");
-    //     return null;
-    // }
-
     if (!task.interval_value || !task.interval_unit) return; // Error
+
 
     const baseDate =
         (task.interval_unit == "week" && task.day_of_week) ||

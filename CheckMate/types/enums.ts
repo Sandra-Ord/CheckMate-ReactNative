@@ -83,6 +83,7 @@ export interface Task {
     next_due_at: Date | null,
     completion_start: Date | null,
     completion_window_days: number | null,
+    skipMissedDueDates: boolean
 }
 
 export interface TaskLog {
