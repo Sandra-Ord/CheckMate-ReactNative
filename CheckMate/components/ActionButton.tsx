@@ -20,7 +20,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     return (
         <TouchableOpacity
             onPress={onPress}
-            className="py-2 px-10 rounded-xl items-center flex-row gap-x-2"
+            className="py-2 px-8 rounded-xl items-center flex-row gap-x-2"
             style={{ backgroundColor: buttonColor }}
         >
             <Ionicons name={iconName} size={20} style={{ color: textColor }} />

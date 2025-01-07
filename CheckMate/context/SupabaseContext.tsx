@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect } from 'react';
-import { client } from '@/utils/supabaseClient';
-import { useAuth } from '@clerk/clerk-expo';
+import {createContext, useContext, useEffect} from 'react';
+import {client} from '@/utils/supabaseClient';
+import {useAuth} from '@clerk/clerk-expo';
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
-import { decode } from 'base64-arraybuffer';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import {decode} from 'base64-arraybuffer';
+import {RealtimePostgresChangesPayload} from '@supabase/supabase-js';
 
 export const COLLECTIONS_TABLE = 'collections';
 export const COLLECTION_USERS_TABLE = 'collection_users'
@@ -23,7 +23,7 @@ type ProviderProps = {
     getAcceptedUsersCount: (collectionId) => Promise<any>;
     getActiveTasksCount: (collectionId) => Promise<any>;
     getPendingTaskCount: (collectionId) => Promise<any>;
-    completeTask: (taskId) => Promise<any>;
+    completeTask: (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => Promise<any>;
     //
     getCollection: (collectionId: number) => Promise<any>;
     getCollectionInfo: (collectionId: number) => Promise<any>;
@@ -73,8 +73,8 @@ export function useSupabase() {
     return useContext(SupabaseContext);
 }
 
-export const SupabaseProvider = ({ children }: any) => {
-    const { userId } = useAuth();
+export const SupabaseProvider = ({children}: any) => {
+    const {userId} = useAuth();
 
     useEffect(() => {
         setRealtimeAuth();
@@ -94,9 +94,9 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const createCollection = async (name: string) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTIONS_TABLE)
-            .insert({ "name": name, "owner_id": userId });
+            .insert({"name": name, "owner_id": userId});
 
         if (error) {
             console.error('Error creating collection:', error);
@@ -106,7 +106,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const getCollections = async () => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('collections(id, name, owner_id, users(id, first_name))')
             .eq('user_id', userId)
@@ -122,7 +122,7 @@ export const SupabaseProvider = ({ children }: any) => {
     }
 
     const getAcceptedUsersCount = async (collectionId) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('user_id, status')
             .eq('collection_id', collectionId)
@@ -143,7 +143,7 @@ export const SupabaseProvider = ({ children }: any) => {
     const getActiveTasksCount = async (collectionId) => {
         const currentTime = new Date().toISOString(); // Current time in ISO format
 
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TASKS_TABLE)
             .select('id')
             .eq('collection_id', collectionId)
@@ -163,7 +163,7 @@ export const SupabaseProvider = ({ children }: any) => {
     const getPendingTaskCount = async (collectionId) => {
         const currentTime = new Date().toISOString(); // Current time in ISO format
 
-        const { data, error } = await client
+        const {data, error} = await client
             .from('tasks')
             .select('id, name')
             .eq('collection_id', collectionId)
@@ -180,8 +180,58 @@ export const SupabaseProvider = ({ children }: any) => {
         return data?.length;
     };
 
-    const completeTask = async (taskId: number) => {
-      return;
+    const completeTask = async (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => {
+        const {logData, logError} = await client
+            .from(TASK_LOGS_TABLE)
+            .insert({
+                "task_id": task.id,
+                "user_id": userId,
+                "completed_at": completionDate.toISOString(),
+                "due_at": task.next_due_at,
+                "comment": logComment
+            });
+
+        if (logError) {
+            console.error('Error logging task:', logError);
+            return;
+        }
+
+        let updates = {
+            last_completed_at: completionDate.toISOString(),
+        };
+
+        if (!task.recurring) {
+            // Non-recurring task: archive it
+            updates = {
+                ...updates,
+                assigned_to_user_id: null,
+                completion_start: null,
+                next_due_at: null,
+                archived_at: new Date().toISOString(),
+            };
+        } else {
+            // Recurring task: calculate the next due date
+            updates.assigned_to_user_id = nextAssignedToUserId;
+
+
+
+
+        }
+
+
+        const { data: taskData, error: taskError } = await client
+            .from(TASKS_TABLE)
+            .update(updates)
+            .match({ id: task.id })
+            .select("*")
+            .single();
+
+        if (taskError) {
+            console.error("Error updating task:", taskError);
+            return null;
+        }
+
+        return taskData;
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -189,10 +239,10 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const getCollection = async (collectionId: number) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTIONS_TABLE)
             .select(`name, id`)
-            .match({ id: collectionId })
+            .match({id: collectionId})
             .single();
 
         if (error) {
@@ -214,10 +264,10 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const updateCollection = async (collection: Collection) => {
-        const { data } = await client
+        const {data} = await client
             .from(COLLECTIONS_TABLE)
-            .update({ name: collection.name })
-            .match({ id: collection.id })
+            .update({name: collection.name})
+            .match({id: collection.id})
             .select('*')
             .single();
 
@@ -244,16 +294,15 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const deleteCollection = async (collectionId: string) => {
-        return await client.from(COLLECTIONS_TABLE).delete().match({ collectionId });
+        return await client.from(COLLECTIONS_TABLE).delete().match({collectionId});
     };
 
 
-
     const getTaskLogs = async (taskId: number) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TASK_LOGS_TABLE)
             .select(`id, comment, completed_at, due_at, users (id, first_name)`)
-            .match({ task_id: taskId });
+            .match({task_id: taskId});
         return data;
     };
 
@@ -263,10 +312,10 @@ export const SupabaseProvider = ({ children }: any) => {
 
 
     const getTaskInformation = async (taskId: number) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TASKS_TABLE)
             .select(`*`)
-            .match({ id: taskId })
+            .match({id: taskId})
             .single();
 
         if (error) {
@@ -292,10 +341,10 @@ export const SupabaseProvider = ({ children }: any) => {
                               next_due_at: Date | null,
                               completion_start: Date | null,
                               completion_window_days: number | null
-        ) => {
-        const { data, error } = await client
+    ) => {
+        const {data, error} = await client
             .from(TAGS_TABLE)
-            .insert({ "tag": tagName, "user_id": userId, "created_at": new Date().toISOString() });
+            .insert({"tag": tagName, "user_id": userId, "created_at": new Date().toISOString()});
 
         if (error) {
             console.error('Error creating to do task:', error);
@@ -305,7 +354,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const updateTask = async (task: Task) => {
-        const { data } = await client
+        const {data} = await client
             .from(TASKS_TABLE)
             .update({
                 name: task.name,
@@ -323,7 +372,7 @@ export const SupabaseProvider = ({ children }: any) => {
                 completion_start: task.completion_start,
                 completion_window_days: task.completion_window_days,
             })
-            .match({ id: task.id })
+            .match({id: task.id})
             .select('*')
             .single();
 
@@ -334,17 +383,17 @@ export const SupabaseProvider = ({ children }: any) => {
         return client
             .from(TASKS_TABLE)
             .delete()
-            .match({ id: taskId })
+            .match({id: taskId})
             .single();
     };
 
     const archiveTask = async (taskId: number) => {
-        const { data } = await client
+        const {data} = await client
             .from(TASKS_TABLE)
             .update({
                 archived_at: new Date().toISOString(),
             })
-            .match({ id: taskId })
+            .match({id: taskId})
             .select('*')
             .single();
 
@@ -352,12 +401,12 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const unArchiveTask = async (taskId: number) => {
-        const { data } = await client
+        const {data} = await client
             .from(TASKS_TABLE)
             .update({
                 archived_at: null,
             })
-            .match({ id: taskId })
+            .match({id: taskId})
             .select('*')
             .single();
 
@@ -370,10 +419,10 @@ export const SupabaseProvider = ({ children }: any) => {
 
 
     const getCollectionTasks = async (collectionId: number) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TASKS_TABLE)
             .select(`*, users (id, first_name, email)`)
-            .match({ collection_id: collectionId });
+            .match({collection_id: collectionId});
 
         if (error) {
             console.error('Error creating to do task:', error);
@@ -383,10 +432,10 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const getBasicTaskInformation = async (taskId: number) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TASKS_TABLE)
             .select(`id, name)`)
-            .match({ id: taskId })
+            .match({id: taskId})
             .single();
 
         if (error) {
@@ -398,7 +447,7 @@ export const SupabaseProvider = ({ children }: any) => {
 
 
     const getCollectionUsers = async (collectionId) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('users!collection_users_user_id_fkey (id, first_name, email)')
             .eq('collection_id', collectionId)
@@ -418,7 +467,7 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const getPendingInvitations = async () => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('id, collections (name, users (first_name)), users!collection_users_invited_by_id_fkey (id, first_name), invited_by_email, invited_at, responded_at')
             .match({user_id: userId})
@@ -432,7 +481,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const acceptInvitation = async (invitationId) => {
-        const {data ,error} = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({responded_at: new Date().toISOString(), status: "ACCEPTED"})
             .match({id: invitationId})
@@ -442,7 +491,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const rejectInvitation = async (invitationId) => {
-        const {data ,error} = await client
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({responded_at: new Date().toISOString(), status: "REJECTED"})
             .match({id: invitationId})
@@ -456,7 +505,7 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const getTags = async () => {
-        const { data } = await client
+        const {data} = await client
             .from(TAGS_TABLE)
             .select(`*`)
             .eq('user_id', userId);
@@ -464,7 +513,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const getActiveTags = async () => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TAGS_TABLE)
             .select(`*`)
             .eq('user_id', userId)
@@ -480,9 +529,9 @@ export const SupabaseProvider = ({ children }: any) => {
 
 
     const createTag = async (tagName: string) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TAGS_TABLE)
-            .insert({ "tag": tagName, "user_id": userId, "created_at": new Date().toISOString() });
+            .insert({"tag": tagName, "user_id": userId, "created_at": new Date().toISOString()});
 
         if (error) {
             console.error('Error creating to do task:', error);
@@ -492,12 +541,12 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const archiveTag = async (tag: Tag) => {
-        const { data } = await client
+        const {data} = await client
             .from(TAGS_TABLE)
             .update({
                 archived_at: new Date().toISOString(),
             })
-            .match({ id: tag.id })
+            .match({id: tag.id})
             .select('*')
             .single();
 
@@ -505,12 +554,12 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const unArchiveTag = async (tag: Tag) => {
-        const { data } = await client
+        const {data} = await client
             .from(TAGS_TABLE)
             .update({
                 archived_at: null,
             })
-            .match({ id: tag.id })
+            .match({id: tag.id})
             .select('*')
             .single();
 
@@ -518,13 +567,13 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const updateTag = async (tag: Tag) => {
-        const { data } = await client
+        const {data} = await client
             .from(TAGS_TABLE)
             .update({
                 tag: tag.tag,
                 tag_icon: tag.tag_icon,
             })
-            .match({ id: tag.id })
+            .match({id: tag.id})
             .select('*')
             .single();
 
@@ -535,7 +584,7 @@ export const SupabaseProvider = ({ children }: any) => {
         return client
             .from(TAGS_TABLE)
             .delete()
-            .match({ id: tagId })
+            .match({id: tagId})
             .single();
     };
 
@@ -544,7 +593,7 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const getToDoTasks = async () => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TO_DO_TASKS_TABLE)
             .select(`*`)
             .eq('user_id', userId)
@@ -559,7 +608,7 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const getArchivedToDoTasks = async () => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TO_DO_TASKS_TABLE)
             .select('*')
             .eq('user_id', userId)
@@ -576,9 +625,15 @@ export const SupabaseProvider = ({ children }: any) => {
     const createToDoTask = async (taskName: string, comment: string, dueDate: Date) => {
         // todo: change due date to actual due date, for testing it is set to now
         // todo: insert the task's comment
-        const { data, error } = await client
+        const {data, error} = await client
             .from(TO_DO_TASKS_TABLE)
-            .insert({ "user_id": userId, "name": taskName, "comment": null, "due_date": new Date().toISOString(), "created_at": new Date().toISOString() });
+            .insert({
+                "user_id": userId,
+                "name": taskName,
+                "comment": null,
+                "due_date": new Date().toISOString(),
+                "created_at": new Date().toISOString()
+            });
 
         if (error) {
             console.error('Error creating to do task:', error);
@@ -589,14 +644,14 @@ export const SupabaseProvider = ({ children }: any) => {
 
 
     const updateToDoTask = async (task: ToDoTask) => {
-        const { data } = await client
+        const {data} = await client
             .from(TO_DO_TASKS_TABLE)
             .update({
                 name: task.name,
                 comment: task.comment,
                 due_date: task.due_date,
             })
-            .match({ id: task.id })
+            .match({id: task.id})
             .select('*')
             .single();
 
@@ -608,17 +663,17 @@ export const SupabaseProvider = ({ children }: any) => {
         return client
             .from(TO_DO_TASKS_TABLE)
             .delete()
-            .match({ id: toDoTaskId })
+            .match({id: toDoTaskId})
             .single();
     };
 
     const completeToDoTask = async (task: ToDoTask) => {
-        const { data } = await client
+        const {data} = await client
             .from(TO_DO_TASKS_TABLE)
             .update({
                 completed_at: new Date().toISOString(),
             })
-            .match({ id: task.id })
+            .match({id: task.id})
             .select('*')
             .single();
 
@@ -626,12 +681,12 @@ export const SupabaseProvider = ({ children }: any) => {
     };
 
     const unCompleteToDoTask = async (task: ToDoTask) => {
-        const { data } = await client
+        const {data} = await client
             .from(TO_DO_TASKS_TABLE)
             .update({
                 completed_at: null,
             })
-            .match({ id: task.id })
+            .match({id: task.id})
             .select('*')
             .single();
 
@@ -643,9 +698,9 @@ export const SupabaseProvider = ({ children }: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const setUserPushToken = async (token: string) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .from(USERS_TABLE)
-            .upsert({ id: userId, push_token: token });
+            .upsert({id: userId, push_token: token});
 
         if (error) {
             console.error('Error setting push token:', error);

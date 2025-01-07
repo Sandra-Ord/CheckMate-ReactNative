@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {Link, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
@@ -27,6 +27,7 @@ const CollectionView = () => {
 
     const [completeTaskModalVisible, setCompleteTaskModalVisible] = useState<boolean>(false);
     const [taskToComplete, setTaskToComplete] = useState<Task>(null);  // the task selected for completion
+    const [completionComment, setCompletionComment] = useState<string>("");
     const [completeTaskDate, setCompleteTaskDate] = useState("");
     const [assignTaskToUserId, setAssignTaskToUserId] = useState("");
 
@@ -37,7 +38,7 @@ const CollectionView = () => {
 
     const onCompleteTask = async () => {
         if (taskToComplete == null) return;
-        const data = await taskToComplete(taskToComplete.id, completeTaskDate, assignTaskToUserId);
+        const data = await completeTask(taskToComplete, completeTaskDate, completionComment, assignTaskToUserId);
         await loadTasks();
     }
 
@@ -240,8 +241,9 @@ const CollectionView = () => {
 
                             <View className="flex-row justify-between items-center">
                                 <Text className="text-2xl font-bold">
-                                    Complete {taskToComplete?.name}:
+                                    Mark as Complete:
                                 </Text>
+
                                 <TouchableOpacity onPress={() => setCompleteTaskModalVisible(false)}>
                                     <Ionicons name="close" size={28} style={{color: Colors.Primary["800"]}}/>
                                 </TouchableOpacity>
@@ -253,15 +255,61 @@ const CollectionView = () => {
                                     height: 1,
                                     backgroundColor: Colors.Complementary["800"],
                                 }}
-                                className="mt-2"
+                                className="my-2"
                             />
 
-                            <Text>
-                                this is a place holder text. this modal will contain fields to mark a task as complete
-                                the user needs ot input the completion date (by default the time of marking as complete)
-                                the user can assign the task to the next person, by default null,
-
-                            </Text>
+                            <View className="py-2 gap-y-2">
+                                <View className="flex-row items-center">
+                                    <Text className="">
+                                        Task: &nbsp;
+                                    </Text>
+                                    <Text className=" font-bold">
+                                        {taskToComplete?.name}
+                                    </Text>
+                                </View>
+                                <View className="flex-row items-center">
+                                    <Text className="">
+                                        Completed at: &nbsp;
+                                    </Text>
+                                    <TextInput
+                                        value={completeTaskDate}
+                                        placeholder="YYYY-MM-DD"
+                                        onChangeText={setCompleteTaskDate}
+                                        className="rounded-lg p-2"
+                                        style={{backgroundColor: Colors.Complementary["50"]}}
+                                        returnKeyType="done"
+                                        enterKeyHint="done"
+                                    />
+                                </View>
+                                <View className="flex-row items-center">
+                                    <Text className="">
+                                        Comment: &nbsp;
+                                    </Text>
+                                    <TextInput
+                                        value={completionComment}
+                                        placeholder="Comment about task"
+                                        onChangeText={setCompletionComment}
+                                        className="rounded-lg p-2"
+                                        style={{backgroundColor: Colors.Complementary["50"]}}
+                                        returnKeyType="done"
+                                        enterKeyHint="done"
+                                    />
+                                </View>
+                                <View className="flex-row items-center">
+                                    <Text className="">
+                                        Assign User: &nbsp;
+                                    </Text>
+                                    <TextInput
+                                        value={completionComment}
+                                        placeholder="Assign User"
+                                        onChangeText={setCompletionComment}
+                                        className="rounded-lg p-2"
+                                        style={{backgroundColor: Colors.Complementary["50"]}}
+                                        returnKeyType="done"
+                                        enterKeyHint="done"
+                                    />
+                                </View>
+                            </View>
 
                             <View className="flex-row items-center justify-center px-5 py-5">
                                 <ActionButton

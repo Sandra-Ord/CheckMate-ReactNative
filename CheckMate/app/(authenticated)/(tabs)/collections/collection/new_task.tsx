@@ -230,7 +230,6 @@ const NewTaskView = () => {
                                     style={{backgroundColor: Colors.Complementary["50"]}}
                                     returnKeyType="done"
                                     enterKeyHint="done"
-                                    autoFocus
                                 />
                             </View>
 
