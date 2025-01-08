@@ -11,9 +11,10 @@ const calculateNextDueDate = (task, completionDate) => {
 
 
     const baseDate =
+        (task.interval_unit && task.interval_value && !task.day_of_week && !task.date_of_month && !task.month_of_year && !task.skip_missed_due_dates) ||
         (task.interval_unit == "week" && task.day_of_week) ||
-        (task.interval_unit == "month" && task.day_of_month) ||
-        (task.interval_unit == "year" && (task.month_of_year || (task.month_of_year && task.day_of_month)))
+        (task.interval_unit == "month" && task.date_of_month) ||
+        (task.interval_unit == "year" && (task.month_of_year || (task.month_of_year && task.date_of_month)))
             ? new Date(task.next_due_at) // Use previous due date if relevant specifying values exist
             : new Date(completionDate);  // Otherwise, use completion date
 
@@ -50,9 +51,9 @@ const calculateNextDueDate = (task, completionDate) => {
             break;
 
         case "month":
-            if (task.day_of_month !== null) {
+            if (task.date_of_month !== null) {
                 // Specific date of a month is selected
-                let targetDay = task.day_of_month;
+                let targetDay = task.date_of_month;
 
                 // Set the date to a number that exists in all months (to avoid increasing the month and days carrying over into the next month)
                 nextDueDate.setDate(1);
@@ -108,7 +109,7 @@ const calculateNextDueDate = (task, completionDate) => {
                 // Set the desired month of the year
                 nextDueDate.setMonth(targetMonth);
                 // Configure the target day - if set, use that value, if not, use the amount of days in the month
-                const targetDay = task.day_of_month || new Date(nextDueDate.getFullYear(), targetMonth + 1, 0).getDate();
+                const targetDay = task.date_of_month || new Date(nextDueDate.getFullYear(), targetMonth + 1, 0).getDate();
                 // Calculate the amount of days in the final due date
                 const daysInMonth = new Date(nextDueDate.getFullYear(), targetMonth + 1, 0).getDate();
                 // Choose the smaller value - set target day or the last date of the month
@@ -125,4 +126,18 @@ const calculateNextDueDate = (task, completionDate) => {
     }
 
     return nextDueDate;
+}
+
+export const calculateCompletionStartDate = (due_date, completion_window_days) => {
+    let completionStart = null;
+    if (completion_window_days !== null && completion_window_days >= 0) {
+        completionStart = new Date(nextDueDate);
+        completionStart.setDate(completionStart.getDate() - completion_window_days);
+    }
+    return completionStart;
+}
+
+export const calculateCompletionStartDateString = (due_date, completion_window_days) : string | null => {
+    let completionStart = calculateCompletionStartDate(due_date, completion_window_days);
+    return completionStart ? completionStart.toISOString() : null;
 }

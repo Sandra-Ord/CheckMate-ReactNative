@@ -7,7 +7,7 @@ import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 const CollectionView = () => {
 
@@ -183,7 +183,7 @@ const CollectionView = () => {
                             }}>
                                 <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]}/>
                             </TouchableOpacity>
-                            <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
+                            <Link href={`/(authenticated)/(tabs)/collections/collection/settings?collectionId=${id}`} asChild>
                                 <TouchableOpacity>
                                     <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]}/>
                                 </TouchableOpacity>

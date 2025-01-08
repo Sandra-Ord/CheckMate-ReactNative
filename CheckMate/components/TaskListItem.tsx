@@ -34,7 +34,7 @@ const TaskListItem = ({task, onTaskComplete} : {task: Task, onTaskComplete: (tas
                         {/* aligned to the right */}
                         <View className="flex-row items-center">
                             <Link
-                                href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${task.id}` as Href}
+                                href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${task.id}&collectionId=${task.collection_id}` as Href}
                                 key={`new-task-${task.id}`}
                                 asChild
                             >
@@ -90,7 +90,7 @@ const TaskListItem = ({task, onTaskComplete} : {task: Task, onTaskComplete: (tas
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="timer-outline" size={16}
                                           style={{color: Colors.Primary["800"]}}/>
-                                <Text>{getBasicRecurrenceDescriptions(task.interval_value, task.interval_unit, task.day_of_week, task.day_of_month, task.month_of_year)}</Text>
+                                <Text>{getBasicRecurrenceDescriptions(task.interval_value, task.interval_unit, task.day_of_week, task.date_of_month, task.month_of_year)}</Text>
                             </View>
                         </View>
 

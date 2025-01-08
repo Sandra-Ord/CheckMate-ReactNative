@@ -4,7 +4,11 @@ import {useAuth} from '@clerk/clerk-expo';
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 import {decode} from 'base64-arraybuffer';
 import {RealtimePostgresChangesPayload} from '@supabase/supabase-js';
-import {calculateNextDueDate} from "@/utils/taskDateUtils.ts";
+import {
+    calculateCompletionStartDate,
+    calculateCompletionStartDateString,
+    calculateNextDueDate
+} from "@/utils/taskDateUtils.ts";
 
 export const COLLECTIONS_TABLE = 'collections';
 export const COLLECTION_USERS_TABLE = 'collection_users'
@@ -34,7 +38,23 @@ type ProviderProps = {
     getTaskLogs: (taskId: number) => Promise<any>;
     // NEW TASK VIEW FUNCTIONS
     getTaskInformation: (taskId: number) => Promise<any>;
-    createTask: (taskId: number) => Promise<any>;
+    createTask: (collection_id: number,
+                 name: string,
+                 description: string,
+                 assigned_to_user_id: string | null,
+                 recurring: boolean,
+                 interval_value: number | null,
+                 interval_unit: number | null,
+                 day_of_week: number | null,
+                 date_of_month: number | null,
+                 month_of_year: number | null,
+                 season_start: Date | null,
+                 season_end: Date | null,
+                 last_completed_at: Date | null,
+                 next_due_at: Date | null,
+                 completion_window_days: number | null,
+                 skip_missed_due_dates: boolean,
+    ) => Promise<any>;
     updateTask: (task: Task) => Promise<any>;
     deleteTask: (taskId: number) => Promise<any>;
     archiveTask: (taskId: number) => Promise<any>;
@@ -276,27 +296,57 @@ export const SupabaseProvider = ({children}: any) => {
     const createTask = async (collection_id: number,
                               name: string,
                               description: string,
+                              assigned_to_user_id: string | null,
                               recurring: boolean,
                               interval_value: number | null,
                               interval_unit: number | null,
                               day_of_week: number | null,
-                              day_of_month: number | null,
+                              date_of_month: number | null,
                               month_of_year: number | null,
                               season_start: Date | null,
                               season_end: Date | null,
                               last_completed_at: Date | null,
                               next_due_at: Date | null,
-                              completion_start: Date | null,
-                              completion_window_days: number | null
+                              completion_window_days: number | null,
+                              skip_missed_due_dates: boolean,
     ) => {
+        console.log("-------------------------");
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+        console.log("-------------------------")
+
         const {data, error} = await client
-            .from(TAGS_TABLE)
-            .insert({"tag": tagName, "user_id": userId, "created_at": new Date().toISOString()});
+            .from(TASKS_TABLE)
+            .insert({
+                "collection_id": collectionId,
+                "name": name,
+                "description": description,
+                "assigned_to_user_id": assigned_to_user_id,
+                "recurring": recurring,
+                "interval_value": interval_value,
+                "interval_unit": interval_unit,
+                "day_of_week": day_of_week,
+                "date_of_month": date_of_month,
+                "month_of_year": month_of_year,
+                "season_start": season_start,
+                "season_end": season_end,
+                "last_completed_at": last_completed_at,
+                "next_due_at": next_due_at,
+                "completion_start": calculateCompletionStartDateString(next_due_at, completion_window_days),
+                "skip_missed_due_dates": skip_missed_due_dates
+            });
 
         if (error) {
             console.error('Error creating to do task:', error);
         }
-
+        console.log(data)
         return data;
     };
 
@@ -306,18 +356,20 @@ export const SupabaseProvider = ({children}: any) => {
             .update({
                 name: task.name,
                 description: task.description,
+                assigned_to_user_id: task.assigned_to_user_id,
                 recurring: task.recurring,
                 interval_value: task.interval_value,
                 interval_unit: task.interval_unit,
                 day_of_week: task.day_of_week,
-                day_of_month: task.day_of_month,
+                date_of_month: task.date_of_month,
                 month_of_year: task.month_of_year,
                 season_start: task.season_start,
                 season_end: task.season_end,
                 last_completed_at: task.last_completed_at,
                 next_due_at: task.next_due_at,
-                completion_start: task.completion_start,
+                completion_start: calculateCompletionStartDateString(task.next_due_at, task.completion_window_days),
                 completion_window_days: task.completion_window_days,
+                skip_missed_due_dates: task.skip_missed_due_dates,
             })
             .match({id: task.id})
             .select('*')
@@ -363,7 +415,7 @@ export const SupabaseProvider = ({children}: any) => {
     // -----------------------------------------------------------------------------------------------------------------
     // ------------------------------------------ COLLECTION VIEW FUNCTIONS --------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
-    
+
     const completeTask = async (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => {
         const {logData, logError} = await client
             .from(TASK_LOGS_TABLE)
@@ -394,15 +446,11 @@ export const SupabaseProvider = ({children}: any) => {
             };
         } else {
             const nextDueDate = calculateNextDueDate(task, completionDate);
-            let completionStart = null;
-            if (task.completion_window_days !== null) {
-                completionStart = new Date(nextDueDate);
-                completionStart.setDate(completionStart.getDate() - task.completion_window_days);
-            }
+            const completionStart = calculateCompletionStartDateString(nextDueDate, task.completion_window_days)
 
             updates = {
                 assigned_to_user_id: nextAssignedToUserId,
-                completion_start: completionStart ? completionStart.toISOString() : null,
+                completion_start: completionStart,
                 next_due_at: calculateNextDueDate(task),
                 last_completed_at: completionDate.toISOString(),
             }

@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 const ToDoTaskModal = ({
                            closeModal,

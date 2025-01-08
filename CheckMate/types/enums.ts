@@ -26,16 +26,16 @@ export enum CollectionRole {
 }
 
 export enum CollectionInvitationStatus {
-    Pending = 1,
+    Pending = 0,
     Rejected = -1,
     Accepted = 1,
 }
 
 export enum IntervalUnit {
-    Days = 'days',
-    Weeks = 'weeks',
-    Months = 'months',
-    Years = 'years',
+    Days = 'day',
+    Weeks = 'week',
+    Months = 'month',
+    Years = 'year',
 }
 
 export interface User {
@@ -75,7 +75,7 @@ export interface Task {
     interval_value: number | null,
     interval_unit: IntervalUnit | null,
     day_of_week: Number | null,
-    day_of_month: Number | null,
+    date_of_month: Number | null,
     month_of_year: Number | null,
     season_start: Date | null,
     season_end: Date | null,
@@ -83,7 +83,7 @@ export interface Task {
     next_due_at: Date | null,
     completion_start: Date | null,
     completion_window_days: number | null,
-    skipMissedDueDates: boolean
+    skip_missed_due_dates: boolean
 }
 
 export interface TaskLog {

@@ -5,7 +5,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {Tag} from "@/types/enums";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 
 const NewTagModal = ({

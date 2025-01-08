@@ -6,7 +6,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import UserListItem from "@/components/UserListItem";
 import {Colors} from "@/constants/Colors";
 import {Collection, User} from "@/types/enums";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 const Settings = () => {
     const router = useRouter();

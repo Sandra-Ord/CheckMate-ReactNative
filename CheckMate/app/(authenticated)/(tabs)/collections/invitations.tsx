@@ -6,7 +6,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {CollectionUser} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import {formatShortDate} from "@/utils/textUtils.ts";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 const InvitationsView = () => {
 

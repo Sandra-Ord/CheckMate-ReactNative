@@ -2,7 +2,7 @@ import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
 import {Colors} from "@/constants/Colors";
-import ActionButton from "@/components/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 
 const Account = () => {
     const {signOut} = useAuth();
