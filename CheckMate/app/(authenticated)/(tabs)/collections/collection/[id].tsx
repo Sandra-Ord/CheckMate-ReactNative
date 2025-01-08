@@ -12,7 +12,6 @@ import ActionButton from "@/components/uiComponents/ActionButton.tsx";
 const CollectionView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
-
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const [collection, setCollection] = useState<Collection>();
@@ -183,7 +182,7 @@ const CollectionView = () => {
                             }}>
                                 <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]}/>
                             </TouchableOpacity>
-                            <Link href={`/(authenticated)/(tabs)/collections/collection/settings?collectionId=${id}`} asChild>
+                            <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
                                 <TouchableOpacity>
                                     <Ionicons name="ellipsis-horizontal" size={26} color={Colors.Complementary["900"]}/>
                                 </TouchableOpacity>
@@ -202,7 +201,7 @@ const CollectionView = () => {
                         <Text className="pl-3">Filter/Sort</Text>
                     </TouchableOpacity>
 
-                    <Link href={`/(authenticated)/(tabs)/collections/collection/new_task`} asChild>
+                    <Link href={`/(authenticated)/(tabs)/collections/collection/new_task?collectionId=${id}`} asChild>
                         <TouchableOpacity className="flex-row items-center">
                             <Text className="pr-2">Add Task</Text>
                             <Ionicons name='add' size={20} style={{color: Colors.primaryGray}}/>

@@ -10,8 +10,8 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import React, {useEffect, useState} from "react";
-import {useLocalSearchParams, useRouter, Stack} from "expo-router";
+import React, {useCallback, useEffect, useState} from "react";
+import {useLocalSearchParams, useRouter, Stack, useFocusEffect} from "expo-router";
 import {useSupabase} from "@/context/SupabaseContext";
 import {getRecurrenceDescription} from "@/utils/textUtils";
 import {Colors} from "@/constants/Colors";
@@ -32,10 +32,19 @@ const NewTaskView = () => {
     const router = useRouter();
     const {collectionId} = useLocalSearchParams<{ collectionId?: string }>()
     const {id} = useLocalSearchParams<{ id?: string }>()
+    console.log(collectionId);
 
-    const {getTaskInformation, createTask, updateTask, archiveTask, unArchiveTask, deleteTask} = useSupabase();
+    const {
+        getTaskInformation,
+        createTask,
+        updateTask,
+        archiveTask,
+        unArchiveTask,
+        deleteTask
+    } = useSupabase();
 
-    const [task, setTask] = useState();
+    const [task, setTask] = useState<Task>();
+    console.log("Task name" + task?.name)
     const [taskName, setTaskName] = useState("");
     const [description, setDescription] = useState("");
     const [isRecurring, setIsRecurring] = useState<boolean>(true);
@@ -55,7 +64,7 @@ const NewTaskView = () => {
     const [timingOption, setTimingOption] = useState("auto"); // 'auto', 'previous', 'next'
     const [dueDate, setDueDate] = useState("");
     const [lastCompletedAt, setLastCompletedAt] = useState("");
-    const [completionWindow, setCompletionWindow] = useState("");
+    const [completionWindow, setCompletionWindow] = useState(null);
 
     const [isIntervalUnitDropdownOpen, setIsIntervalUnitDropdownOpen] = useState(false);
     const [isWeekdayDropdownOpen, setIsWeekdayDropdownOpen] = useState(false);
@@ -91,7 +100,7 @@ const NewTaskView = () => {
     const handleCompletionWindowInput = (txt) => {
         const numericValue = txt.replace(/[^0-9]/g, '');
         const nonNegativeValue = numericValue === '' ? '' : Math.max(0, parseInt(numericValue, 10));
-        setIntervalValue(nonNegativeValue.toString());
+        setCompletionWindow(nonNegativeValue.toString());
     }
 
     const handleDateOfMonthInput = (txt) => {
@@ -129,52 +138,52 @@ const NewTaskView = () => {
             alert('Please enter a task name.');
             return;
         }
-        await createTask(
-            collectionId,
-            taskName.trim(),
-            description.trim(),
-            null,
-            isRecurring,
-            intervalValue ? parseInt(intervalValue) : null,
-            intervalUnit,
-            dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null,
-            dateOfMonth ? parseInt(dateOfMonth) : null,
-            monthOfYear ? monthOptions.indexOf(monthOfYear) : null,
-            seasonStart ? seasonStart : null,
-            seasonEnd ? seasonEnd : null,
-            lastCompletedAt ? lastCompletedAt : null,
-            dueDate ? dueDate : null,
-            parseInt(completionWindow),
-            skipMissedDueDates);
+        const newTask = {
+            collection_id: collectionId,
+            name: taskName.trim(),
+            description: description?.trim() || null,
+            recurring: isRecurring,
+            interval_value: intervalValue ? parseInt(intervalValue) : null,
+            interval_unit: intervalUnit || null,
+            day_of_week: dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null,
+            date_of_month: dateOfMonth ? parseInt(dateOfMonth) : null,
+            month_of_year: monthOfYear ? monthOptions.indexOf(monthOfYear) : null,
+            season_start: seasonStart || null,
+            season_end: seasonEnd || null,
+            last_completed_at: lastCompletedAt || null,
+            completion_window_days: completionWindow !== null ? parseInt(completionWindow) : null,
+            next_due_at: dueDate || null,
+            assigned_to_user_id: null, // Assuming no user is assigned by default
+        };
+
+        await createTask(newTask);
         router.back();
     };
 
+
     const onUpdateTask = async () => {
+        if (!task) {
+            alert('You are in edit mode without a task');
+            router.back();
+            return;
+        }
         if (!taskName.trim()) {
             alert('Please enter a task name.');
             return;
         }
-
         task.name = taskName.trim();
-        task.description = description.trim();
+        task.description = description ? description.trim() : null;
         task.recurring = isRecurring;
-
-        task.interval_value = parseInt(intervalValue);
+        task.interval_value = intervalValue ? parseInt(intervalValue) : null;
         task.interval_unit = intervalUnit;
-
-        task.day_of_week = weekdayOptions.indexOf(dayOfWeek);
-        task.date_of_month = parseInt(dateOfMonth);
-        task.month_of_year =  monthOptions.indexOf(monthOfYear);
-
-        task.season_start = seasonStart;
-        task.season_end = seasonEnd;
-
-        task.last_completed_at = lastCompletedAt;
-        task.completion_window_days = parseInt(completionWindow);
-        task.next_due_at = dueDate
-
-        console.log(task);
-
+        task.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
+        task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
+        task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
+        task.season_start = seasonStart ? seasonStart : null;
+        task.season_end = seasonEnd ? seasonEnd : null;
+        task.last_completed_at = lastCompletedAt ? lastCompletedAt : null;
+        task.completion_window_days = completionWindow !== null ? parseInt(completionWindow) : null;
+        task.next_due_at = dueDate ? dueDate : null;
         await updateTask(task);
         router.back();
     };
@@ -222,11 +231,14 @@ const NewTaskView = () => {
     };
 
     // If the modal is opened in edit more
-    useEffect(() => {
-        if (id) {
-            loadTask();
-        }
-    }, [id]);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (id) {
+                loadTask();
+            }
+        }, [])
+    );
 
     return (
         <SafeAreaView className="flex-1">
@@ -537,7 +549,7 @@ const NewTaskView = () => {
                                             <TextInput
                                                 value={completionWindow}
                                                 placeholder="Enter Completion Window"
-                                                onChangeText={() => handleCompletionWindowInput()}
+                                                onChangeText={handleCompletionWindowInput}
                                                 className="rounded-lg flex-1 p-2"
                                                 style={{backgroundColor: Colors.Complementary["50"]}}
                                                 keyboardType="numeric"
@@ -548,7 +560,8 @@ const NewTaskView = () => {
                                         {showCompletionWindowsInfo && (
                                             <View>
                                                 <Text className="text-xs italic" style={{color: Colors.Primary["600"]}}>
-                                                    The amount of days before the due date, that the task is available for completion.
+                                                    The amount of days before the due date, that the task is available
+                                                    for completion.
                                                 </Text>
                                             </View>
                                         )}

@@ -293,87 +293,30 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
-    const createTask = async (collection_id: number,
-                              name: string,
-                              description: string,
-                              assigned_to_user_id: string | null,
-                              recurring: boolean,
-                              interval_value: number | null,
-                              interval_unit: number | null,
-                              day_of_week: number | null,
-                              date_of_month: number | null,
-                              month_of_year: number | null,
-                              season_start: Date | null,
-                              season_end: Date | null,
-                              last_completed_at: Date | null,
-                              next_due_at: Date | null,
-                              completion_window_days: number | null,
-                              skip_missed_due_dates: boolean,
-    ) => {
-        console.log("-------------------------");
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-        console.log("-------------------------")
-
+    const createTask = async (task: Task) => {
         const {data, error} = await client
             .from(TASKS_TABLE)
-            .insert({
-                "collection_id": collectionId,
-                "name": name,
-                "description": description,
-                "assigned_to_user_id": assigned_to_user_id,
-                "recurring": recurring,
-                "interval_value": interval_value,
-                "interval_unit": interval_unit,
-                "day_of_week": day_of_week,
-                "date_of_month": date_of_month,
-                "month_of_year": month_of_year,
-                "season_start": season_start,
-                "season_end": season_end,
-                "last_completed_at": last_completed_at,
-                "next_due_at": next_due_at,
-                "completion_start": calculateCompletionStartDateString(next_due_at, completion_window_days),
-                "skip_missed_due_dates": skip_missed_due_dates
-            });
-
+            .insert(task)
+            .select("*");
         if (error) {
-            console.error('Error creating to do task:', error);
+            console.error('Error creating task:', error);
         }
-        console.log(data)
         return data;
     };
 
     const updateTask = async (task: Task) => {
-        const {data} = await client
+        console.log("update task")
+        console.log(task);
+        const {data, error} = await client
             .from(TASKS_TABLE)
-            .update({
-                name: task.name,
-                description: task.description,
-                assigned_to_user_id: task.assigned_to_user_id,
-                recurring: task.recurring,
-                interval_value: task.interval_value,
-                interval_unit: task.interval_unit,
-                day_of_week: task.day_of_week,
-                date_of_month: task.date_of_month,
-                month_of_year: task.month_of_year,
-                season_start: task.season_start,
-                season_end: task.season_end,
-                last_completed_at: task.last_completed_at,
-                next_due_at: task.next_due_at,
-                completion_start: calculateCompletionStartDateString(task.next_due_at, task.completion_window_days),
-                completion_window_days: task.completion_window_days,
-                skip_missed_due_dates: task.skip_missed_due_dates,
-            })
+            .update(task)
             .match({id: task.id})
             .select('*')
             .single();
+
+        if (error) {
+            console.error("Error updating task: " + error);
+        }
 
         return data;
     };

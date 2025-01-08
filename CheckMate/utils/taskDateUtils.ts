@@ -130,7 +130,7 @@ const calculateNextDueDate = (task, completionDate) => {
 
 export const calculateCompletionStartDate = (due_date, completion_window_days) => {
     let completionStart = null;
-    if (completion_window_days !== null && completion_window_days >= 0) {
+    if (duea_date !== null && completion_window_days !== null && completion_window_days >= 0) {
         completionStart = new Date(nextDueDate);
         completionStart.setDate(completionStart.getDate() - completion_window_days);
     }
@@ -139,5 +139,5 @@ export const calculateCompletionStartDate = (due_date, completion_window_days) =
 
 export const calculateCompletionStartDateString = (due_date, completion_window_days) : string | null => {
     let completionStart = calculateCompletionStartDate(due_date, completion_window_days);
-    return completionStart ? completionStart.toISOString() : null;
+    return completionStart !== null ? completionStart.toISOString() : null;
 }
