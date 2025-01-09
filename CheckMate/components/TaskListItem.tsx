@@ -72,7 +72,7 @@ const TaskListItem = ({task, onTaskComplete} : {task: Task, onTaskComplete: (tas
                             <View className="flex-row items-center pb-1">
                                 <Ionicons className="pr-2" name="calendar-outline" size={16}
                                           style={{color: Colors.Primary["800"]}}/>
-                                <Text>Due {formatShortDate(task.next_due_at)}</Text>
+                                <Text>{task.next_due_at ? `Due ${formatShortDate(task.next_due_at)}` : "No due date"}</Text>
                             </View>
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="person-circle-outline" size={16}

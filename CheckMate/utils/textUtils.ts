@@ -35,11 +35,21 @@ export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayO
         description += `${intervalValue} ${intervalUnit}s`;
     }
 
+    const days = {
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "7": "Sunday",
+    }
+
     if (intervalUnit === "day") {
         // No other specifying options for days.
     } else if (intervalUnit === "week" && dayOfWeek) {
         // Every week on weekday.
-        description += ` on ${dayOfWeek}`;
+        description += ` on ${days[dayOfWeek]}`;
     } else if (intervalUnit === "month" && dateOfMonth) {
         // Every month on Xth date.
         const dayWithSuffix = `${dateOfMonth}${getNumberSuffix(Number(dateOfMonth))}`;

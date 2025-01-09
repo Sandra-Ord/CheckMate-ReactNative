@@ -8,6 +8,7 @@ import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
 import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import HorizontalInput from "@/components/uiComponents/HorizontalInput.tsx";
 
 const CollectionView = () => {
 
@@ -27,8 +28,8 @@ const CollectionView = () => {
     const [completeTaskModalVisible, setCompleteTaskModalVisible] = useState<boolean>(false);
     const [taskToComplete, setTaskToComplete] = useState<Task>(null);  // the task selected for completion
     const [completionComment, setCompletionComment] = useState<string>("");
-    const [completeTaskDate, setCompleteTaskDate] = useState("");
-    const [assignTaskToUserId, setAssignTaskToUserId] = useState("");
+    const [completeTaskDate, setCompleteTaskDate] = useState(new Date());
+    const [assignTaskToUserId, setAssignTaskToUserId] = useState(null);
 
     const handleTaskCompletion = (task: Task) => {
         setTaskToComplete(task);
@@ -36,9 +37,20 @@ const CollectionView = () => {
     };
 
     const onCompleteTask = async () => {
+        console.log("on complete task")
+        console.log("tasktocomplete is null? " + (taskToComplete == null))
+        console.log(taskToComplete)
         if (taskToComplete == null) return;
         const data = await completeTask(taskToComplete, completeTaskDate, completionComment, assignTaskToUserId);
-        await loadTasks();
+        console.log("complete data")
+        console.log(data);
+        console.log("visible" + completeTaskModalVisible)
+        setCompleteTaskModalVisible(false);
+        console.log("visible" + completeTaskModalVisible)
+        setTaskToComplete(null);
+        setAssignTaskToUserId(null);
+        setCompletionComment("");
+        //await loadTasks();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -235,93 +247,73 @@ const CollectionView = () => {
                         style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}
                         onPress={() => setCompleteTaskModalVisible(false)}
                     >
+                        <TouchableOpacity onPress={() => console.log("press")}>
+                            <View className="rounded-lg p-4 mx-4"
+                                  style={{backgroundColor: Colors.Complementary["100"]}}>
 
-                        <View className="rounded-lg p-4 mx-4" style={{backgroundColor: Colors.Complementary["100"]}}>
-
-                            <View className="flex-row justify-between items-center">
-                                <Text className="text-2xl font-bold">
-                                    Mark as Complete:
-                                </Text>
-
-                                <TouchableOpacity onPress={() => setCompleteTaskModalVisible(false)}>
-                                    <Ionicons name="close" size={28} style={{color: Colors.Primary["800"]}}/>
-                                </TouchableOpacity>
-                            </View>
-
-                            {/* separator line */}
-                            <View
-                                style={{
-                                    height: 1,
-                                    backgroundColor: Colors.Complementary["800"],
-                                }}
-                                className="my-2"
-                            />
-
-                            <View className="py-2 gap-y-2">
-                                <View className="flex-row items-center">
-                                    <Text className="">
-                                        Task: &nbsp;
+                                <View className="flex-row justify-between items-center">
+                                    <Text className="text-2xl font-bold">
+                                        Mark as Complete:
                                     </Text>
-                                    <Text className=" font-bold">
-                                        {taskToComplete?.name}
-                                    </Text>
+
+                                    <TouchableOpacity onPress={() => setCompleteTaskModalVisible(false)}>
+                                        <Ionicons name="close" size={28} style={{color: Colors.Primary["800"]}}/>
+                                    </TouchableOpacity>
                                 </View>
-                                <View className="flex-row items-center">
-                                    <Text className="">
-                                        Completed at: &nbsp;
-                                    </Text>
-                                    <TextInput
-                                        value={completeTaskDate}
-                                        placeholder="YYYY-MM-DD"
-                                        onChangeText={setCompleteTaskDate}
-                                        className="rounded-lg p-2"
-                                        style={{backgroundColor: Colors.Complementary["50"]}}
-                                        returnKeyType="done"
-                                        enterKeyHint="done"
-                                    />
-                                </View>
-                                <View className="flex-row items-center">
-                                    <Text className="">
-                                        Comment: &nbsp;
-                                    </Text>
-                                    <TextInput
-                                        value={completionComment}
-                                        placeholder="Comment about task"
-                                        onChangeText={setCompletionComment}
-                                        className="rounded-lg p-2"
-                                        style={{backgroundColor: Colors.Complementary["50"]}}
-                                        returnKeyType="done"
-                                        enterKeyHint="done"
-                                    />
-                                </View>
-                                <View className="flex-row items-center">
-                                    <Text className="">
-                                        Assign User: &nbsp;
-                                    </Text>
-                                    <TextInput
-                                        value={completionComment}
-                                        placeholder="Assign User"
-                                        onChangeText={setCompletionComment}
-                                        className="rounded-lg p-2"
-                                        style={{backgroundColor: Colors.Complementary["50"]}}
-                                        returnKeyType="done"
-                                        enterKeyHint="done"
-                                    />
-                                </View>
-                            </View>
 
-                            <View className="flex-row items-center justify-center px-5 py-5">
-                                <ActionButton
-                                    onPress={() => console.log("yolo")}
-                                    iconName="checkbox-outline"
-                                    text="Complete"
-                                    textColor={Colors.Complementary["100"]}
-                                    buttonColor={Colors.Complementary["600"]}
+                                {/* separator line */}
+                                <View
+                                    style={{
+                                        height: 1,
+                                        backgroundColor: Colors.Complementary["800"],
+                                    }}
+                                    className="my-2"
                                 />
+
+                                <View className="py-2 gap-y-5">
+                                    <View className="flex-row items-center gap-x-5">
+                                        <Text className="text-sm" style={{color: Colors.Primary["800"]}}>
+                                            Task:
+                                        </Text>
+                                        <Text className=" font-bold">
+                                            {taskToComplete?.name}
+                                        </Text>
+                                    </View>
+
+                                    <HorizontalInput
+                                        labelText="Completed at:"
+                                        placeholder="YYYY-MM-DD"
+                                        value={completeTaskDate.toISOString()}
+                                        onChangeText={setCompleteTaskDate}
+                                    />
+                                    <HorizontalInput
+                                        labelText="Comment:"
+                                        placeholder=""
+                                        value={completionComment}
+                                        onChangeText={setCompletionComment}
+                                        multiline={true}
+                                        numberOfLines={3}
+                                    />
+                                    <HorizontalInput
+                                        labelText="Assign User:"
+                                        placeholder="Assign a user..."
+                                        value={assignTaskToUserId}
+                                        onChangeText={setAssignTaskToUserId}
+                                    />
+
+                                    <View className="flex-row items-center justify-center px-5 py-5">
+                                        <ActionButton
+                                            onPress={onCompleteTask}
+                                            iconName="checkbox-outline"
+                                            text="Complete"
+                                            textColor={Colors.Complementary["100"]}
+                                            buttonColor={Colors.Complementary["600"]}
+                                        />
+                                    </View>
+
+                                </View>
                             </View>
-
-                        </View>
-
+                        </TouchableOpacity>
                     </TouchableOpacity>
                 </Modal>
 

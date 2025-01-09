@@ -1,6 +1,6 @@
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 
-const calculateNextDueDate = (task, completionDate) => {
+export const calculateNextDueDate = (task, completionDate) => {
 
     if (!task.recurring) {
         // Non-recurring task: no next due date
@@ -129,15 +129,31 @@ const calculateNextDueDate = (task, completionDate) => {
 }
 
 export const calculateCompletionStartDate = (due_date, completion_window_days) => {
+    console.log("inside the calculateCompletionStartDate")
+
     let completionStart = null;
-    if (duea_date !== null && completion_window_days !== null && completion_window_days >= 0) {
-        completionStart = new Date(nextDueDate);
+    if (due_date !== null && completion_window_days !== null && completion_window_days >= 0) {
+        console.log("if statement true")
+        console.log("due_date !== null " + (due_date !== null))
+        console.log("completion_window_days !== null " + (completion_window_days !== null))
+        console.log("completion_window_days >= 0" + (completion_window_days >= 0))
+        console.log("completion_window_days" + completion_window_days)
+        console.log()
+        completionStart = new Date(due_date);
+        console.log("base date " + completionStart)
         completionStart.setDate(completionStart.getDate() - completion_window_days);
+        console.log("new date " + completionStart)
+
     }
+    console.log("value returned " + completionStart)
     return completionStart;
 }
 
 export const calculateCompletionStartDateString = (due_date, completion_window_days) : string | null => {
+    console.log("inside the calculateCompletionStartDateString")
     let completionStart = calculateCompletionStartDate(due_date, completion_window_days);
-    return completionStart !== null ? completionStart.toISOString() : null;
+    console.log("before returning")
+    console.log("value " + completionStart)
+    console.log("returning value = " + (completionStart?.toISOString() ?? null))
+    return completionStart?.toISOString() ?? null;
 }

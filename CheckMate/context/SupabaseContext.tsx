@@ -360,6 +360,11 @@ export const SupabaseProvider = ({children}: any) => {
     // -----------------------------------------------------------------------------------------------------------------
 
     const completeTask = async (task: Task, completionDate: Date, logComment: string, nextAssignedToUserId: string) => {
+        console.log(task);
+        console.log(completionDate)
+        console.log(logComment)
+        console.log(userId)
+        console.log(nextAssignedToUserId)
         const {logData, logError} = await client
             .from(TASK_LOGS_TABLE)
             .insert({
@@ -367,44 +372,93 @@ export const SupabaseProvider = ({children}: any) => {
                 "user_id": userId,
                 "completed_at": completionDate.toISOString(),
                 "due_at": task.next_due_at,
-                "comment": logComment
+                "comment": logComment ? logComment.trim() : null
             });
 
+        console.log("after log creation")
         if (logError) {
             console.error('Error logging task:', logError);
             return;
         }
 
-        let updates = {};
 
         if (!task.recurring) {
             // Non-recurring task: archive it
-            updates = {
-                ...updates,
-                assigned_to_user_id: null,
-                last_completed_at: completionDate.toISOString(),
-                completion_start: null,
-                next_due_at: null,
-                archived_at: new Date().toISOString(),
-            };
-        } else {
-            const nextDueDate = calculateNextDueDate(task, completionDate);
-            const completionStart = calculateCompletionStartDateString(nextDueDate, task.completion_window_days)
+            console.log("not recurring task");
+            console.log("checkpoint 1")
+            task.assigned_to_user_id = nextAssignedToUserId ? nextAssignedToUserId : null;
+            console.log("checkpoint 2")
 
-            updates = {
-                assigned_to_user_id: nextAssignedToUserId,
-                completion_start: completionStart,
-                next_due_at: calculateNextDueDate(task),
-                last_completed_at: completionDate.toISOString(),
-            }
+            task.last_completed_at = completionDate.toISOString();
+            console.log("checkpoint 3")
+
+            task.completion_start = null;
+            console.log("checkpoint 4")
+
+            task.next_due_at = null;
+            console.log("checkpoint 5")
+
+            task.archived_at = new Date().toISOString();
+            console.log("checkpoint 6")
+
+            console.log(updates)
+            console.log("after not recurring task updates");
+        } else {
+            console.log("recurring task")
+
+            console.log("checkpoint 1 nextDueDate calculate" )
+
+            const nextDueDate = calculateNextDueDate(task, completionDate);
+            console.log(nextDueDate)
+
+            console.log("checkpoint 1.2 completionStart calculate")
+            const completionStart = calculateCompletionStartDateString(nextDueDate, task.completion_window_days)
+            console.log(completionStart)
+
+            console.log("checkpoint 1.3")
+
+            console.log("checkpoint 2 assigned_to_user_id")
+            console.log(task.assigned_to_user_id)
+            task.assigned_to_user_id = nextAssignedToUserId ? nextAssignedToUserId : null;
+            console.log(task.assigned_to_user_id)
+
+            console.log("checkpoint 3 completion start")
+            console.log( task.completion_start)
+            task.completion_start = completionStart;
+            console.log( task.completion_start)
+
+            console.log("checkpoint 4 next_due_at task.next_due_at")
+            console.log(task.next_due_at)
+            task.next_due_at = nextDueDate;
+            console.log(task.next_due_at)
+
+            console.log("checkpoint 5 task.last_completed_at")
+            console.log(task.last_completed_at)
+            task.last_completed_at = completionDate;
+            console.log(task.last_completed_at)
+
+            console.log("full task");
+            console.log(task);
+            console.log("after recurring task updates")
         }
 
+        console.log("before task update")
+
+        console.log(task)
         const { taskData, taskError } = await client
             .from(TASKS_TABLE)
-            .update(updates)
-            .match({ id: task.id })
+            .update({
+                last_completed_at: task.last_completed_at,
+                completion_start: task.completion_start,
+                next_due_at: task.next_due_at,
+                assigned_to_user_id: task.assigned_to_user_id,
+                archived_at: task.archived_at
+            })
+            .eq('id', task.id )
             .select("*")
             .single();
+
+        console.log("after task update")
 
         if (taskError) {
             console.error("Error updating task:", taskError);

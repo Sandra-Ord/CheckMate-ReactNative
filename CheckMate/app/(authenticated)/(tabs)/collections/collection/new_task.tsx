@@ -154,6 +154,7 @@ const NewTaskView = () => {
             completion_window_days: completionWindow !== null ? parseInt(completionWindow) : null,
             next_due_at: dueDate || null,
             assigned_to_user_id: null, // Assuming no user is assigned by default
+            skip_missed_due_dates: skipMissedDueDates,
         };
 
         await createTask(newTask);
@@ -215,15 +216,15 @@ const NewTaskView = () => {
         setIntervalValue(task.interval_value?.toString());
         setIntervalUnit(task.interval_unit);
 
-        setDayOfWeek(task.day_of_week);
-        setDateOfMonth(task.date_of_month?.toString());
-        setMonthOfYear(task.month_of_year);
+        setDayOfWeek(weekdayOptions[task.day_of_week ? task.day_of_week : 0]);
+        setDateOfMonth(task.date_of_month?.toString() ?? null);
+        setMonthOfYear(monthOptions[task.month_of_year ? task.month_of_year : 0]);
 
         if (task.season_start !== null && task.season_end !== null) {
             setSeasonalTask(true);
         }
-        setSeasonStart(task.season_start?.toString());
-        setSeasonEnd(task.season_end?.toString());
+        setSeasonStart(task.season_start?.toString() ?? null);
+        setSeasonEnd(task.season_end?.toString() ?? null);
 
         setDueDate(task.next_due_at);
         setLastCompletedAt(task.last_completed_at);
@@ -286,6 +287,7 @@ const NewTaskView = () => {
                                     value={description}
                                     onChangeText={setDescription}
                                     multiline={true}
+                                    numberOfLines={3}
                                 />
 
                                 {/* Recurring Toggle Switch */}
