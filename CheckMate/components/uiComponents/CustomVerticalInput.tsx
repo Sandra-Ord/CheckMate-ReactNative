@@ -1,9 +1,11 @@
 import React from 'react';
 import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import {Colors} from "@/constants/Colors";
+import {placeholder} from "@babel/types";
 
 const CustomVerticalInput = ({
                                  labelText,
+                                 placeholder,
                                  value,
                                  handlePress,
                                  inputBackgroundColor = Colors.Complementary["50"],
@@ -20,7 +22,7 @@ const CustomVerticalInput = ({
                 className="rounded-lg p-2"
                 style={{backgroundColor: inputBackgroundColor}}
             >
-                <Text style={{color: textColor}}>{value}</Text>
+                <Text style={{color: textColor}}>{value || placeholder}</Text>
             </TouchableOpacity>
         </View>
     );

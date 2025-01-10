@@ -24,6 +24,8 @@ import SwitchInput from "@/components/uiComponents/SwitchInput";
 import CustomVerticalInput from "@/components/uiComponents/CustomVerticalInput";
 import DropdownModal from "@/components/uiComponents/DropdownModal";
 import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput";
+import {calculateCompletionStartDateString, calculateNextDueDate} from "@/utils/taskDateUtils.ts";
+import CalendarInput from "@/components/uiComponents/CalendarInput.tsx";
 
 const NewTaskView = () => {
 
@@ -32,7 +34,6 @@ const NewTaskView = () => {
     const router = useRouter();
     const {collectionId} = useLocalSearchParams<{ collectionId?: string }>()
     const {id} = useLocalSearchParams<{ id?: string }>()
-    console.log(collectionId);
 
     const {
         getTaskInformation,
@@ -44,7 +45,6 @@ const NewTaskView = () => {
     } = useSupabase();
 
     const [task, setTask] = useState<Task>();
-    console.log("Task name" + task?.name)
     const [taskName, setTaskName] = useState("");
     const [description, setDescription] = useState("");
     const [isRecurring, setIsRecurring] = useState<boolean>(true);
@@ -61,6 +61,7 @@ const NewTaskView = () => {
     const [seasonStart, setSeasonStart] = useState("");
     const [seasonEnd, setSeasonEnd] = useState("");
 
+    const [adjustDates, setAdjustDates] = useState<boolean>(false);
     const [timingOption, setTimingOption] = useState("auto"); // 'auto', 'previous', 'next'
     const [dueDate, setDueDate] = useState("");
     const [lastCompletedAt, setLastCompletedAt] = useState("");
@@ -129,6 +130,51 @@ const NewTaskView = () => {
         setIsMonthDropdownOpen(false);
     };
 
+    const [seasonStartCalendarVisible, setSeasonStartCalendarVisible] = useState(false);
+    const [seasonEndCalendarVisible, setSeasonEndCalendarVisible] = useState(false);
+    const [lastCompletedCalendarVisible, setLastCompletedCalendarVisible] = useState(false);
+    const [dueDateCalendarVisible, setDueDateCalendarVisible] = useState(false);
+
+    const handleSelectSeasonStart = (value) => {
+        if (value) {
+            const formattedDate = value.toISOString();
+            setSeasonStart(formattedDate);
+        } else {
+            setSeasonStart(null);
+        }
+        setSeasonStartCalendarVisible(false);
+    }
+    const handleSelectSeasonEnd = (value) => {
+        if (value) {
+            const formattedDate = value.toISOString();
+            setSeasonEnd(formattedDate);
+        } else {
+            setSeasonEnd(null);
+        }
+        setSeasonEndCalendarVisible(false);
+    }
+
+    const handleSelectLastCompleted = (value) => {
+        if (value) {
+            const formattedDate = value.toISOString();
+            setLastCompletedAt(formattedDate);
+        } else {
+            setLastCompletedAt(null);
+        }
+        setLastCompletedCalendarVisible(false);
+    }
+    const handleSelectDueDate = (value) => {
+        if (value) {
+
+            const formattedDate = value.toISOString();
+            setDueDate(formattedDate);
+        } else {
+            setDueDate(null);
+        }
+        setDueDateCalendarVisible(false);
+    }
+
+
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------------- HANDLE CRUD METHODS ------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -138,6 +184,7 @@ const NewTaskView = () => {
             alert('Please enter a task name.');
             return;
         }
+        console.log(taskName)
         const newTask = {
             collection_id: collectionId,
             name: taskName.trim(),
@@ -157,6 +204,134 @@ const NewTaskView = () => {
             skip_missed_due_dates: skipMissedDueDates,
         };
 
+        console.log("task create")
+        console.log(newTask)
+        if (isRecurring && (!intervalValue || !intervalUnit)) {
+            alert('Please enter an interval value and choose a unit.');
+            return;
+        }
+        console.log("checkpoint 1")
+        console.log("checkpoint 1")
+        console.log("checkpoint 1")
+
+        console.log(newTask)
+        if (!isRecurring) {
+            console.log("!recurring checkpoint 2")
+            newTask.recurring = false;
+
+            newTask.interval_value = null;
+            newTask.interval_unit = null;
+            newTask.day_of_week = null;
+            newTask.date_of_month = null;
+            newTask.month_of_year = null;
+            console.log("checkpoint 3")
+            console.log(newTask)
+        } else {
+            console.log("isrecurring checkpoint 2")
+            newTask.recurring = true;
+            newTask.interval_value = intervalValue ? parseInt(intervalValue) : null;
+            newTask.interval_unit = intervalUnit;
+            console.log("checkpoint 3")
+
+            if (intervalUnit == days) {
+                console.log("checkpoint 4.1")
+
+                newTask.day_of_week = null;
+                newTask.date_of_month = null;
+                newTask.month_of_year = null;
+                console.log(newTask)
+
+                console.log("checkpoint 4.11")
+
+            } else if (intervalUnit == weeks) {
+                console.log("checkpoint 4.2")
+
+                newTask.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
+                newTask.date_of_month = null;
+                newTask.month_of_year = null;
+                console.log(newTask)
+
+                console.log("checkpoint 4.21")
+
+            } else if (intervalUnit == months) {
+                console.log("checkpoint 4.3")
+
+                newTask.day_of_week = null;
+                newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
+                newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
+                console.log(newTask)
+
+                console.log("checkpoint 4.31")
+
+            } else if (intervalUnit == years) {
+                console.log("checkpoint 4.4")
+
+                newTask.day_of_week = null;
+                newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
+                newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
+                console.log(newTask)
+
+                console.log("checkpoint 4.41")
+
+            }
+        }
+
+        console.log("checkpoint 5")
+
+        if (!isRecurring || !seasonalTask || intervalUnit === years) {
+            console.log("no season checkpoint 6")
+
+            newTask.season_start = null;
+            newTask.season_end = null;
+            console.log(newTask)
+
+            console.log("no season checkpoint 6.1")
+
+
+        } else {
+            console.log("season checkpoint 6")
+
+            newTask.season_start = seasonStart ? seasonStart : null;
+            newTask.season_end = seasonEnd ? seasonEnd : null;
+
+            console.log(newTask)
+
+            console.log("season checkpoint 6.1")
+        }
+        if (!dueDate && !isRecurring) {
+            newTask.completion_window_days = null;
+        } else {
+            newTask.completion_window_days = completionWindow !== null ? parseInt(completionWindow) : null;
+        }
+
+        if (timingOption === "previous") {
+            console.log("previous checkpoint 7")
+
+            newTask.last_completed_at = lastCompletedAt;
+            newTask.next_due_at = null;
+            newTask.next_due_at = calculateNextDueDate(task, lastCompletedAt);
+            console.log(newTask)
+            console.log("previous checkpoint 7")
+        } else if (timingOption === "next") {
+            console.log("next checkpoint 7")
+            newTask.last_completed_at = null;
+            newTask.next_due_at = dueDate ? dueDate : null;
+            console.log(newTask)
+            console.log("previous checkpoint 7")
+        } else if (timingOption === "auto") {
+            console.log("auto checkpoint 7")
+
+            newTask.last_completed_at = null;
+            newTask.next_due_at = null;
+            console.log(new Date())
+            newTask.next_due_at = calculateNextDueDate(newTask, new Date());
+            console.log(newTask)
+            console.log("previous checkpoint 7")
+        }
+
+        console.log("task before create")
+        console.log(task)
+
         await createTask(newTask);
         router.back();
     };
@@ -175,16 +350,72 @@ const NewTaskView = () => {
         task.name = taskName.trim();
         task.description = description ? description.trim() : null;
         task.recurring = isRecurring;
-        task.interval_value = intervalValue ? parseInt(intervalValue) : null;
-        task.interval_unit = intervalUnit;
-        task.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
-        task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
-        task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
-        task.season_start = seasonStart ? seasonStart : null;
-        task.season_end = seasonEnd ? seasonEnd : null;
-        task.last_completed_at = lastCompletedAt ? lastCompletedAt : null;
+        if (isRecurring && (!intervalValue || !intervalUnit)) {
+            alert('Please enter an interval value and choose a unit.');
+            return;
+        }
+        if (!isRecurring) {
+            task.recurring = false;
+            task.interval_value = null;
+            task.interval_unit = null;
+            task.day_of_week = null;
+            task.date_of_month = null;
+            task.month_of_year = null;
+        } else {
+            task.recurring = true;
+            task.interval_value = intervalValue ? parseInt(intervalValue) : null;
+            task.interval_unit = intervalUnit;
+
+            if (intervalUnit == days) {
+                task.day_of_week = null;
+                task.date_of_month = null;
+                task.month_of_year = null;
+            } else if (intervalUnit == weeks) {
+                task.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
+                task.date_of_month = null;
+                task.month_of_year = null;
+            } else if (intervalUnit == months) {
+                task.day_of_week = null;
+                task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
+                task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
+            } else if (intervalUnit == years) {
+                task.day_of_week = null;
+                task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
+                task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
+            }
+        }
+
+
+        if (!isRecurring || !seasonalTask || intervalUnit === years) {
+            task.season_start = null;
+            task.season_end = null;
+        } else {
+            task.season_start = seasonStart ? seasonStart : null;
+            task.season_end = seasonEnd ? seasonEnd : null;
+        }
+
         task.completion_window_days = completionWindow !== null ? parseInt(completionWindow) : null;
-        task.next_due_at = dueDate ? dueDate : null;
+
+        if (adjustDates) {
+            const last_completed_at_date = task.last_completed_at;
+            if (timingOption === "previous") {
+                task.last_completed_at = lastCompletedAt;
+                task.next_due_at = null;
+                task.next_due_at = calculateNextDueDate(task, lastCompletedAt);
+            } else if (timingOption === "next") {
+                task.last_completed_at = null;
+                task.next_due_at = dueDate ? dueDate : null;
+                task.last_completed_at = last_completed_at_date;
+            } else if (timingOption === "auto") {
+                task.last_completed_at = null;
+                task.next_due_at = null;
+                task.next_due_at = calculateNextDueDate(task, new Date());
+                task.last_completed_at = last_completed_at_date;
+            }
+        }
+        task.completion_start = calculateCompletionStartDateString(task.next_due_at, task.completion_window_days);
+
+
         await updateTask(task);
         router.back();
     };
@@ -192,17 +423,17 @@ const NewTaskView = () => {
     const onDeleteTask = async () => {
         await deleteTask(task.id);
         router.back();
-    }
+    };
 
     const onArchiveTask = async () => {
         await archiveTask(task.id);
         router.back();
-    }
+    };
 
     const onUnarchiveTask = async () => {
         await unArchiveTask(task.id);
         router.back();
-    }
+    };
 
     const loadTask = async () => {
         if (!id) return;
@@ -226,6 +457,8 @@ const NewTaskView = () => {
         setSeasonStart(task.season_start?.toString() ?? null);
         setSeasonEnd(task.season_end?.toString() ?? null);
 
+        setSkipMissedDueDates(task.skip_missed_due_dates);
+
         setDueDate(task.next_due_at);
         setLastCompletedAt(task.last_completed_at);
         setCompletionWindow(task.completion_window_days);
@@ -240,7 +473,8 @@ const NewTaskView = () => {
             }
         }, [])
     );
-
+    console.log("!task || (task && adjustDates) " + !task || (task && adjustDates));
+    console.log("isrecurring " + isRecurring)
     return (
         <SafeAreaView className="flex-1">
 
@@ -382,7 +616,7 @@ const NewTaskView = () => {
 
                                         {/* Seasonal Task */}
                                         {intervalUnit !== null && intervalUnit !== years && (
-                                            <View className="gap-y-64">
+                                            <View className="gap-y-6">
                                                 <SwitchInput
                                                     labelText="Is this task seasonal?"
                                                     value={seasonalTask}
@@ -390,25 +624,44 @@ const NewTaskView = () => {
                                                 />
 
                                                 {seasonalTask && (
-                                                    <View className="flex-row items-center gap-x-5">
-                                                        {/* Season Start and End */}
-                                                        <View className="flex-1">
-                                                            <VerticalInputField
-                                                                labelText="From:"
-                                                                placeholder="YYYY-MM-DD"
+                                                    <>
+                                                        <View className="flex-row items-center gap-x-5">
+                                                            {/* Season Start and End */}
+                                                            <View className="flex-1">
+                                                                <CustomVerticalInput
+                                                                    labelText="From:"
+                                                                    placeholder="YYYY-MM-DD"
+                                                                    value={seasonStart ? seasonStart.split('T')[0] : "YYYY-MM-DD"}
+                                                                    handlePress={() => setSeasonStartCalendarVisible(true)}
+                                                                />
+                                                            </View>
+                                                            <View className="flex-1">
+                                                                <CustomVerticalInput
+                                                                    labelText="Until:"
+                                                                    placeholder="YYYY-MM-DD"
+                                                                    value={seasonEnd ? seasonEnd.split('T')[0] : "YYYY-MM-DD"}
+                                                                    handlePress={() => setSeasonStartCalendarVisible(true)}
+                                                                />
+                                                            </View>
+                                                        </View>
+                                                        <View className="items-center">
+                                                            <CalendarInput
+                                                                labelText={"Choose the Season's Starting Date:"}
                                                                 value={seasonStart}
-                                                                onChangeText={setSeasonStart}
+                                                                handleSelect={handleSelectSeasonStart}
+                                                                isVisible={seasonStartCalendarVisible}
+                                                                close={() => setSeasonStartCalendarVisible(false)}
                                                             />
-                                                        </View>
-                                                        <View className="flex-1">
-                                                            <VerticalInputField
-                                                                labelText="Until:"
-                                                                placeholder="YYYY-MM-DD"
+                                                            <CalendarInput
+                                                                labelText={"Choose the Season's Ending Date:"}
                                                                 value={seasonEnd}
-                                                                onChangeText={setSeasonEnd}
+                                                                handleSelect={handleSelectSeasonEnd}
+                                                                isVisible={seasonEndCalendarVisible}
+                                                                close={() => setSeasonEndCalendarVisible(false)}
                                                             />
                                                         </View>
-                                                    </View>
+
+                                                    </>
                                                 )}
                                             </View>
                                         )}
@@ -438,86 +691,110 @@ const NewTaskView = () => {
                                             </View>
                                         )}
 
+                                        {task && (
+                                            <SwitchInput
+                                                labelText={"Adjust the due date?"}
+                                                value={adjustDates}
+                                                onValueChange={setAdjustDates}
+                                            />
+                                        )}
 
-                                        <View>
-                                            <Text className="text-sm my-1 pt-5" style={{color: Colors.Primary["800"]}}>
-                                                How should the next due date be determined?
-                                            </Text>
+                                        {(!task || (task && adjustDates)) && (
+                                            <View>
+                                                <Text className="text-sm my-1 " style={{color: Colors.Primary["800"]}}>
+                                                    How should the next due date be determined?
+                                                </Text>
 
-                                            {/* Timing Options */}
-                                            <View className="flex-row justify-between pt-3 gap-x-2">
-                                                <TouchableOpacity
-                                                    className={`py-2 px-4 rounded-lg ${timingOption === "previous" ? "bg-blue-500" : "bg-gray-300"}`}
-                                                    onPress={() => setTimingOption("previous")}
-                                                >
-                                                    <Text className="text-xs"
-                                                          style={{color: timingOption === "previous" ? "white" : "black"}}>Previously
-                                                        Completed</Text>
-                                                </TouchableOpacity>
+                                                {/* Timing Options */}
+                                                <View className="flex-row justify-between pt-3 gap-x-2">
+                                                    <TouchableOpacity
+                                                        className={`py-2 px-4 rounded-lg`}
+                                                        style={{
+                                                            backgroundColor: timingOption === "previous" ? Colors.Complementary["600"] : Colors.Complementary["400"]
+                                                        }}
+                                                        onPress={() => setTimingOption("previous")}
+                                                    >
+                                                        <Text className="text-xs"
+                                                              style={{color: timingOption === "previous" ? "white" : "black"}}>Previously
+                                                            Completed</Text>
+                                                    </TouchableOpacity>
 
-                                                <TouchableOpacity
-                                                    className={`py-2 px-4 rounded-lg ${timingOption === "next" ? "bg-blue-500" : "bg-gray-300"}`}
-                                                    onPress={() => setTimingOption("next")}
-                                                >
-                                                    <Text className="text-xs"
-                                                          style={{color: timingOption === "next" ? "white" : "black"}}>Next
-                                                        Due</Text>
-                                                </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        className={`py-2 px-4 rounded-lg`}
+                                                        style={{
+                                                            backgroundColor: timingOption === "next" ? Colors.Complementary["600"] : Colors.Complementary["400"]
+                                                        }}
+                                                        onPress={() => setTimingOption("next")}
+                                                    >
+                                                        <Text className="text-xs"
+                                                              style={{color: timingOption === "next" ? "white" : "black"}}>Next
+                                                            Due</Text>
+                                                    </TouchableOpacity>
 
-                                                <TouchableOpacity
-                                                    className={`py-2 px-4 rounded-lg ${timingOption === "auto" ? "bg-blue-500" : "bg-gray-300"}`}
-                                                    onPress={() => setTimingOption("auto")}
-                                                >
-                                                    <Text className="text-xs"
-                                                          style={{color: timingOption === "auto" ? "white" : "black"}}>Auto-Calculate</Text>
-                                                </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        className={`py-2 px-4 rounded-lg`}
+                                                        style={{
+                                                            backgroundColor: timingOption === "auto" ? Colors.Complementary["600"] : Colors.Complementary["400"]
+                                                        }}
+                                                        onPress={() => setTimingOption("auto")}
+                                                    >
+                                                        <Text className="text-xs"
+                                                              style={{color: timingOption === "auto" ? "white" : "black"}}>Auto-Calculate</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+
+
+                                                {/* Input Fields Based on Selection */}
+                                                {timingOption === "previous" && (
+                                                    <View className="pt-5 flex">
+                                                        <CustomHorizontalInput
+                                                            labelText="Enter Last Completion Date:"
+                                                            placeholder="YYYY-MM-DD"
+                                                            value={lastCompletedAt ? lastCompletedAt.split('T')[0] : "YYYY-MM-DD"}
+                                                            handlePress={() => setLastCompletedCalendarVisible(true)}
+                                                        />
+
+                                                        <CalendarInput
+                                                            labelText={"Choose the Date the Task was Last Completed:"}
+                                                            value={lastCompletedAt}
+                                                            handleSelect={handleSelectLastCompleted}
+                                                            isVisible={lastCompletedCalendarVisible}
+                                                            close={() => setLastCompletedCalendarVisible(false)}
+                                                        />
+                                                    </View>
+                                                )}
+
+                                                {timingOption === "next" && (
+                                                    <View className="pt-5 flex-1">
+                                                        <CustomHorizontalInput
+                                                            labelText="Due Date:"
+                                                            placeholder="YYYY-MM-DD"
+                                                            value={dueDate ? dueDate.split('T')[0] : "YYYY-MM-DD"}
+                                                            handlePress={() => setDueDateCalendarVisible(true)}
+                                                        />
+
+                                                        <CalendarInput
+                                                            labelText={"Choose the Task's Due Date:"}
+                                                            value={dueDate}
+                                                            handleSelect={handleSelectDueDate}
+                                                            isVisible={dueDateCalendarVisible}
+                                                            close={() => setDueDateCalendarVisible(false)}
+                                                        />
+                                                    </View>
+                                                )}
+
+                                                {timingOption === "auto" && (
+                                                    <View className="pt-5">
+                                                        <Text className="text-sm text-gray-600">
+                                                            Next due date will be calculated automatically from the
+                                                            current
+                                                            moment.
+                                                        </Text>
+                                                    </View>
+                                                )}
                                             </View>
+                                        )}
 
-                                            {/* Input Fields Based on Selection */}
-                                            {timingOption === "previous" && (
-                                                <View className="pt-5">
-                                                    <Text className="text-sm text-gray-600">
-                                                        Next due date will be calculated from the last completion.
-                                                    </Text>
-                                                    <Text className="text-sm my-1 pt-2"
-                                                          style={{color: Colors.Primary["800"]}}>
-                                                        Enter Last Completion Date:
-                                                    </Text>
-                                                    <TextInput
-                                                        value={lastCompletedAt}
-                                                        placeholder="YYYY-MM-DD"
-                                                        onChangeText={setLastCompletedAt}
-                                                        className="rounded-lg p-2"
-                                                        style={{backgroundColor: Colors.Complementary["50"]}}
-                                                    />
-                                                </View>
-                                            )}
-
-                                            {timingOption === "next" && (
-                                                <View className="pt-5">
-                                                    <Text className="text-sm my-1"
-                                                          style={{color: Colors.Primary["800"]}}>
-                                                        Enter Next Due Date:
-                                                    </Text>
-                                                    <TextInput
-                                                        value={dueDate}
-                                                        placeholder="YYYY-MM-DD"
-                                                        onChangeText={setDueDate}
-                                                        className="rounded-lg p-2"
-                                                        style={{backgroundColor: Colors.Complementary["50"]}}
-                                                    />
-                                                </View>
-                                            )}
-
-                                            {timingOption === "auto" && (
-                                                <View className="pt-5">
-                                                    <Text className="text-sm text-gray-600">
-                                                        Next due date will be calculated automatically from the current
-                                                        moment.
-                                                    </Text>
-                                                </View>
-                                            )}
-                                        </View>
 
                                     </>
 
@@ -525,13 +802,19 @@ const NewTaskView = () => {
                                     // Non-recurring task fields (Due Date + Completion Window)
                                     <View>
 
-                                        <HorizontalInputField
-                                            labelText="Due Date:"
-                                            placeholder="Select Due Date"
+                                        <CustomHorizontalInput
+                                            labelText="Due Date (Optional):"
+                                            placeholder="YYYY-MM-DD"
+                                            value={dueDate ? dueDate.split('T')[0] : "YYYY-MM-DD"}
+                                            handlePress={() => setDueDateCalendarVisible(true)}
+                                        />
+
+                                        <CalendarInput
+                                            labelText={"Choose the Task's Due Date:"}
                                             value={dueDate}
-                                            onChangeText={setDueDate}
-                                            inputBackgroundColor={Colors.Complementary['50']}
-                                            textColor={Colors.Primary['800']}
+                                            handleSelect={handleSelectDueDate}
+                                            isVisible={dueDateCalendarVisible}
+                                            close={() => setDueDateCalendarVisible(false)}
                                         />
 
                                     </View>

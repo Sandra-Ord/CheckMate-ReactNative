@@ -45,7 +45,7 @@ const TaskLogListItem = (log: TaskLog) => {
                     <View className="flex-row items-center">
                         <Ionicons className="pr-2" name="time-outline" size={16}
                                   style={{color: Colors.Primary["800"]}}/>
-                        <Text className="text-sm">Due by: {formatDate(log.due_at)}</Text>
+                        <Text className="text-sm">Due by: {formatShortDate(log.due_at)}</Text>
                     </View>
                 </View>
 

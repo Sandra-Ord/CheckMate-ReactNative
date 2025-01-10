@@ -50,7 +50,7 @@ const CollectionView = () => {
         setTaskToComplete(null);
         setAssignTaskToUserId(null);
         setCompletionComment("");
-        //await loadTasks();
+        await loadTasks();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -222,7 +222,9 @@ const CollectionView = () => {
                 </View>
 
                 <View className="flex-1 justify-center pb-3 px-5">
+
                     <FlatList
+                        className="pt-2"
                         data={filteredTasks}
                         renderItem={({item}) => (
                             <TaskListItem

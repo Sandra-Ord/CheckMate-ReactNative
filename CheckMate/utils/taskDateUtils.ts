@@ -2,21 +2,27 @@ import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 
 export const calculateNextDueDate = (task, completionDate) => {
 
+    console.log("calculateNextDueDate cp 1")
+    console.log(task.recurring)
+
     if (!task.recurring) {
         // Non-recurring task: no next due date
         return null;
     }
-
+    console.log("calculateNextDueDate cp 2")
     if (!task.interval_value || !task.interval_unit) return; // Error
 
 
     const baseDate =
+        (
         (task.interval_unit && task.interval_value && !task.day_of_week && !task.date_of_month && !task.month_of_year && !task.skip_missed_due_dates) ||
         (task.interval_unit == "week" && task.day_of_week) ||
         (task.interval_unit == "month" && task.date_of_month) ||
         (task.interval_unit == "year" && (task.month_of_year || (task.month_of_year && task.date_of_month)))
+        ) && task.next_due_at
             ? new Date(task.next_due_at) // Use previous due date if relevant specifying values exist
             : new Date(completionDate);  // Otherwise, use completion date
+
 
     const nextDueDate = new Date(baseDate);
 

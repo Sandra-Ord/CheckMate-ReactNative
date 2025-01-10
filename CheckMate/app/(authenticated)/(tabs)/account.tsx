@@ -1,25 +1,77 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
 import {Colors} from "@/constants/Colors";
 import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import VerticalInput from "@/components/uiComponents/VerticalInput.tsx";
+import {useFocusEffect} from "expo-router";
+import {useSupabase} from "@/context/SupabaseContext.tsx";
 
 const Account = () => {
     const {signOut} = useAuth();
 
+    const [firstName, setFirstName] = useState();
+    const [nickName, setNickName] = useState();
+
+    const {getUserName, setUserName} = useSupabase();
+
+    const loadUserName = async () => {
+        const data = await getUserName();
+        setFirstName(data.first_name);
+        setNickName(data.first_name);
+    };
+
+    const onUpdateUserName = async () => {
+        if (!nickName.trim()) {
+            alert("Please enter a username for updating.")
+            return;
+        }
+        await setUserName(nickName.trim());
+        await loadUserName();
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            loadUserName();
+        }, [])
+    );
+
     return (
-        <View className=" justify-center w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
+        <View className=" w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
-            {/* Button to delete the collection */}
+            <View className="px-4 py-4 gap-y-5">
+                {/* Button to delete the collection */}
+                <View className="gap-y-5">
+                    <View>
+                        <VerticalInput
+                            labelText="User Name: "
+                            placeholder=""
+                            value={nickName}
+                            onChangeText={setNickName}
+                        />
+                        <Text className="text-sm italic" style={{color: Colors.Primary["600"]}}>This name is visible to others.</Text>
+                    </View>
+                    {firstName !== nickName && (
+                    <View className="items-center">
+                        <ActionButton onPress={onUpdateUserName} iconName={"checkmark-circle-outline"} text={"Update User Name"} textColor={Colors.Complementary["100"]} buttonColor={Colors.Yellow["600"]}/>
+                    </View>
+                    )}
 
-            <View className="items-center pt-8">
-                <ActionButton
-                    onPress={signOut}
-                    iconName={"log-out-outline"}
-                    text={"Sign Out"}
-                    textColor={Colors.Complementary["100"]}
-                    buttonColor={Colors.Blue["600"]}
-                />
+                </View>
+
+
+
+                <View style={{height: 0.5, backgroundColor: Colors.Complementary["500"]}}></View>
+
+                <View className="items-center pt-8">
+                    <ActionButton
+                        onPress={signOut}
+                        iconName={"log-out-outline"}
+                        text={"Sign Out"}
+                        textColor={Colors.Complementary["100"]}
+                        buttonColor={Colors.Blue["600"]}
+                    />
+                </View>
             </View>
         </View>
     );

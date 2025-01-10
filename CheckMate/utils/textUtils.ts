@@ -53,12 +53,12 @@ export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayO
     } else if (intervalUnit === "month" && dateOfMonth) {
         // Every month on Xth date.
         const dayWithSuffix = `${dateOfMonth}${getNumberSuffix(Number(dateOfMonth))}`;
-        description += ` on the ${dayWithSuffix}`;
+        description += ` on ${dayWithSuffix}`;
     } else if (intervalUnit === "year" && monthOfYear) {
         if (dateOfMonth) {
             // Every year on the Xth date of month.
             const dayWithSuffix = `${dateOfMonth}${getNumberSuffix(Number(dateOfMonth))}`;
-            description += ` on the ${dayWithSuffix} ${monthOfYear}`;
+            description += ` on ${dayWithSuffix} ${monthOfYear}`;
         } else {
             // Every year in month.
             description += ` in ${monthOfYear}`;
@@ -70,12 +70,12 @@ export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayO
 
 export const formatShortDate = (dateString) => {
     const date = new Date(dateString);
-    const options = { day: 'numeric', month: 'short', year: '2-digit' };
+    const options = { day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' };
     return date.toLocaleDateString(undefined, options);
 };
 
 export const formatDateWithDay = (dateString) => {
     const date = new Date(dateString);
-    const options = { weekday: 'long', day: 'numeric', month: 'short', year: '2-digit' };
+    const options = { weekday: 'long', day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' };
     return date.toLocaleDateString(undefined, options);
 };

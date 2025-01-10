@@ -86,6 +86,8 @@ type ProviderProps = {
     deleteTag: (tagId: number) => Promise<any>;
     // USER
     setUserPushToken: (token: string) => Promise<any>;
+    getUserName: () => Promise<any>;
+    setUserName: (firstName: string) => Promise<any>;
 };
 
 const SupabaseContext = createContext<Partial<ProviderProps>>({});
@@ -401,7 +403,7 @@ export const SupabaseProvider = ({children}: any) => {
             task.archived_at = new Date().toISOString();
             console.log("checkpoint 6")
 
-            console.log(updates)
+            console.log(task)
             console.log("after not recurring task updates");
         } else {
             console.log("recurring task")
@@ -750,6 +752,30 @@ export const SupabaseProvider = ({children}: any) => {
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
+    const getUserName = async () => {
+        const {data, error} = await client
+            .from(USERS_TABLE)
+            .select('first_name')
+            .match({id: userId})
+            .single();
+        if (error) {
+            console.error("Error retrieving user name: " + error);
+        }
+        return data || null;
+    };
+
+    const setUserName = async (firstName) => {
+        const {data, error} = await client
+            .from(USERS_TABLE)
+            .update({first_name: firstName})
+            .match({id: userId})
+            .select("*");
+        if (error) {
+            console.error("Error setting user name: " + error);
+        }
+        return data || null;
+    };
+
     const setUserPushToken = async (token: string) => {
         const {data, error} = await client
             .from(USERS_TABLE)
@@ -815,6 +841,8 @@ export const SupabaseProvider = ({children}: any) => {
         unCompleteToDoTask,
         //User
         setUserPushToken,
+        getUserName,
+        setUserName,
     };
 
     return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>;
