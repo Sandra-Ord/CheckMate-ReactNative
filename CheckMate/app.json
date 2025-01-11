@@ -39,7 +39,14 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to add descriptive photos and share them with your friends.",
+          "cameraPermission": "The app accesses your camera to let you take photos."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

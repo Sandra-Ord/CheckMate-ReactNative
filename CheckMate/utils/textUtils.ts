@@ -68,6 +68,12 @@ export const getBasicRecurrenceDescriptions = (intervalValue, intervalUnit, dayO
     return description;
 }
 
+export const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'short', timeZone: 'UTC' };
+    return date.toLocaleDateString(undefined, options);
+};
+
 export const formatShortDate = (dateString) => {
     const date = new Date(dateString);
     const options = { day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' };

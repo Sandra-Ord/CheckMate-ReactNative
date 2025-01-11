@@ -6,6 +6,8 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
 import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput.tsx";
+import CalendarInput from "@/components/uiComponents/CalendarInput.tsx";
 
 const ToDoTaskModal = ({
                            closeModal,
@@ -22,9 +24,21 @@ const ToDoTaskModal = ({
     const [taskName, setTaskName] = useState<string>("");
     const [comment, setComment] = useState<string>("");
     const [dueDate, setDueDate] = useState('');
+    const [dueDateCalendarVisible, setDueDateCalendarVisible] = useState(false);
     const [tags, setTags] = useState<[]>();
 
     const {createToDoTask, updateToDoTask, deleteToDoTask} = useSupabase();
+
+    const handleSelectDueDate = (value) => {
+        if (value) {
+
+            const formattedDate = value.toISOString();
+            setDueDate(formattedDate);
+        } else {
+            setDueDate(null);
+        }
+        setDueDateCalendarVisible(false);
+    }
 
     const onCreateToDoTask = async () => {
         if (!taskName.trim()) {
@@ -108,15 +122,20 @@ const ToDoTaskModal = ({
 
             {/* Due Date Input */}
             <View className="flex-row items-center pt-5 gap-x-2 ">
-                <Text className="text-sm " style={{color: Colors.Primary["800"]}}>Due Date:</Text>
-                <TextInput
+
+                <CustomHorizontalInput
+                    labelText="Due Date:"
+                    placeholder="YYYY-MM-DD"
+                    value={dueDate ? dueDate.split('T')[0] : "YYYY-MM-DD"}
+                    handlePress={() => setDueDateCalendarVisible(true)}
+                />
+
+                <CalendarInput
+                    labelText={"Choose the Task's Due Date:"}
                     value={dueDate}
-                    placeholder="Select Due Date"
-                    onChangeText={setDueDate}
-                    className="rounded-lg flex-1 p-2"
-                    style={{backgroundColor: Colors.Complementary["50"]}}
-                    returnKeyType="done"
-                    enterKeyHint="done"
+                    handleSelect={handleSelectDueDate}
+                    isVisible={dueDateCalendarVisible}
+                    close={() => setDueDateCalendarVisible(false)}
                 />
             </View>
 

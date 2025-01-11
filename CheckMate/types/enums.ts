@@ -104,6 +104,13 @@ export interface TaskNotification {
     sent_at: Date
 }
 
+export interface TaskPhoto {
+    id: ID,
+    task_id: ID,
+    photo_url: string,
+    uploaded_at: Date,
+}
+
 export interface ToDoTask {
     id: ID,
     user_id: UserID,

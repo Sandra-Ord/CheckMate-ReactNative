@@ -224,8 +224,7 @@ const NewTaskView = () => {
             newTask.day_of_week = null;
             newTask.date_of_month = null;
             newTask.month_of_year = null;
-            console.log("checkpoint 3")
-            console.log(newTask)
+            newTask.skip_missed_due_dates = false;
         } else {
             console.log("isrecurring checkpoint 2")
             newTask.recurring = true;

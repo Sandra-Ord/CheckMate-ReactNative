@@ -1,22 +1,22 @@
 import React, {useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import {useLocalSearchParams, Stack, router} from 'expo-router';
-import {DefaultTheme} from '@react-navigation/native';
 import {useSupabase} from '@/context/SupabaseContext';
 import UserListItem from '@/components/UserListItem';
 import {User} from '@/types/enums';
+import {Colors} from "@/constants/Colors";
 
-// If this doesn't work, enable the pg_trgm extension in Supabase extensions
 const Invite = () => {
 
     const {id} = useLocalSearchParams<{ id?: string }>();
 
-    const {findUsers, addUserToBoard} = useSupabase();
+    const {findUsers, addUserToCollection} = useSupabase();
 
     const [search, setSearch] = useState("");
     const [userList, setUserList] = useState<User[]>([]);
 
     const onSearchUser = async () => {
+
         console.log("searching user", search);
         const data = await findUsers!(search);
         setUserList(data);
@@ -25,18 +25,18 @@ const Invite = () => {
 
     const onAddUser = async (user: User) => {
         console.log('adding user', user);
-        await addUserToBoard!(id!, user.id);
+        await addUserToCollection!(id!, user.id);
         router.dismiss(2);
     };
 
     return (
-        <View style={{flex: 1, padding: 8}}>
+        <View style={{flex: 1, padding: 8, paddingTop: 64, backgroundColor: Colors.Complementary["300"]}} >
 
             <Stack.Screen
                 options={{
                     headerShadowVisible: false,
                     headerStyle: {
-                        backgroundColor: DefaultTheme.colors.background,
+                        backgroundColor: Colors.Complementary["500"],
                     },
                     headerSearchBarOptions: {
                         autoCapitalize: 'none',

@@ -27,6 +27,24 @@ const Layout = () => {
                           }}
             />
 
+            <Stack.Screen name="log"
+                          options={{
+                              headerTitle: "Task Log",
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleAlign: 'left',
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="arrow-back"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
+                          }}
+            />
+
             {/*<Stack.Screen name="statistics"*/}
             {/*              options={{*/}
             {/*                  headerShown: false*/}

@@ -61,7 +61,7 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
                     </Text>
                 )}
 
-                <Ionicons name="notifications" size={24} style={{color: Colors.Primary["800"]}}/>
+                {/*<Ionicons name="notifications" size={24} style={{color: Colors.Primary["800"]}}/>*/}
             </View>
         </View>
     );
