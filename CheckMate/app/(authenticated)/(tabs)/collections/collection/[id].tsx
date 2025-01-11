@@ -7,8 +7,8 @@ import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
-import HorizontalInput from "@/components/uiComponents/HorizontalInput.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton";
+import HorizontalInput from "@/components/uiComponents/HorizontalInput";
 
 const CollectionView = () => {
 
@@ -29,7 +29,7 @@ const CollectionView = () => {
     const [taskToComplete, setTaskToComplete] = useState<Task>(null);  // the task selected for completion
     const [completionComment, setCompletionComment] = useState<string>("");
     const [completeTaskDate, setCompleteTaskDate] = useState(new Date());
-    const [assignTaskToUserId, setAssignTaskToUserId] = useState(null);
+    const [assignTaskToUserId, setAssignTaskToUserId] = useState<string>(null);
 
     const handleTaskCompletion = (task: Task) => {
         setTaskToComplete(task);
@@ -37,16 +37,9 @@ const CollectionView = () => {
     };
 
     const onCompleteTask = async () => {
-        console.log("on complete task")
-        console.log("tasktocomplete is null? " + (taskToComplete == null))
-        console.log(taskToComplete)
         if (taskToComplete == null) return;
         const data = await completeTask(taskToComplete, completeTaskDate, completionComment, assignTaskToUserId);
-        console.log("complete data")
-        console.log(data);
-        console.log("visible" + completeTaskModalVisible)
         setCompleteTaskModalVisible(false);
-        console.log("visible" + completeTaskModalVisible)
         setTaskToComplete(null);
         setAssignTaskToUserId(null);
         setCompletionComment("");

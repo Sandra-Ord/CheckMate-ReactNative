@@ -3,38 +3,29 @@ import {ListRenderItemInfo, Text, TouchableOpacity, View, Image} from 'react-nat
 import {User} from '@/types/enums';
 import {Colors} from '@/constants/Colors';
 
-// Define the props interface for the UserListItem component
 interface UserListItemProps {
-    element: ListRenderItemInfo<User>; // Information about the item to render
-    onPress: (user: User) => void; // Function to call when the item is pressed
+    element: ListRenderItemInfo<User>;
+    onPress: (user: User) => void;
 }
 
-// Functional component to display a single user item
 const UserListItem = ({element: {item}, onPress}: UserListItemProps) => (
     <TouchableOpacity
-        style={{
-            flexDirection: 'row', // Align items in a row
-            gap: 12, // Space between avatar and user info
-            alignItems: 'center', // Center items vertically
-        }}
-        // Call the onPress function with the user object when the item is pressed
+        className="flex-row gap-x-4 items-center mx-2"
         onPress={() => onPress(item)}
     >
-        {/* Display user avatar */}
         <Image
             source={{uri: item.avatar_url}}
             style={{
-                width: 30, // Set avatar width
-                height: 30, // Set avatar height
-                borderRadius: 40, // Make avatar circular
+                width: 30,
+                height: 30,
+                borderRadius: 40,
             }}
         />
         <View>
-            {/* Display user's first name */}
-            <Text style={{fontSize: 16, fontWeight: 'semibold'}}>{item.first_name}</Text>
-            {/* Display user's email */}
-            <Text style={{color: Colors.grey}}>{item.email}</Text>
+            <Text className="text-lg font-semibold" style={{color: Colors.Primary["900"]}}>{item.first_name}</Text>
+            <Text style={{color: Colors.Primary["900"]}}>{item.email}</Text>
         </View>
+
     </TouchableOpacity>
 );
 

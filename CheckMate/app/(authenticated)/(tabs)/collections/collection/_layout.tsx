@@ -27,15 +27,21 @@ const Layout = () => {
                           }}
             />
 
-            <Stack.Screen name="log"
-                          options={{
-                              headerShown: true
-                          }}
-            />
-
             <Stack.Screen name="invite"
                           options={{
-                              headerShown: true
+                              headerTitle: "Invite to Collection",
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleAlign: 'left',
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="arrow-back"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
                           }}
             />
 

@@ -36,7 +36,7 @@ type ProviderProps = {
     updateCollection: (collection: Collection) => Promise<any>;
     deleteCollection: (collectionId: number) => Promise<any>;
     addUserToCollection: (collectionId: number, invitedUserId: number) => Promise<any>;
-    getCollectionMembers: (collectionId: number) => Promise<any>;
+    leaveCollection: (collectionId: string) => Promise<any>;
     getTaskLogs: (taskId: number) => Promise<any>;
     // NEW TASK VIEW FUNCTIONS
     getTaskInformation: (taskId: number) => Promise<any>;
@@ -250,16 +250,6 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
-    const getCollectionMembers = async (collectionId: string) => {
-        const {data} = await client
-            .from(COLLECTION_USERS_TABLE)
-            .select('users(*)')
-            .eq('collection_id', collectionId);
-
-        const members = data?.map((c: any) => c.users);
-        return members;
-    };
-
     const addUserToCollection = async (collectionId: string, invitedUserId, string) => {
         return await client
             .from(COLLECTION_USERS_TABLE)
@@ -273,10 +263,30 @@ export const SupabaseProvider = ({children}: any) => {
             });
     };
 
-    const deleteCollection = async (collectionId: string) => {
-        return await client.from(COLLECTIONS_TABLE).delete().match({collectionId});
+    const leaveCollection = async (collectionId: string) => {
+        const {data, error} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .update({
+                status: "CANCELLED"
+            })
+            .eq("collection_id", collectionId)
+            .eq("user_id", userId)
+            .eq("status", "ACCEPTED")
+            .select("*");
+        if (error) {
+            console.error("Error leaving the collection: " + error);
+            return;
+        }
+        return data;
     };
 
+    const deleteCollection = async (collectionId: string) => {
+        return await client.from(COLLECTIONS_TABLE).delete().match({id: collectionId});
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- TASK VIEW FUNCTIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const getTaskLogs = async (taskId: number) => {
         const {data, error} = await client
@@ -285,11 +295,6 @@ export const SupabaseProvider = ({children}: any) => {
             .match({task_id: taskId});
         return data;
     };
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ NEW TASK VIEW FUNCTIONS ----------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-
 
     const getTaskInformation = async (taskId: number) => {
         const {data, error} = await client
@@ -468,7 +473,7 @@ export const SupabaseProvider = ({children}: any) => {
     const getCollectionUsers = async (collectionId) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
-            .select('users!collection_users_user_id_fkey (id, first_name, email)')
+            .select('users!collection_users_user_id_fkey (id, first_name, email, avatar_url)')
             .eq('collection_id', collectionId)
             .eq('status', 'ACCEPTED');
 
@@ -899,10 +904,9 @@ export const SupabaseProvider = ({children}: any) => {
         deleteCollection,
         getCollectionTasks,
         addUserToCollection,
-        getCollectionMembers,
+        leaveCollection,
         getBasicTaskInformation,
         getTaskLogs,
-        getCollectionUsers,
         // NEW TASK VIEW FUNCTIONS
         getTaskInformation,
         createTask,

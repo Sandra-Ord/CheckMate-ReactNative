@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Text, View, TextInput, TouchableOpacity, FlatList} from 'react-native';
-import {Link, Stack, useLocalSearchParams, useRouter} from "expo-router";
+import React, {useCallback, useEffect, useState} from 'react';
+import {Text, View, TextInput, TouchableOpacity, FlatList, Alert} from 'react-native';
+import {Link, Stack, useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import {useSupabase} from "@/context/SupabaseContext";
-import UserListItem from "@/components/UserListItem";
 import {Colors} from "@/constants/Colors";
 import {Collection, User} from "@/types/enums";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton";
+import UserListItem from "@/components/UserListItem";
+import VerticalInput from "@/components/uiComponents/VerticalInput.tsx";
+import VerticalInputField from "@/components/uiComponents/VerticalInput.tsx";
 
 const Settings = () => {
+
     const router = useRouter();
 
     const {id} = useLocalSearchParams<{ id?: string }>();
@@ -16,34 +19,97 @@ const Settings = () => {
     const [collection, setCollection] = useState<Collection>();
     const [members, setMembers] = useState<User[]>([]);
 
-    const {getCollectionInfo, updateCollection, deleteCollection, getCollectionMembers} = useSupabase();
+    const {
+        getCollectionInfo,
+        updateCollection,
+        deleteCollection,
+        getCollectionUsers,
+        leaveCollection,
+        userId
+    } = useSupabase();
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
-    useEffect(() => {
+    const confirmDeleteCollection = () => {
+        Alert.alert(
+            "Confirm Delete",
+            "Are you sure you want to delete this collection? This action will delete all tasks and their logs inside the collection and cannot be undone. The collection will also be deleted for all members.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        await onDeleteCollection();
+                    },
+                }
+            ]
+        );
+    };
+
+    const confirmLeaveCollection = () => {
+        Alert.alert(
+            "Confirm Leave Collection",
+            "Are you sure you want to leave from this collection? You will not be able to access the contents of the collection anymore, until you are invited again.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Leave",
+                    style: "destructive",
+                    onPress: async () => {
+                        await onLeaveCollection();
+                    },
+                }
+            ]
+        );
+    };
+
+    const onLeaveCollection = async () => {
         if (!id) return;
-        loadCollectionInfo();
-    }, []);
-
-    const loadCollectionInfo = async () => {
-        if (!id) return;
-        const data = await getCollectionInfo!(id);
-        setCollection(data);
-
-        const members = await getCollectionMembers!(id);
-        setMembers(members);
+        if (userId === collection.owner_id) return;
+        const data = await leaveCollection(id);
+        router.dismissTo("/(authenticated)/(tabs)/collections");
     };
 
     const onUpdateCollection = async () => {
         const updated = await updateCollection!(collection!);
         setCollection(updated);
-        router.dismissAll(); // Dismisses all modals or screens after updating
+        router.dismissAll();
     };
 
     const onDeleteCollection = async () => {
         if (!id) return;
+        if (userId !== collection.owner_id) return;
         await deleteCollection!(id);
-        router.dismissAll(); // Dismisses all modals or screens after deletion
+        router.dismissTo("/(authenticated)/(tabs)/collections");
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const loadCollectionInfo = async () => {
+        if (!id) return;
+        const data = await getCollectionInfo(id);
+        setCollection(data);
+
+        const members = await getCollectionUsers(id);
+        setMembers(members);
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            loadCollectionInfo();
+        }, [])
+    );
 
     return (
         <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
@@ -54,57 +120,92 @@ const Settings = () => {
                 }}
             />
 
-            <View className="px-4 pb-8 pt-2">
-                <Text className="text-sm my-2" style={{color: Colors.Primary["800"]}}>Collection Name</Text>
+            <View className="px-2 gap-y-8 py-4">
 
-                {/* Input for updating the collection name */}
-                <TextInput
-                    value={collection?.name}
-                    onChangeText={(text) => setCollection({...collection!, name: text})}
-                    className="rounded-md p-2"
-                    style={{backgroundColor: Colors.Complementary["50"]}}
-                    returnKeyType="done"
-                    enterKeyHint="done"
-                    onEndEditing={onUpdateCollection}
-                />
-            </View>
-
-            <View className="px-4 pt-4 pb-32 border-b" style={{borderColor: Colors.Complementary["500"]}}>
-
-                <View className="flex-row items-center">
-                    <Ionicons name={'person-outline'} size={18} color={Colors.Primary["900"]}/>
-                    <Text className="pl-2 font-bold text-lg" style={{color: Colors.Primary["900"]}}>Members</Text>
+                <View className="px-2">
+                    <VerticalInputField
+                        labelText="Collection Name"
+                        placeholder="Collection"
+                        value={collection?.name}
+                        onChangeText={(text) => setCollection({...collection!, name: text})}
+                        onEndEditing={onUpdateCollection}
+                    />
                 </View>
 
-                {/* FlatList to display the members of the collection */}
-                <FlatList
-                    data={members}
-                    keyExtractor={(item) => `${item.id}`}
-                    renderItem={(item) => <UserListItem onPress={() => {
-                    }} element={item}/>}
-                    contentContainerStyle={{gap: 8}}
-                    style={{marginVertical: 12}}
-                />
+                <View style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
 
-                {/* Link to invite a new member to the collection */}
-                <Link href={`/(authenticated)/(tabs)/collections/collection/invite?id=${id}`} asChild>
-                    <TouchableOpacity className="py-2 mx-20 rounded-2xl items-center"
-                                      style={{backgroundColor: Colors.Complementary["600"]}}>
-                        <Text className="text-lg" style={{color: Colors.fontLight}}>Invite...</Text>
-                    </TouchableOpacity>
-                </Link>
 
-            </View>
+                <View className="px-2">
 
-            {/* Button to delete the collection */}
-            <View className="items-center pt-8">
-                <ActionButton
-                    onPress={onDeleteCollection}
-                    iconName={"trash-bin-outline"}
-                    text={"Delete Collection"}
-                    textColor={Colors.Complementary["100"]}
-                    buttonColor={Colors.Red["600"]}
-                />
+                    <View className="flex-row items-center">
+                        <Ionicons name={'people-outline'} size={20} color={Colors.Primary["900"]}/>
+                        <Text className="pl-2 font-bold text-lg" style={{color: Colors.Primary["900"]}}>Members</Text>
+                    </View>
+
+                    {/* FlatList to display the members of the collection */}
+                    <FlatList
+                        data={members}
+                        keyExtractor={(item) => `${item.id}`}
+                        renderItem={(item) =>
+                            <UserListItem
+                                onPress={() => {}}
+                                element={item}
+                            />
+                        }
+                        ItemSeparatorComponent={
+                            <View className="my-2" style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
+                        }
+                        className="my-5"
+                    />
+
+                    {/* Link to invite a new member to the collection */}
+                    <View className="items-center">
+                        <Link href={`/(authenticated)/(tabs)/collections/collection/invite?id=${id}`} asChild>
+                            <TouchableOpacity className="py-2 px-8 rounded-xl items-center flex-row gap-x-2"
+                                              style={{backgroundColor: Colors.Complementary["600"]}}>
+                                <Ionicons name={"person-add-outline"} size={20}
+                                          style={{color: Colors.Complementary["100"]}}/>
+                                <Text className="text" style={{color: Colors.Complementary["100"]}}>Invite...</Text>
+                            </TouchableOpacity>
+                        </Link>
+                    </View>
+
+                </View>
+
+                <View style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
+
+
+                {/* Button to delete the collection (for owner) and leave collection (for member) */}
+                <View className="items-center">
+
+                    {collection === null ? (
+                        <ActionButton
+                            onPress={() => {
+                            }}
+                            iconName={"ellipsis-horizontal-circle-outline"}
+                            text={"Loading..."}
+                            textColor={Colors.Complementary["100"]}
+                            buttonColor={Colors.Primary["600"]}
+                        />
+                    ) : (collection?.owner_id === userId) ? (
+                        <ActionButton
+                            onPress={confirmDeleteCollection}
+                            iconName={"trash-bin-outline"}
+                            text={"Delete Collection"}
+                            textColor={Colors.Complementary["100"]}
+                            buttonColor={Colors.Red["600"]}
+                        />
+                    ) : (
+                        <ActionButton
+                            onPress={confirmLeaveCollection}
+                            iconName={"exit-outline"}
+                            text={"Leave Collection"}
+                            textColor={Colors.Complementary["100"]}
+                            buttonColor={Colors.Blue["600"]}
+                        />
+                    )}
+                </View>
+
             </View>
 
         </View>
