@@ -1,9 +1,8 @@
 import React from 'react';
-import {FlatList, Modal, Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from "@/constants/Colors";
+import {Modal, Text, TouchableOpacity, View} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
-
+import {Colors} from "@/constants/Colors";
+import ActionButton from "@/components/uiComponents/ActionButton";
 
 const CalendarInput = ({
                            labelText,
@@ -16,14 +15,14 @@ const CalendarInput = ({
                        }) => {
 
     const handlePress = (day) => {
-        console.log(day)
         const date = new Date(Date.UTC(day.year, day.month - 1, day.day));
-        console.log(date);
         handleSelect(date);
     }
+
     const handleCancel = () => {
         handleSelect(null);
     }
+
     return (
         <Modal
             visible={isVisible}
@@ -39,9 +38,11 @@ const CalendarInput = ({
                 <View className="rounded-lg p-4 w-4/5"
                       style={{backgroundColor: backgroundColor}}>
                     <View className="w-full justify-center" style={{backgroundColor: backgroundColor}}>
+
                         <Text className="text-lg font-bold" style={{color: textColor}}>
                             {labelText}
                         </Text>
+
                         <Calendar
                             onDayPress={handlePress}
                         />
@@ -49,6 +50,7 @@ const CalendarInput = ({
                         <View className="items-center">
                             <ActionButton onPress={handleCancel} iconName={"close-circle-outline"} text={"Unselect"} textColor={Colors.Primary["800"]} buttonColor={Colors.Yellow["600"]}/>
                         </View>
+
                     </View>
                 </View>
             </TouchableOpacity>

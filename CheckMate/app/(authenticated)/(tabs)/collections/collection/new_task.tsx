@@ -1,7 +1,7 @@
 import {
     FlatList,
     KeyboardAvoidingView,
-    Modal, Platform,
+    Platform,
     SafeAreaView,
     ScrollView,
     Switch,
@@ -10,13 +10,14 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {useLocalSearchParams, useRouter, Stack, useFocusEffect} from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {getRecurrenceDescription} from "@/utils/textUtils";
+import {days, intervalOptions, monthOptions, months, weekdayOptions, weeks, years} from "@/utils/intervalUtils";
 import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import HorizontalInputField from "@/components/uiComponents/HorizontalInput";
 import VerticalInputField from "@/components/uiComponents/VerticalInput";
@@ -24,8 +25,8 @@ import SwitchInput from "@/components/uiComponents/SwitchInput";
 import CustomVerticalInput from "@/components/uiComponents/CustomVerticalInput";
 import DropdownModal from "@/components/uiComponents/DropdownModal";
 import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput";
-import {calculateCompletionStartDateString, calculateNextDueDate} from "@/utils/taskDateUtils.ts";
-import CalendarInput from "@/components/uiComponents/CalendarInput.tsx";
+import {calculateCompletionStartDateString, calculateNextDueDate} from "@/utils/taskDateUtils";
+import CalendarInput from "@/components/uiComponents/CalendarInput";
 
 const NewTaskView = () => {
 
@@ -75,21 +76,7 @@ const NewTaskView = () => {
     const [showCompletionWindowsInfo, setShowCompletionWindowsInfo] = useState<boolean>(false);
 
     // -----------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- TEMP CONSTANTS -----------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-
-    const days = "day";
-    const weeks = "week";
-    const months = "month";
-    const years = "year";
-
-    const intervalOptions = [days, weeks, months, years];
-    const weekdayOptions = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const dateOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-    const monthOptions = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ CLOSE MODALS ---------------------------------------------------------
+    // ------------------------------------------ HANDLE INPUTS --------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
     const handleIntervalInput = (txt) => {
@@ -113,7 +100,6 @@ const NewTaskView = () => {
         } else {
             clampedValue = '';
         }
-
         setDateOfMonth(clampedValue.toString());
     }
 
@@ -129,6 +115,10 @@ const NewTaskView = () => {
         setMonthOfYear(value);
         setIsMonthDropdownOpen(false);
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------ HANDLE CALENDARS -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const [seasonStartCalendarVisible, setSeasonStartCalendarVisible] = useState(false);
     const [seasonEndCalendarVisible, setSeasonEndCalendarVisible] = useState(false);
@@ -165,7 +155,6 @@ const NewTaskView = () => {
     }
     const handleSelectDueDate = (value) => {
         if (value) {
-
             const formattedDate = value.toISOString();
             setDueDate(formattedDate);
         } else {
@@ -174,9 +163,8 @@ const NewTaskView = () => {
         setDueDateCalendarVisible(false);
     }
 
-
     // -----------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------------- HANDLE CRUD METHODS ------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
     const onCreateTask = async () => {
@@ -204,21 +192,12 @@ const NewTaskView = () => {
             skip_missed_due_dates: skipMissedDueDates,
         };
 
-        console.log("task create")
-        console.log(newTask)
         if (isRecurring && (!intervalValue || !intervalUnit)) {
             alert('Please enter an interval value and choose a unit.');
             return;
         }
-        console.log("checkpoint 1")
-        console.log("checkpoint 1")
-        console.log("checkpoint 1")
-
-        console.log(newTask)
         if (!isRecurring) {
-            console.log("!recurring checkpoint 2")
             newTask.recurring = false;
-
             newTask.interval_value = null;
             newTask.interval_unit = null;
             newTask.day_of_week = null;
@@ -226,76 +205,35 @@ const NewTaskView = () => {
             newTask.month_of_year = null;
             newTask.skip_missed_due_dates = false;
         } else {
-            console.log("isrecurring checkpoint 2")
             newTask.recurring = true;
             newTask.interval_value = intervalValue ? parseInt(intervalValue) : null;
             newTask.interval_unit = intervalUnit;
-            console.log("checkpoint 3")
 
             if (intervalUnit == days) {
-                console.log("checkpoint 4.1")
-
                 newTask.day_of_week = null;
                 newTask.date_of_month = null;
                 newTask.month_of_year = null;
-                console.log(newTask)
-
-                console.log("checkpoint 4.11")
-
             } else if (intervalUnit == weeks) {
-                console.log("checkpoint 4.2")
-
                 newTask.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
                 newTask.date_of_month = null;
                 newTask.month_of_year = null;
-                console.log(newTask)
-
-                console.log("checkpoint 4.21")
-
             } else if (intervalUnit == months) {
-                console.log("checkpoint 4.3")
-
                 newTask.day_of_week = null;
                 newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
-                console.log(newTask)
-
-                console.log("checkpoint 4.31")
-
             } else if (intervalUnit == years) {
-                console.log("checkpoint 4.4")
-
                 newTask.day_of_week = null;
                 newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
-                console.log(newTask)
-
-                console.log("checkpoint 4.41")
-
             }
         }
 
-        console.log("checkpoint 5")
-
         if (!isRecurring || !seasonalTask || intervalUnit === years) {
-            console.log("no season checkpoint 6")
-
             newTask.season_start = null;
             newTask.season_end = null;
-            console.log(newTask)
-
-            console.log("no season checkpoint 6.1")
-
-
         } else {
-            console.log("season checkpoint 6")
-
             newTask.season_start = seasonStart ? seasonStart : null;
             newTask.season_end = seasonEnd ? seasonEnd : null;
-
-            console.log(newTask)
-
-            console.log("season checkpoint 6.1")
         }
         if (!dueDate && !isRecurring) {
             newTask.completion_window_days = null;
@@ -304,38 +242,22 @@ const NewTaskView = () => {
         }
 
         if (timingOption === "previous") {
-            console.log("previous checkpoint 7")
-
             newTask.last_completed_at = lastCompletedAt;
             newTask.next_due_at = null;
             newTask.next_due_at = calculateNextDueDate(task, lastCompletedAt);
-            console.log(newTask)
-            console.log("previous checkpoint 7")
         } else if (timingOption === "next") {
-            console.log("next checkpoint 7")
             newTask.last_completed_at = null;
             newTask.next_due_at = dueDate ? dueDate : null;
-            console.log(newTask)
-            console.log("previous checkpoint 7")
         } else if (timingOption === "auto") {
-            console.log("auto checkpoint 7")
-
             newTask.last_completed_at = null;
             newTask.next_due_at = null;
-            console.log(new Date())
             newTask.next_due_at = calculateNextDueDate(newTask, new Date());
-            console.log(newTask)
-            console.log("previous checkpoint 7")
         }
-
-        console.log("task before create")
-        console.log(task)
 
         await createTask(newTask);
         router.back();
     };
-
-
+    
     const onUpdateTask = async () => {
         if (!task) {
             alert('You are in edit mode without a task');
@@ -383,8 +305,7 @@ const NewTaskView = () => {
                 task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
             }
         }
-
-
+        
         if (!isRecurring || !seasonalTask || intervalUnit === years) {
             task.season_start = null;
             task.season_end = null;
@@ -434,6 +355,10 @@ const NewTaskView = () => {
         router.back();
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadTask = async () => {
         if (!id) return;
         const task: Task = await getTaskInformation!(id);
@@ -463,8 +388,6 @@ const NewTaskView = () => {
         setCompletionWindow(task.completion_window_days);
     };
 
-    // If the modal is opened in edit more
-
     useFocusEffect(
         useCallback(() => {
             if (id) {
@@ -472,11 +395,9 @@ const NewTaskView = () => {
             }
         }, [])
     );
-    console.log("!task || (task && adjustDates) " + !task || (task && adjustDates));
-    console.log("isrecurring " + isRecurring)
+
     return (
         <SafeAreaView className="flex-1">
-
 
             <Stack.Screen
                 options={{
@@ -484,15 +405,14 @@ const NewTaskView = () => {
                 }}
             />
 
-            {/* Use KeyboardAvoidingView to adjust the layout when keyboard is visible */}
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}  // Adjust behavior based on platform
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={{flex: 1}}
             >
                 {/* Scrollable container */}
                 <ScrollView
                     contentContainerStyle={{flexGrow: 1}}
-                    keyboardShouldPersistTaps="handled"  // Ensures taps outside input fields close keyboard
+                    keyboardShouldPersistTaps="handled"
                 >
                     <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
                         <View className="px-5 py-5">
@@ -639,7 +559,7 @@ const NewTaskView = () => {
                                                                     labelText="Until:"
                                                                     placeholder="YYYY-MM-DD"
                                                                     value={seasonEnd ? seasonEnd.split('T')[0] : "YYYY-MM-DD"}
-                                                                    handlePress={() => setSeasonStartCalendarVisible(true)}
+                                                                    handlePress={() => setSeasonEndCalendarVisible(true)}
                                                                 />
                                                             </View>
                                                         </View>
@@ -901,14 +821,12 @@ const NewTaskView = () => {
                                 }
                             </View>
 
-
                         </View>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
-    )
-        ;
+    );
 };
 
 export default NewTaskView;

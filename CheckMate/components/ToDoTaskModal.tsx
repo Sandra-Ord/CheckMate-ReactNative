@@ -1,13 +1,13 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Text, TextInput, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
-import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput.tsx";
-import CalendarInput from "@/components/uiComponents/CalendarInput.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton";
+import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput";
+import CalendarInput from "@/components/uiComponents/CalendarInput";
 
 const ToDoTaskModal = ({
                            closeModal,
@@ -40,6 +40,10 @@ const ToDoTaskModal = ({
         setDueDateCalendarVisible(false);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const onCreateToDoTask = async () => {
         if (!taskName.trim()) {
             alert('Please enter a task name.');
@@ -68,6 +72,10 @@ const ToDoTaskModal = ({
         closeModal();
         reload();
     }
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     useEffect(() => {
         if (task) {

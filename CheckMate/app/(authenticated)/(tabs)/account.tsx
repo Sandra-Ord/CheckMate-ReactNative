@@ -1,11 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
 import {Colors} from "@/constants/Colors";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
-import VerticalInput from "@/components/uiComponents/VerticalInput.tsx";
+import ActionButton from "@/components/uiComponents/ActionButton";
+import VerticalInput from "@/components/uiComponents/VerticalInput";
 import {useFocusEffect} from "expo-router";
-import {useSupabase} from "@/context/SupabaseContext.tsx";
+import {useSupabase} from "@/context/SupabaseContext";
 
 const Account = () => {
     const {signOut} = useAuth();
@@ -15,11 +15,9 @@ const Account = () => {
 
     const {getUserName, setUserName} = useSupabase();
 
-    const loadUserName = async () => {
-        const data = await getUserName();
-        setFirstName(data.first_name);
-        setNickName(data.first_name);
-    };
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const onUpdateUserName = async () => {
         if (!nickName.trim()) {
@@ -29,6 +27,16 @@ const Account = () => {
         await setUserName(nickName.trim());
         await loadUserName();
     }
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const loadUserName = async () => {
+        const data = await getUserName();
+        setFirstName(data.first_name);
+        setNickName(data.first_name);
+    };
 
     useFocusEffect(
         useCallback(() => {

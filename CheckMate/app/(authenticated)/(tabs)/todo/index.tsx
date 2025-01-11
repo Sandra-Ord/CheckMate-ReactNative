@@ -16,8 +16,11 @@ const ToDoView = () => {
     const [selectedTask, setSelectedTask] = useState<ToDoTask | null>(null);
     const {getToDoTasks} = useSupabase();
 
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------- TASK MODAL ------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["100%"], []);
 
     const showNewTaskModal = () => {
@@ -30,13 +33,15 @@ const ToDoView = () => {
         bottomSheetModalRef.current?.present();
     };
 
-    // Function to load to do tasks from Supabase
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadTasks = async () => {
         const data = await getToDoTasks();
         setTasks(data);
     };
 
-    // Load tasks when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadTasks();

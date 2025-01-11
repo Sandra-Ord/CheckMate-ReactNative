@@ -94,8 +94,8 @@ const AuthModal = ({authType}: AuthModalProps) => {
             } catch (err) {
                 console.log("OAuth error", err);
             }
-
         }
+
     };
 
     return (

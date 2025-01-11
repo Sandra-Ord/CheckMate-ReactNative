@@ -8,7 +8,7 @@ import {Colors} from "@/constants/Colors";
 import {useSharedValue} from "react-native-reanimated";
 import {useHeaderHeight} from "@react-navigation/elements";
 
-const Index = () => {
+const CollectionsView = () => {
 
     const {width, height} = useWindowDimensions();
     const ref = useRef<ICarouselInstance>(null);
@@ -17,9 +17,13 @@ const Index = () => {
 
     const [refreshing, setRefreshing] = useState(false);
     const [collections, setCollections] = useState<[]>();
-    const {userId, getCollections} = useSupabase();
+    const {getCollections} = useSupabase();
 
     const headerHeight = useHeaderHeight();
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     const loadCollections = async () => {
         const data = await getCollections!();
@@ -54,4 +58,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default CollectionsView;

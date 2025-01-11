@@ -1,14 +1,13 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Text, View, TextInput, TouchableOpacity, FlatList, Alert} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {Text, View, TouchableOpacity, FlatList, Alert} from 'react-native';
 import {Link, Stack, useFocusEffect, useLocalSearchParams, useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {Collection, User} from "@/types/enums";
 import ActionButton from "@/components/uiComponents/ActionButton";
+import VerticalInputField from "@/components/uiComponents/VerticalInput";
 import UserListItem from "@/components/UserListItem";
-import VerticalInput from "@/components/uiComponents/VerticalInput.tsx";
-import VerticalInputField from "@/components/uiComponents/VerticalInput.tsx";
 
 const Settings = () => {
 

@@ -12,13 +12,15 @@ const ArchiveView = () => {
     const [tasks, setTasks] = useState<[]>([]);
     const {getArchivedToDoTasks} = useSupabase();
 
-    // Function to load archived to do tasks from Supabase
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadTasks = async () => {
         const data = await getArchivedToDoTasks();
         setTasks(data);
     };
 
-    // Load tasks when the screen gains focus
     useFocusEffect(
         useCallback(() => {
             loadTasks();

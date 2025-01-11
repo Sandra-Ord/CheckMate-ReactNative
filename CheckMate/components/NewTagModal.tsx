@@ -1,12 +1,11 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
-import {Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Text, TextInput, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {Tag} from "@/types/enums";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
-
+import ActionButton from "@/components/uiComponents/ActionButton";
 
 const NewTagModal = ({
                          closeModal,
@@ -23,13 +22,15 @@ const NewTagModal = ({
 
     const {createTag, updateTag, deleteTag} = useSupabase();
 
-    const onCreateTag = async () => {
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
+    const onCreateTag = async () => {
         if (!tagName.trim()) {
             alert('Please enter a tag name.');
             return;
         }
-        console.log("Create a tag with the name: " + tagName);
         await createTag(tagName.trim());
         reload();
         closeModal();

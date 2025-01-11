@@ -1,7 +1,7 @@
 import React from 'react';
-import {TouchableOpacity, Text, ViewStyle, TextStyle} from 'react-native';
+import {TouchableOpacity, Text} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {Colors} from "@/constants/Colors.ts";
+import {Colors} from "@/constants/Colors";
 
 type ActionButtonProps = {
     onPress: () => void;
@@ -33,12 +33,3 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 };
 
 export default ActionButton;
-
-// Example use
-//  <ActionButton
-//     onPress={handlePress}
-//     iconName="checkbox-outline"
-//     text="Complete"
-//     textColor={Colors.Complementary["100"]}
-//     buttonColor={Colors.Complementary["600"]}
-// />

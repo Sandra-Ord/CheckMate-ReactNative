@@ -1,18 +1,20 @@
 import React, {useState} from 'react';
 import {Stack, router} from "expo-router";
-import {SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 
-const Index = () => {
+const NewCollectionView = () => {
 
     const [collectionName, setCollectionName] = useState<string>("");
 
     const {createCollection} = useSupabase();
 
-    //Create a new board and return to Collections page
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const onCreateCollection = async () => {
-        console.log("Creating Collection with name: " + collectionName);
         await createCollection(collectionName);
         router.dismiss();
     };
@@ -50,4 +52,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default NewCollectionView;

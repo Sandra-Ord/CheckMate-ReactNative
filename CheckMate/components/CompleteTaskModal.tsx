@@ -1,9 +1,9 @@
 import React from 'react';
 import {Modal, Text, TouchableOpacity, View} from 'react-native';
-import {Colors} from "@/constants/Colors.ts";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import HorizontalInput from "@/components/uiComponents/HorizontalInput.tsx";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import {Colors} from "@/constants/Colors";
+import HorizontalInput from "@/components/uiComponents/HorizontalInput";
+import ActionButton from "@/components/uiComponents/ActionButton";
 
 const CompleteTaskModal = ({task, completeTaskModalVisible, setCompleteTaskModalVisible, completeTaskDate, setCompleteTaskDate, completionComment, setCompletionComment, assignTaskToUserId, setAssignTaskToUserId, onCompleteTask}) => {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, Switch} from 'react-native';
+import {View, Text, Switch} from 'react-native';
 import {Colors} from "@/constants/Colors";
 
 const SwitchInput = ({

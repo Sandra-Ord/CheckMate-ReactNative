@@ -10,15 +10,17 @@ const TagListItem = (tag: Tag) => {
     const [isArchived, setIsArchived] = useState<boolean>(tag.archived_at !== null);
     const {archiveTag, unArchiveTag} = useSupabase();
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const onArchiveTag = async () => {
         tag = await archiveTag(tag);
-        console.log("Tag " + tag.tag + " archived");
         setIsArchived(true);
     };
 
     const onUnArchiveTag = async () => {
         tag = await unArchiveTag(tag);
-        console.log("Tag " + tag.tag + " unarchived");
         setIsArchived(false);
     };
 

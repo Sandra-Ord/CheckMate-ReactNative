@@ -12,7 +12,8 @@ const HorizontalInputField = ({
                                   keyboardType = "default",
                                   multiline = false,
                                   numberOfLines = 1,
-                                  editable = true
+                                  editable = true,
+                                  onEndEditing,
                               }) => {
     return (
         <View className="flex-row items-center gap-x-5">
@@ -31,6 +32,7 @@ const HorizontalInputField = ({
                 multiline={multiline}
                 numberOfLines={numberOfLines}
                 editable={editable}
+                onEndEditing={onEndEditing}
             />
         </View>
     );

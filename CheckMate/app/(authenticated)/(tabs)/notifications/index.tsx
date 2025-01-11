@@ -9,6 +9,10 @@ const NotificationsView = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [notifications, setNotifications] = useState<[]>([]);
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadNotifications = async () => {
         const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         setNotifications(data);

@@ -5,8 +5,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {CollectionUser} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
-import {formatShortDate} from "@/utils/textUtils.ts";
-import ActionButton from "@/components/uiComponents/ActionButton.tsx";
+import {formatShortDate} from "@/utils/textUtils";
+import ActionButton from "@/components/uiComponents/ActionButton";
 
 const InvitationsView = () => {
 

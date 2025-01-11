@@ -25,6 +25,7 @@ import {formatDate, formatShortDate} from "@/utils/textUtils";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import CompleteTaskModal from "@/components/CompleteTaskModal";
 import HorizontalInput from "@/components/uiComponents/HorizontalInput.tsx";
+import {days, months} from "@/utils/intervalUtils.ts";
 
 const TaskView = () => {
 
@@ -74,43 +75,24 @@ const TaskView = () => {
     // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Function to select an image from the device's library
     const onSelectImage = async () => {
-        // Launch the image picker to select an image
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images, // Only allow image selection
-            allowsEditing: true, // Enable editing for the selected image
-            aspect: [4, 3], // Set aspect ratio for editing
-            quality: 1, // Set image quality (1 = best quality)
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
 
-        // If the selection is not canceled
         if (!result.canceled) {
-            // Get the selected image
             const img = result.assets[0];
 
-            // Read the image file as a base64 string
             const base64 = await FileSystem.readAsStringAsync(img.uri, {
                 encoding: FileSystem.EncodingType.Base64,
             });
-            console.log("Checkpoint 1")
-            // Generate a unique file name using the current timestamp and user ID
             const fileName = `${new Date().getTime()}-${userId}.png`;
-            console.log("Checkpoint 2")
-
-            // Define the file path in the storage
             const filePath = `${task?.id}/${fileName}`;
-            console.log("Checkpoint 3")
-
-            // Define the content type for the file (image/png)
             const contentType = 'image/png';
-            console.log("Checkpoint 4")
-
-            // Upload the file and get the storage path
             const storagePath = await uploadTaskPhoto(task?.id, filePath, base64, contentType);
-            console.log("Checkpoint 5")
-
-
         }
     };
 
@@ -147,9 +129,6 @@ const TaskView = () => {
             loadPhotos();
         }, [])
     );
-
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     return (
         <SafeAreaView className="flex-1">
@@ -252,7 +231,7 @@ const TaskView = () => {
                                     ) : task.interval_unit === "week" ? (
                                         <View className="flex-row gap-x-2">
                                             <Text className="font-bold">Day of Week:</Text>
-                                            <Text>{task.day_of_week ? days[task.day_of_week - 1] : "None"}</Text>
+                                            <Text>{task.day_of_week ? days[task.day_of_week] : "None"}</Text>
                                         </View>
                                     ) : task.interval_unit === "month" ? (
                                         <View className="flex-row gap-x-2">
@@ -262,7 +241,7 @@ const TaskView = () => {
                                     ) : task.interval_unit === "year" ? (
                                         <View className="flex-row gap-x-2">
                                             <Text className="font-bold">Month of Year:</Text>
-                                            <Text>{task.month_of_year ? months[task.month_of_year - 1] : "None"}</Text>
+                                            <Text>{task.month_of_year ? months[task.month_of_year] : "None"}</Text>
                                             {task.month_of_year && (
                                                 <View className="flex-row gap-x-2">
                                                     <Text className="font-bold">Date of Month:</Text>

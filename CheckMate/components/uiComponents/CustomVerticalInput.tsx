@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {Colors} from "@/constants/Colors";
-import {placeholder} from "@babel/types";
 
 const CustomVerticalInput = ({
                                  labelText,

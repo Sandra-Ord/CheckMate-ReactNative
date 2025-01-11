@@ -1,5 +1,5 @@
 import React from 'react';
-import {Href, Link, useRouter} from "expo-router";
+import {Href, Link} from "expo-router";
 import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
@@ -33,7 +33,6 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
 
     const {state, icon, color} = getTaskState(task);
 
-
     return (
         <View className="py-1">
             <Link
@@ -44,6 +43,7 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
                 <TouchableOpacity className="rounded-3xl w-full px-4 py-4"
                                   style={{backgroundColor: Colors.Complementary["50"]}}
                 >
+                    {/*task state badge*/}
                     <View
                         style={{
                             position: "absolute",

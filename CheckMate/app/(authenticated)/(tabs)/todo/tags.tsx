@@ -7,7 +7,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import NewTagModal from "@/components/NewTagModal";
 import TagListItem from "@/components/TagListItem";
 import {Colors} from "@/constants/Colors";
-import {Tag} from "@/types/enums.ts";
+import {Tag} from "@/types/enums";
 
 const ToDoView = () => {
 

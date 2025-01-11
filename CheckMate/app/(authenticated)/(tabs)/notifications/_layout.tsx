@@ -1,8 +1,8 @@
 import React from 'react';
+import {Text, View} from "react-native";
 import {Stack, useRouter} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
-import {Text, View} from "react-native";
 
 const Layout = () => {
     const router = useRouter();

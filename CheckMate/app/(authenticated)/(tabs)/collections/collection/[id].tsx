@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {FlatList, Modal, RefreshControl, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {Link, useFocusEffect, useLocalSearchParams, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
@@ -182,10 +182,6 @@ const CollectionView = () => {
                         <View className="flex-row gap-4">
                             <TouchableOpacity onPress={() => setFilterMenuVisible(true)}>
                                 <Ionicons name="filter-circle-outline" size={26} color={Colors.Complementary["900"]}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {
-                            }}>
-                                <Ionicons name="notifications-outline" size={26} color={Colors.Complementary["900"]}/>
                             </TouchableOpacity>
                             <Link href={`/(authenticated)/(tabs)/collections/collection/settings?id=${id}`} asChild>
                                 <TouchableOpacity>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Stack, useRouter} from "expo-router";
-import {Colors} from "@/constants/Colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {Colors} from "@/constants/Colors";
 
 const Layout = () => {
     const router = useRouter();

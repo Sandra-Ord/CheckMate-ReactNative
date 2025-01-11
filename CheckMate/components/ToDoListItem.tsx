@@ -17,15 +17,17 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
 
     const {completeToDoTask, unCompleteToDoTask} = useSupabase();
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- DATABASE OPERATIONS ------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const onCompleteTask = async () => {
         await completeToDoTask(data.task);
-        console.log("Task " + data.task.name + " Completed");
         setIsCompleted(true);
     };
 
     const onUnCompleteTask = async () => {
         await unCompleteToDoTask(data.task);
-        console.log("Task " + data.task.name + " UnCompleted");
         setIsCompleted(false);
     };
 

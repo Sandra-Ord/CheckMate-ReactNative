@@ -18,6 +18,10 @@ const CollectionCard = (collection: Collection) => {
     const {width, height} = useWindowDimensions();
     const headerHeight = useHeaderHeight();
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const loadMemberCount = async () => {
         const data = await getAcceptedUsersCount!(collection.id);
         setMembers(data);
@@ -92,6 +96,5 @@ const CollectionCard = (collection: Collection) => {
         </View>
     );
 };
-
 
 export default CollectionCard;
