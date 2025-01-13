@@ -5,10 +5,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
-import TaskListItem from "@/components/TaskListItem";
-import FilterMenu from "@/components/CollectionFilterMenu";
-import CompleteTaskModal from "@/components/CompleteTaskModal";
-import NoTasksListItem from "@/components/NoTasksListItem";
+import TaskListItem from "@/components/taskComponents/TaskListItem";
+import FilterMenu from "@/components/collectionComponents/CollectionFilterMenu";
+import CompleteTaskModal from "@/components/taskComponents/CompleteTaskModal";
+import NoTasksListItem from "@/components/taskComponents/NoTasksListItem";
 
 const CollectionView = () => {
 

@@ -8,8 +8,8 @@ import {
 import {useFocusEffect} from "expo-router";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
-import InvitationListItem from "@/components/InvitationListItem";
-import InvitationResponseModal from "@/components/InvitationResponseModal";
+import InvitationListItem from "@/components/invitationComponents/InvitationListItem";
+import InvitationResponseModal from "@/components/invitationComponents/InvitationResponseModal";
 
 const InvitationsView = () => {
 

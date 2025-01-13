@@ -3,8 +3,8 @@ import {FlatList, RefreshControl, SafeAreaView, Text, View} from 'react-native';
 import {useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
-import ToDoListItem from "@/components/ToDoListItem";
 import {Colors} from "@/constants/Colors";
+import ToDoListItem from "@/components/todoComponents/ToDoListItem";
 
 const ArchiveView = () => {
 

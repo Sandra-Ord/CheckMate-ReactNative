@@ -239,7 +239,7 @@ export const SupabaseProvider = ({children}: any) => {
     };
 
     const getCollectionInfo = async (collectionId: number) => {
-        const {data, error, error} = await client
+        const {data, error} = await client
             .from(COLLECTIONS_TABLE)
             .select(`*, users (first_name)`)
             .match({id: collectionId})

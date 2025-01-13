@@ -18,7 +18,7 @@ const InvitationListItem = ({
 
     return (
         <View className="py-1">
-            <TouchableOpacity className="rounded-3xl w-full py-4 px-4"
+            <View className="rounded-3xl w-full py-4 px-4"
                               style={{backgroundColor: Colors.Complementary["50"]}}>
                 <View className="flex-col">
 
@@ -63,7 +63,7 @@ const InvitationListItem = ({
                     </View>
 
                 </View>
-            </TouchableOpacity>
+            </View>
         </View>
     );
 };

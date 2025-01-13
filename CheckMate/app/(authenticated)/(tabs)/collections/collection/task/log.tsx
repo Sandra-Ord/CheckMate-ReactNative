@@ -3,7 +3,7 @@ import {FlatList, RefreshControl, SafeAreaView, TouchableOpacity, View} from 're
 import {Link, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
-import TaskLogListItem from "@/components/TaskLogListItem";
+import TaskLogListItem from "@/components/taskComponents/TaskLogListItem";
 import {Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 

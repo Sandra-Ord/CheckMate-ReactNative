@@ -1,5 +1,4 @@
 import {
-    FlatList,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,

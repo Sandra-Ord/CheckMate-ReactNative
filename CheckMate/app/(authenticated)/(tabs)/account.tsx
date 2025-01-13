@@ -1,11 +1,11 @@
 import React, {useCallback, useState} from 'react';
 import {Text, View} from 'react-native';
 import {useAuth} from "@clerk/clerk-expo";
+import {useFocusEffect} from "expo-router";
+import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import VerticalInput from "@/components/uiComponents/VerticalInput";
-import {useFocusEffect} from "expo-router";
-import {useSupabase} from "@/context/SupabaseContext";
 
 const Account = () => {
     const {signOut} = useAuth();
@@ -48,6 +48,7 @@ const Account = () => {
         <View className=" w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
             <View className="px-4 py-4 gap-y-5">
+
                 {/* Button to delete the collection */}
                 <View className="gap-y-5">
                     <View>
@@ -67,8 +68,6 @@ const Account = () => {
 
                 </View>
 
-
-
                 <View style={{height: 0.5, backgroundColor: Colors.Complementary["500"]}}></View>
 
                 <View className="items-center pt-8">
@@ -80,6 +79,7 @@ const Account = () => {
                         buttonColor={Colors.Blue["600"]}
                     />
                 </View>
+
             </View>
         </View>
     );

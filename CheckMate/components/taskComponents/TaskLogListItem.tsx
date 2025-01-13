@@ -10,7 +10,7 @@ const TaskLogListItem = (log: TaskLog) => {
 
     const [showComment, setShowComment] = useState(false);
 
-    // todo: add task log (comment and completed_at date) and deleting?
+    // todo: add task log (comment and completed_at date) editing and deleting?
     const {userId} = useSupabase();
 
     const toggleCommentVisibility = () => {

@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {Stack, useRouter} from "expo-router";
 import {Colors} from "@/constants/Colors"
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 const Layout = () => {
     const router = useRouter();

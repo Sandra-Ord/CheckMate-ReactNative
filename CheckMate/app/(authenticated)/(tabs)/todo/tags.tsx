@@ -4,10 +4,10 @@ import {useFocusEffect, Stack} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
-import NewTagModal from "@/components/NewTagModal";
-import TagListItem from "@/components/TagListItem";
 import {Colors} from "@/constants/Colors";
 import {Tag} from "@/types/enums";
+import NewTagModal from "@/components/todoComponents/NewTagModal";
+import TagListItem from "@/components/todoComponents/TagListItem";
 
 const ToDoView = () => {
 

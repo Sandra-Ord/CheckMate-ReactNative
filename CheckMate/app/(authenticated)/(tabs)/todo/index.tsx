@@ -6,8 +6,8 @@ import {BottomSheetModal, BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
-import ToDoListItem from "@/components/ToDoListItem";
-import ToDoTaskModal from "@/components/ToDoTaskModal";
+import ToDoListItem from "@/components/todoComponents/ToDoListItem";
+import ToDoTaskModal from "@/components/todoComponents/ToDoTaskModal";
 
 const ToDoView = () => {
 

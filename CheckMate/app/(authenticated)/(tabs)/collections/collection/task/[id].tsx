@@ -5,40 +5,29 @@ import {
     TouchableOpacity,
     View,
     ScrollView,
-    Alert, useWindowDimensions, FlatList, Image
+    Alert
 } from 'react-native';
 import {Href, Link, Stack, useFocusEffect, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import Carousel, {ICarouselInstance} from "react-native-reanimated-carousel";
-import {useSharedValue} from "react-native-reanimated";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors"
 import ActionButton from "@/components/uiComponents/ActionButton";
-import CompleteTaskModal from "@/components/CompleteTaskModal";
-import TaskCard from "@/components/TaskCard";
-import NewCollectionCard from "@/components/NewCollectionCard.tsx";
-import CollectionCard from "@/components/CollectionCard.tsx";
+import CompleteTaskModal from "@/components/taskComponents/CompleteTaskModal";
+import TaskCard from "@/components/taskComponents/TaskCard";
 
 const TaskView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
 
-    const {width, height} = useWindowDimensions();
     const [refreshing, setRefreshing] = useState(false);
-    const ref = useRef<ICarouselInstance>(null);
-    const scrollOffsetValue = useSharedValue(0);
 
     const [task, setTask] = useState<Task>();
-    const [photoPaths, setPhotoPaths] = useState([]);
     const [photoUrls, setPhotoUrls] = useState<string[]>([]);
 
-    const [path, setPath] = useState();
-
     const {getTaskInformation, completeTask, uploadTaskPhoto, getTaskPhotos, getFileFromPath, userId} = useSupabase();
-
 
     const [assignTaskToUserId, setAssignTaskToUserId] = useState();
     const [completeTaskModalVisible, setCompleteTaskModalVisible] = useState(false);
@@ -62,7 +51,6 @@ const TaskView = () => {
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- LOAD INFORMATION ---------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
-
 
     const openImagePickerAlert = async () => {
         const choice = await new Promise((resolve) => {
