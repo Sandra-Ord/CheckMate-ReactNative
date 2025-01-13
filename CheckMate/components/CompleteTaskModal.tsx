@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
 import HorizontalInput from "@/components/uiComponents/HorizontalInput";
@@ -16,9 +16,13 @@ const CompleteTaskModal = ({task, completeTaskModalVisible, setCompleteTaskModal
             <TouchableOpacity
                 className="justify-center flex-1"
                 style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}
-                onPress={() => setCompleteTaskModalVisible(false)}
+                onPress={() => {
+                    setCompleteTaskModalVisible(false);
+                    console.log("pressed")
+                }
+                }
             >
-                <TouchableOpacity>
+                <TouchableWithoutFeedback>
                     <View className="rounded-lg p-4 mx-4"
                           style={{backgroundColor: Colors.Complementary["100"]}}>
 
@@ -84,7 +88,7 @@ const CompleteTaskModal = ({task, completeTaskModalVisible, setCompleteTaskModal
 
                         </View>
                     </View>
-                </TouchableOpacity>
+                </TouchableWithoutFeedback>
             </TouchableOpacity>
         </Modal>
     );

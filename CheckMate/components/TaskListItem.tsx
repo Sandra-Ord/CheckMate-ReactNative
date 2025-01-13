@@ -5,29 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
 import {formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
-
-const getTaskState = (task) => {
-    const now = new Date();
-    const inSeason = !task.season_start || !task.season_end ||
-        (
-            new Date(task.season_start).setFullYear(2000) <= now.setFullYear(2000) &&
-            now.setFullYear(2000) <= new Date(task.season_end).setFullYear(2000)
-        );
-    const isArchived = task.archived_at;
-    const isOverdue = task.next_due_at && new Date(task.next_due_at) < now;
-    const isOpenForCompletion =
-        (!task.next_due_at) ||
-        (task.completion_start && task.next_due_at &&
-            new Date(task.completion_start) <= now &&
-            now <= new Date(task.next_due_at)) ||
-        (!task.completion_start && !task.completion_window_days);
-
-    if (isArchived) return {state: "Archived", icon: "archive-outline", color: Colors.Primary["400"]};
-    if (!inSeason) return {state: "Out of Season", icon: "moon-outline", color: Colors.Primary["600"]};
-    if (isOverdue) return {state: "Overdue", icon: "warning-outline", color: Colors.Red["600"]};
-    if (isOpenForCompletion) return {state: "Open", icon: "timer-outline", color: Colors.Green["600"]};
-    return {state: "Not Open", icon: "pause-circle-outline", color: Colors.Yellow["600"]};
-};
+import {getTaskState, isCompleted} from "@/utils/taskUtils";
 
 const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (task: Task) => void }) => {
 
@@ -45,20 +23,15 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
                 >
                     {/*task state badge*/}
                     <View
+                        className="gap-x-2 flex-row items-center absolute px-2.5 py-0.5 rounded-xl"
                         style={{
-                            position: "absolute",
                             top: -10,
                             right: 10,
                             backgroundColor: color,
-                            paddingHorizontal: 10,
-                            paddingVertical: 3,
-                            borderRadius: 12,
-                            flexDirection: "row",
-                            alignItems: "center",
                         }}
                     >
-                        <Ionicons name={icon} size={14} color="white" style={{marginRight: 6}}/>
-                        <Text style={{color: "white", fontSize: 12, fontWeight: "bold"}}>{state}</Text>
+                        <Ionicons name={icon} size={14} className="" color="white"/>
+                        <Text className="font-bold" style={{color: "white", fontSize: 12}}>{state}</Text>
                     </View>
 
                     <View className="flex-col">
@@ -68,9 +41,17 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
 
                             {/*aligned to the left*/}
                             <View className="flex-row items-center flex-1">
-                                <TouchableOpacity className="px-1" onPress={() => onTaskComplete(task)}>
-                                    <Ionicons name="square-outline" size={20} style={{color: Colors.Primary["800"]}}/>
-                                </TouchableOpacity>
+
+                                {isCompleted(task) ? (
+                                    <View className="px-1">
+                                        <Ionicons name="checkbox-outline" size={20} style={{color: Colors.Primary["800"]}}/>
+                                    </View>
+                                ) : (
+                                    <TouchableOpacity className="px-1" onPress={() => onTaskComplete(task)}>
+                                        <Ionicons name="square-outline" size={20} style={{color: Colors.Primary["800"]}}/>
+                                    </TouchableOpacity>
+                                )}
+
                                 <Ionicons name="notifications-outline" size={18}
                                           style={{color: Colors.Primary["800"]}}/>
                                 <View className="pl-1 flex-shrink flex-1 ">
@@ -142,7 +123,7 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
                             {/* aligned to the right*/}
                             <View className="flex-col w-1/2 gap-y-1">
                                 <View className="flex-row items-center gap-x-2">
-                                    <Ionicons className="" name="timer-outline" size={16}
+                                    <Ionicons className="" name="repeat-outline" size={16}
                                               style={{color: Colors.Primary["800"]}}/>
                                     <Text
                                         className="flex-1">{getBasicRecurrenceDescriptions(task.interval_value, task.interval_unit, task.day_of_week, task.date_of_month, task.month_of_year)}</Text>

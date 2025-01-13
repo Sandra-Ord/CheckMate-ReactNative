@@ -44,9 +44,9 @@ const CollectionCard = (collection: Collection) => {
     );
 
     return (
-        <View className="px-8 items-center">
+        <View className="px-2 items-center">
             <Link
-                href={`/(authenticated)/(tabs)/collections/collection/${collection.id}` as Href} // Hack for faster loading
+                href={`/(authenticated)/(tabs)/collections/collection/${collection.id}` as Href}
                 key={`1}`}
                 asChild
             >

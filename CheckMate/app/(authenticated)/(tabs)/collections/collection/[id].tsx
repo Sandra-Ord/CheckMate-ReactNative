@@ -7,8 +7,8 @@ import {Collection, Task} from "@/types/enums";
 import {Colors} from "@/constants/Colors";
 import TaskListItem from "@/components/TaskListItem";
 import FilterMenu from "@/components/CollectionFilterMenu";
-import ActionButton from "@/components/uiComponents/ActionButton";
-import HorizontalInput from "@/components/uiComponents/HorizontalInput";
+import CompleteTaskModal from "@/components/CompleteTaskModal";
+import NoTasksListItem from "@/components/NoTasksListItem";
 
 const CollectionView = () => {
 
@@ -210,103 +210,43 @@ const CollectionView = () => {
                     </Link>
                 </View>
 
-                <View className="flex-1 justify-center pb-3 px-5">
-
-                    <FlatList
-                        className="pt-2"
-                        data={filteredTasks}
-                        renderItem={({item}) => (
-                            <TaskListItem
-                                task={item}
-                                onTaskComplete={handleTaskCompletion}
+                <View className="flex-1 pb-3 px-5">
+                    {filteredTasks.length === 0 ? (
+                        <View className="pt-2">
+                            <NoTasksListItem
+                                onOpenFilterMenu={() => setFilterMenuVisible(true)}
+                                newTaskLink={`/(authenticated)/(tabs)/collections/collection/new_task?collectionId=${id}`}
                             />
-                        )}
-                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
-                        keyExtractor={(item) => `${item.id.toString()}`}
-                    />
+                        </View>
+                    ) : (
+                        <FlatList
+                            className="pt-2"
+                            data={filteredTasks}
+                            renderItem={({item}) => (
+                                <TaskListItem
+                                    task={item}
+                                    onTaskComplete={handleTaskCompletion}
+                                />
+                            )}
+                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
+                            keyExtractor={(item) => `${item.id.toString()}`}
+                        />
+                    )}
                 </View>
 
                 {/* Modal for Responding */}
-                <Modal
-                    visible={completeTaskModalVisible}
-                    transparent
-                    animationType="fade"
-                    onRequestClose={() => setCompleteTaskModalVisible(false)}
-                >
-                    <TouchableOpacity
-                        className="justify-center  flex-1"
-                        style={{backgroundColor: "rgba(0, 0, 0, 0.3)"}}
-                        onPress={() => setCompleteTaskModalVisible(false)}
-                    >
-                        <TouchableOpacity onPress={() => console.log("press")}>
-                            <View className="rounded-lg p-4 mx-4"
-                                  style={{backgroundColor: Colors.Complementary["100"]}}>
-
-                                <View className="flex-row justify-between items-center">
-                                    <Text className="text-2xl font-bold">
-                                        Mark as Complete:
-                                    </Text>
-
-                                    <TouchableOpacity onPress={() => setCompleteTaskModalVisible(false)}>
-                                        <Ionicons name="close" size={28} style={{color: Colors.Primary["800"]}}/>
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* separator line */}
-                                <View
-                                    style={{
-                                        height: 1,
-                                        backgroundColor: Colors.Complementary["800"],
-                                    }}
-                                    className="my-2"
-                                />
-
-                                <View className="py-2 gap-y-5">
-                                    <View className="flex-row items-center gap-x-5">
-                                        <Text className="text-sm" style={{color: Colors.Primary["800"]}}>
-                                            Task:
-                                        </Text>
-                                        <Text className=" font-bold">
-                                            {taskToComplete?.name}
-                                        </Text>
-                                    </View>
-
-                                    <HorizontalInput
-                                        labelText="Completed at:"
-                                        placeholder="YYYY-MM-DD"
-                                        value={completeTaskDate.toISOString()}
-                                        onChangeText={setCompleteTaskDate}
-                                    />
-                                    <HorizontalInput
-                                        labelText="Comment:"
-                                        placeholder=""
-                                        value={completionComment}
-                                        onChangeText={setCompletionComment}
-                                        multiline={true}
-                                        numberOfLines={3}
-                                    />
-                                    <HorizontalInput
-                                        labelText="Assign User:"
-                                        placeholder="Assign a user..."
-                                        value={assignTaskToUserId}
-                                        onChangeText={setAssignTaskToUserId}
-                                    />
-
-                                    <View className="flex-row items-center justify-center px-5 py-5">
-                                        <ActionButton
-                                            onPress={onCompleteTask}
-                                            iconName="checkbox-outline"
-                                            text="Complete"
-                                            textColor={Colors.Complementary["100"]}
-                                            buttonColor={Colors.Complementary["600"]}
-                                        />
-                                    </View>
-
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    </TouchableOpacity>
-                </Modal>
+                <CompleteTaskModal
+                    task={taskToComplete}
+                    completeTaskModalVisible={completeTaskModalVisible}
+                    setCompleteTaskModalVisible={setCompleteTaskModalVisible}
+                    completeTaskDate={completeTaskDate}
+                    setCompleteTaskDate={setCompleteTaskDate}
+                    completionComment={completionComment}
+                    setCompletionComment={setCompletionComment}
+                    assignTaskToUserId={assignTaskToUserId}
+                    setAssignTaskToUserId={setAssignTaskToUserId}
+                    onCompleteTask={onCompleteTask}
+                />
 
 
                 {/* Filter and sort side menu modal */}

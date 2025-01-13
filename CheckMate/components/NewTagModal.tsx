@@ -1,10 +1,10 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import {Text, TextInput, View} from "react-native";
 import React, {useEffect, useState} from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import {Tag} from "@/types/enums";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import ActionButton from "@/components/uiComponents/ActionButton";
 
 const NewTagModal = ({

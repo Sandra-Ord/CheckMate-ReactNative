@@ -66,7 +66,7 @@ const NewTaskView = () => {
     const [timingOption, setTimingOption] = useState("auto"); // 'auto', 'previous', 'next'
     const [dueDate, setDueDate] = useState("");
     const [lastCompletedAt, setLastCompletedAt] = useState("");
-    const [completionWindow, setCompletionWindow] = useState(null);
+    const [completionWindow, setCompletionWindow] = useState();
 
     const [isIntervalUnitDropdownOpen, setIsIntervalUnitDropdownOpen] = useState(false);
     const [isWeekdayDropdownOpen, setIsWeekdayDropdownOpen] = useState(false);
@@ -268,6 +268,7 @@ const NewTaskView = () => {
             alert('Please enter a task name.');
             return;
         }
+
         task.name = taskName.trim();
         task.description = description ? description.trim() : null;
         task.recurring = isRecurring;
@@ -335,13 +336,13 @@ const NewTaskView = () => {
         }
         task.completion_start = calculateCompletionStartDateString(task.next_due_at, task.completion_window_days);
 
-
         await updateTask(task);
         router.back();
     };
 
     const onDeleteTask = async () => {
         await deleteTask(task.id);
+        router.dismissTo(`/(authenticated)/(tabs)/collections/collection/${collectionId}`);
         router.back();
     };
 
@@ -385,7 +386,8 @@ const NewTaskView = () => {
 
         setDueDate(task.next_due_at);
         setLastCompletedAt(task.last_completed_at);
-        setCompletionWindow(task.completion_window_days);
+        setCompletionWindow(task.completion_window_days ? task.completion_window_days.toString() : null);
+
     };
 
     useFocusEffect(
@@ -422,7 +424,7 @@ const NewTaskView = () => {
 
                                 <Text className="text-2xl font-bold"
                                       style={{color: Colors.Complementary["800"]}}>
-                                    {`${task === null ? "New Task:" : "Edit Task:"}`}
+                                    {`${task == null ? "New Task:" : "Edit Task:"}`}
                                 </Text>
 
                                 {/* Task Name Input */}

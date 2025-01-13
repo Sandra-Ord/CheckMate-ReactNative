@@ -24,7 +24,7 @@ const Layout = () => {
                               headerTitleAlign: 'left',
                               headerRight: () => (
                                   <Ionicons
-                                      name='time-outline'
+                                      name='sparkles-outline'
                                       size={24}
                                       onPress={() => router.navigate('/(authenticated)/(tabs)/notifications/activity')}
                                       style={{color: Colors.primaryGray}}
