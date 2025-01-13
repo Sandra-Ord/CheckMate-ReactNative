@@ -13,10 +13,10 @@ import React, {useCallback, useState} from "react";
 import {useLocalSearchParams, useRouter, Stack, useFocusEffect} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
-import {getRecurrenceDescription} from "@/utils/textUtils";
-import {days, intervalOptions, monthOptions, months, weekdayOptions, weeks, years} from "@/utils/intervalUtils";
 import {Colors} from "@/constants/Colors";
-import {Task} from "@/types/enums";
+import {intervalOptions, weekdayOptions, monthOptions, IntervalUnit, Task} from "@/types/enums";
+import {getRecurrenceDescription} from "@/utils/textUtils";
+import {calculateCompletionStartDateString, calculateNextDueDate} from "@/utils/taskDateUtils";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import HorizontalInputField from "@/components/uiComponents/HorizontalInput";
 import VerticalInputField from "@/components/uiComponents/VerticalInput";
@@ -24,7 +24,6 @@ import SwitchInput from "@/components/uiComponents/SwitchInput";
 import CustomVerticalInput from "@/components/uiComponents/CustomVerticalInput";
 import DropdownModal from "@/components/uiComponents/DropdownModal";
 import CustomHorizontalInput from "@/components/uiComponents/CustomHorizontalnput";
-import {calculateCompletionStartDateString, calculateNextDueDate} from "@/utils/taskDateUtils";
 import CalendarInput from "@/components/uiComponents/CalendarInput";
 
 const NewTaskView = () => {
@@ -208,26 +207,26 @@ const NewTaskView = () => {
             newTask.interval_value = intervalValue ? parseInt(intervalValue) : null;
             newTask.interval_unit = intervalUnit;
 
-            if (intervalUnit == days) {
+            if (intervalUnit == IntervalUnit.Days) {
                 newTask.day_of_week = null;
                 newTask.date_of_month = null;
                 newTask.month_of_year = null;
-            } else if (intervalUnit == weeks) {
+            } else if (intervalUnit == IntervalUnit.Weeks) {
                 newTask.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
                 newTask.date_of_month = null;
                 newTask.month_of_year = null;
-            } else if (intervalUnit == months) {
+            } else if (intervalUnit == IntervalUnit.Months) {
                 newTask.day_of_week = null;
                 newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
-            } else if (intervalUnit == years) {
+            } else if (intervalUnit == IntervalUnit.Years) {
                 newTask.day_of_week = null;
                 newTask.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 newTask.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
             }
         }
 
-        if (!isRecurring || !seasonalTask || intervalUnit === years) {
+        if (!isRecurring || !seasonalTask || intervalUnit === IntervalUnit.Years) {
             newTask.season_start = null;
             newTask.season_end = null;
         } else {
@@ -287,26 +286,26 @@ const NewTaskView = () => {
             task.interval_value = intervalValue ? parseInt(intervalValue) : null;
             task.interval_unit = intervalUnit;
 
-            if (intervalUnit == days) {
+            if (intervalUnit == IntervalUnit.Days) {
                 task.day_of_week = null;
                 task.date_of_month = null;
                 task.month_of_year = null;
-            } else if (intervalUnit == weeks) {
+            } else if (intervalUnit == IntervalUnit.Weeks) {
                 task.day_of_week = dayOfWeek ? weekdayOptions.indexOf(dayOfWeek) : null;
                 task.date_of_month = null;
                 task.month_of_year = null;
-            } else if (intervalUnit == months) {
+            } else if (intervalUnit == IntervalUnit.Months) {
                 task.day_of_week = null;
                 task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
-            } else if (intervalUnit == years) {
+            } else if (intervalUnit == IntervalUnit.Years) {
                 task.day_of_week = null;
                 task.date_of_month = dateOfMonth ? parseInt(dateOfMonth) : null;
                 task.month_of_year = monthOfYear ? monthOptions.indexOf(monthOfYear) : null;
             }
         }
         
-        if (!isRecurring || !seasonalTask || intervalUnit === years) {
+        if (!isRecurring || !seasonalTask || intervalUnit === IntervalUnit.Years) {
             task.season_start = null;
             task.season_end = null;
         } else {
@@ -491,7 +490,7 @@ const NewTaskView = () => {
 
                                         {/* Conditional Fields Based on Interval Unit */}
 
-                                        {intervalUnit === weeks && (
+                                        {intervalUnit === IntervalUnit.Weeks && (
                                             <>
                                                 <CustomHorizontalInput
                                                     labelText="Day of Week:"
@@ -507,7 +506,7 @@ const NewTaskView = () => {
                                             </>
                                         )}
 
-                                        {intervalUnit === years && (
+                                        {intervalUnit === IntervalUnit.Years && (
                                             <>
                                                 <CustomHorizontalInput
                                                     labelText="Month of Year:"
@@ -523,7 +522,7 @@ const NewTaskView = () => {
                                             </>
                                         )}
 
-                                        {(intervalUnit === months || (intervalUnit === years && monthOfYear)) && (
+                                        {(intervalUnit === IntervalUnit.Months || (intervalUnit === IntervalUnit.Years && monthOfYear)) && (
                                             <HorizontalInputField
                                                 labelText="Date of Month:"
                                                 placeholder="Date of Month"
@@ -535,7 +534,7 @@ const NewTaskView = () => {
                                         )}
 
                                         {/* Seasonal Task */}
-                                        {intervalUnit !== null && intervalUnit !== years && (
+                                        {intervalUnit !== null && intervalUnit !== IntervalUnit.Years && (
                                             <View className="gap-y-6">
                                                 <SwitchInput
                                                     labelText="Is this task seasonal?"

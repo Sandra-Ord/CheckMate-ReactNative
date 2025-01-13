@@ -4,9 +4,8 @@ import {Image, Text, TouchableOpacity, useWindowDimensions, View} from 'react-na
 import Carousel from "react-native-reanimated-carousel";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
-import {Task} from "@/types/enums";
-import {years} from "@/utils/intervalUtils";
-import {isInSeason, isArchived, isCompleted, getTaskState} from "@/utils/taskUtils";
+import {IntervalUnit, Task} from "@/types/enums";
+import {getTaskState, isArchived, isCompleted, isInSeason} from "@/utils/taskUtils";
 import {formatDate, formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
 import IconText from "@/components/uiComponents/IconText";
 import SeparatorLine from "@/components/uiComponents/SeparatorLine";
@@ -127,7 +126,7 @@ const TaskCard = ({task, photoUrls, onTaskComplete}: {
                             </View>
                         )}
 
-                        {(task.recurring && task.interval_unit !== years) && (
+                        {(task.recurring && task.interval_unit !== IntervalUnit.Years) && (
                             <View className="gap-y-2">
                                 <Text className="text-lg font-semibold">Season Info:</Text>
                                 <IconText icon="earth-outline"

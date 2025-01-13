@@ -13,11 +13,17 @@ export enum AuthStrategy {
     Apple = 'oauth_apple',
 }
 
-
-export enum TaskNotificationType {
-    TaskAssigned,
-    TaskWindowOpen,
-    TaskDueDate,
+export enum NotificationType {
+    Invitation = 'invitation',
+    InvitationAccepted = 'invitation_accepted',
+    InvitationRejected = 'invitation_rejected',
+    UserJoinedCollection = 'user_joined_collection',
+    UserLeftCollection = 'user_left_collection',
+    TaskAssigned = 'task_assigned',
+    TaskCompletionWindow = 'task_completion_window',
+    TaskDueSoon = 'task_due_soon',
+    TaskInSeason = 'task_in_season',
+    ToDoTaskDueSoon = 'to_do_task_due_soon',
 }
 
 export enum CollectionRole {
@@ -26,9 +32,10 @@ export enum CollectionRole {
 }
 
 export enum CollectionInvitationStatus {
-    Pending = 0,
-    Rejected = -1,
-    Accepted = 1,
+    Pending = null,
+    Rejected = 'REJECTED',
+    Accepted = 'ACCEPTED',
+    Cancelled = 'CANCELLED'
 }
 
 export enum IntervalUnit {
@@ -37,6 +44,11 @@ export enum IntervalUnit {
     Months = 'month',
     Years = 'year',
 }
+
+export const intervalOptions = [IntervalUnit.Days, IntervalUnit.Weeks, IntervalUnit.Months, IntervalUnit.Years];
+export const weekdayOptions = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export const monthOptions = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 
 export interface User {
     id: UserID;
@@ -96,12 +108,16 @@ export interface TaskLog {
     comment: string | null
 }
 
-export interface TaskNotification {
+export interface Notification {
     id: ID,
     user_id: UserID,
-    task_id: ID,
-    notification_type: TaskNotificationType,
-    sent_at: Date
+    type: NotificationType,
+    collection_id: ID | null,
+    task_id: ID | null,
+    about_user_id: UserID | null,
+    created_at: Date,
+    read_at: Date | null,
+    is_critical: boolean
 }
 
 export interface TaskPhoto {

@@ -8,6 +8,7 @@ import {Collection, User} from "@/types/enums";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import VerticalInputField from "@/components/uiComponents/VerticalInput";
 import UserListItem from "@/components/UserListItem";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
 
 const Settings = () => {
 
@@ -131,8 +132,7 @@ const Settings = () => {
                     />
                 </View>
 
-                <View style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
-
+                <SeparatorLine height={0.5} margin={4} color={Colors.Complementary["500"]}/>
 
                 <View className="px-2">
 
@@ -152,7 +152,7 @@ const Settings = () => {
                             />
                         }
                         ItemSeparatorComponent={
-                            <View className="my-2" style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
+                        <SeparatorLine height={0.5} margin={8} color={Colors.Complementary["400"]}/>
                         }
                         className="my-5"
                     />
@@ -171,8 +171,7 @@ const Settings = () => {
 
                 </View>
 
-                <View style={{height: 0.5, backgroundColor: Colors.Primary["600"]}}></View>
-
+                <SeparatorLine height={0.5} margin={4} color={Colors.Complementary["500"]}/>
 
                 {/* Button to delete the collection (for owner) and leave collection (for member) */}
                 <View className="items-center">

@@ -8,19 +8,18 @@ import {
     calculateCompletionStartDateString,
     calculateNextDueDate
 } from "@/utils/taskDateUtils";
-import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
+import {Collection, CollectionInvitationStatus, Tag, Task, ToDoTask} from '@/types/enums';
 
 export const COLLECTIONS_TABLE = 'collections';
 export const COLLECTION_USERS_TABLE = 'collection_users'
 export const TASKS_TABLE = 'tasks';
 export const TASK_LOGS_TABLE = 'task_logs';
-export const TASK_NOTIFICATIONS_TABLE = 'task_notifications';
 export const TASK_PHOTOS = 'task_photos'
 export const TO_DO_TASKS_TABLE = 'to_do_tasks';
 export const TO_DO_TAGS_TABLE = 'to_do_tags';
 export const TAGS_TABLE = 'tags';
 export const USERS_TABLE = 'users';
-export const NOTIFICATIONS = 'notifications';
+export const NOTIFICATIONS_TABLE = 'notifications';
 export const FILES_BUCKET = 'files';
 
 type ProviderProps = {
@@ -97,6 +96,10 @@ type ProviderProps = {
     archiveTag: (tag: Tag) => Promise<any>;
     unarchiveTag: (tag: Tag) => Promise<any>;
 
+    // NOTIFICATIONS
+    getUsersNotifications: () => Promise<any>;
+    readNotification: (notification_id) => Promise<any>;
+
     // OTHER
     setUserPushToken: (token: string) => Promise<any>;
     getUserName: () => Promise<any>;
@@ -152,7 +155,7 @@ export const SupabaseProvider = ({children}: any) => {
             .from(COLLECTION_USERS_TABLE)
             .select('collections(id, name, owner_id, users(id, first_name))')
             .eq('user_id', userId)
-            .eq('status', 'ACCEPTED');
+            .eq('status', CollectionInvitationStatus.Accepted);
 
         if (error) {
             console.error('Error fetching person\'s collections:', error);
@@ -168,7 +171,7 @@ export const SupabaseProvider = ({children}: any) => {
             .from(COLLECTION_USERS_TABLE)
             .select('user_id, status')
             .eq('collection_id', collectionId)
-            .eq('status', 'ACCEPTED');
+            .eq('status', CollectionInvitationStatus.Accepted);
 
         if (error) {
             console.error('Error fetching accepted users:', error);
@@ -285,7 +288,7 @@ export const SupabaseProvider = ({children}: any) => {
             .from(COLLECTION_USERS_TABLE)
             .select('users!collection_users_user_id_fkey (id, first_name, email, avatar_url)')
             .eq('collection_id', collectionId)
-            .eq('status', 'ACCEPTED');
+            .eq('status', CollectionInvitationStatus.Accepted);
 
         if (error) {
             console.error('Error fetching collection users:', error);
@@ -300,11 +303,11 @@ export const SupabaseProvider = ({children}: any) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({
-                status: "CANCELLED"
+                status: CollectionInvitationStatus.Cancelled
             })
             .eq("collection_id", collectionId)
             .eq("user_id", userId)
-            .eq("status", "ACCEPTED")
+            .eq("status", CollectionInvitationStatus.Accepted)
             .select("*");
         if (error) {
             console.error("Error leaving the collection: " + error);
@@ -537,13 +540,13 @@ export const SupabaseProvider = ({children}: any) => {
             .from(COLLECTION_USERS_TABLE)
             .update({
                 responded_at: new Date().toISOString(),
-                status: "ACCEPTED"
+                status: CollectionInvitationStatus.Accepted
             })
             .match({id: invitationId})
             .select('*')
             .single();
         if (error) {
-            console.error("Error acceptin invitation:", error);
+            console.error("Error accepting invitation:", error);
         }
         return data;
     };
@@ -553,7 +556,7 @@ export const SupabaseProvider = ({children}: any) => {
             .from(COLLECTION_USERS_TABLE)
             .update({
                 responded_at: new Date().toISOString(),
-                status: "REJECTED"
+                status: CollectionInvitationStatus.Rejected
             })
             .match({id: invitationId})
             .select('*')
@@ -786,6 +789,42 @@ export const SupabaseProvider = ({children}: any) => {
     // ----------------------------------------------------- OTHER -----------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
+    const getUsersNotifications = async () => {
+        const {data, error} = await client
+            .from(NOTIFICATIONS_TABLE)
+            .select('*, users!notifications_about_user_id_fkey (id, first_name), collections (id, name), tasks (id, name)')
+            .eq('user_id', userId)
+            .order('read_at', { ascending: true, nullsFirst: true })
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Error retrieving user's notifications:", error);
+        }
+
+        return data || [];
+    };
+
+    const readNotification = async (notification_id) => {
+        const {data, error} = await client
+            .from(NOTIFICATIONS_TABLE)
+            .update({
+                read_at: new Date().toISOString(),
+            })
+            .match({id: notification_id})
+            .select('*')
+            .single();
+
+        if (error) {
+            console.error("Error marking notification as read:", error);
+        }
+
+        return data;
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------- OTHER -----------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     const setUserPushToken = async (token: string) => {
         const {data, error} = await client
             .from(USERS_TABLE)
@@ -974,6 +1013,10 @@ export const SupabaseProvider = ({children}: any) => {
         deleteTag,
         archiveTag,
         unArchiveTag,
+
+        // NOTIFICATIONS
+        getUsersNotifications,
+        readNotification,
 
         // OTHER
         setUserPushToken,
