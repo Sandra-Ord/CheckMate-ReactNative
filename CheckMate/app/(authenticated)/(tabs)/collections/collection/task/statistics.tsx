@@ -121,6 +121,11 @@ const TaskStatisticsView = () => {
                             <View className="gap-y-1">
                                 <View className="flex-row items-center gap-x-2 mb-2">
                                     <View className="h-4 w-4"
+                                          style={{backgroundColor: Colors.Blue["600"]}}/>
+                                    <Text style={{color: Colors.Primary["800"]}}>Total</Text>
+                                </View>
+                                <View className="flex-row items-center gap-x-2 mb-2">
+                                    <View className="h-4 w-4"
                                           style={{backgroundColor: Colors.Green["600"]}}/>
                                     <Text style={{color: Colors.Primary["800"]}}>On Time</Text>
                                 </View>
