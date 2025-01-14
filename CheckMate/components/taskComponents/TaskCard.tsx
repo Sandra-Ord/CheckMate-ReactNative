@@ -79,7 +79,7 @@ const TaskCard = ({task, photoUrls, onTaskComplete}: {
                                 </TouchableOpacity>
                             </Link>
                             <Link
-                                href={`/(authenticated)/(tabs)/collections/collection/task/log?id=${task.id}` as Href}
+                                href={`/(authenticated)/(tabs)/collections/collection/task/log?id=${task.id}&collectionId=${task.collection_id}` as Href}
                                 key={`task-log-${task.id}`}
                                 asChild
                             >

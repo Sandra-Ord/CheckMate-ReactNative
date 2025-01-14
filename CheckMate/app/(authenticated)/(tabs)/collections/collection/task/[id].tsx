@@ -131,6 +131,16 @@ const TaskView = () => {
                 headerTitle: task?.name ? `${task.name}` : "Task",
                 headerRight: () => (
                     <View className="flex-row items-center gap-x-2">
+
+                        <Link
+                            href={`/(authenticated)/(tabs)/collections/collection/task/statistics?id=${id}&collectionId=${task?.collection_id}`}
+                            key={`statistics-${task?.id}`}
+                            asChild>
+                            <TouchableOpacity>
+                                <Ionicons name="stats-chart-outline" size={20} color={Colors.Complementary["800"]}/>
+                            </TouchableOpacity>
+                        </Link>
+
                         <Link
                             href={`/(authenticated)/(tabs)/collections/collection/new_task?id=${task?.id}&collectionId=${task?.collection_id}` as Href}
                             key={`new-task-${task?.id}`}

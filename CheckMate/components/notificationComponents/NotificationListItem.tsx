@@ -7,7 +7,7 @@ import {Notification} from "@/types/enums";
 import {getNotificationLink, getNotificationText, timeSinceNotificationCreated} from "@/utils/textUtils";
 import {useSupabase} from "@/context/SupabaseContext";
 
-const NotificationListItem = (notification: Notification) => {
+const NotificationListItem = ({notification, allSelected}) => {
     const router = useRouter();
     const {readNotification} = useSupabase();
 
@@ -22,7 +22,7 @@ const NotificationListItem = (notification: Notification) => {
         <View>
             <View className="py-1">
                 <TouchableOpacity className="w-full px-3 py-1 rounded-sm flex-row items-center "
-                                  style={{backgroundColor: Colors.Complementary["50"], aspectRatio: 10 / 2}}
+                                  style={{backgroundColor: (allSelected && isUnread) ? Colors.Complementary["200"] : Colors.Complementary["50"], aspectRatio: 10 / 2}}
                                   onPress={handlePress}
                 >
                     {/* First Column: Icon */}

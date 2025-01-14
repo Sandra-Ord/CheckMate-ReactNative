@@ -4,7 +4,6 @@ import {decode} from 'base64-arraybuffer';
 import {RealtimePostgresChangesPayload} from '@supabase/supabase-js';
 import {client} from '@/utils/supabaseClient';
 import {
-    calculateCompletionStartDate,
     calculateCompletionStartDateString,
     calculateNextDueDate
 } from "@/utils/taskDateUtils";
@@ -73,6 +72,10 @@ type ProviderProps = {
     archiveTask: (taskId: number) => Promise<any>;
     unArchiveTask: (taskId: number) => Promise<any>;
 
+    // TASK STATISTICS FUNCTIONS
+    getRelevantCollectionUsers: (collectionId: number) => Promise<any>;
+    getTaskCompletionStats: (taskId: number) => Promise<any>;
+
     // INVITATIONS
     getPendingInvitations: () => Promise<any>;
     acceptInvitation: (invitationId) => Promise<any>;
@@ -99,6 +102,7 @@ type ProviderProps = {
     // NOTIFICATIONS
     getUsersNotifications: () => Promise<any>;
     readNotification: (notification_id) => Promise<any>;
+    readAllNotifications: () => Promise<any>;
 
     // OTHER
     setUserPushToken: (token: string) => Promise<any>;
@@ -323,8 +327,8 @@ export const SupabaseProvider = ({children}: any) => {
             .from(TASKS_TABLE)
             .select(`*, users (id, first_name, email)`)
             .match({collection_id: collectionId})
-            .order('next_due_at', { ascending: true })  // Sort by next_due_at ascending
-            .order('completion_window_days', { nullsFirst: false, ascending: true });  // Sort by completion_window_days ascending, nullsFirst
+            .order('next_due_at', {ascending: true})  // Sort by next_due_at ascending
+            .order('completion_window_days', {nullsFirst: false, ascending: true});  // Sort by completion_window_days ascending, nullsFirst
 
         if (error) {
             console.error('Error creating to do task:', error);
@@ -402,7 +406,7 @@ export const SupabaseProvider = ({children}: any) => {
             task.last_completed_at = completionDate;
         }
 
-        const { taskData, taskError } = await client
+        const {taskData, taskError} = await client
             .from(TASKS_TABLE)
             .update({
                 last_completed_at: task.last_completed_at,
@@ -411,7 +415,7 @@ export const SupabaseProvider = ({children}: any) => {
                 assigned_to_user_id: task.assigned_to_user_id,
                 archived_at: task.archived_at
             })
-            .eq('id', task.id )
+            .eq('id', task.id)
             .select("*")
             .single();
 
@@ -516,6 +520,61 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------- TASK STATISTICS FUNCTIONS ---------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const getRelevantCollectionUsers = async (collectionId: number) => {
+        const {data, error} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .select(`
+            user_id,
+            status,
+            users!collection_users_user_id_fkey (id, first_name, avatar_url)
+        `)
+            .match({collection_id: collectionId})
+            .in('status', [CollectionInvitationStatus.Accepted, CollectionInvitationStatus.Cancelled])
+            .order('status', {ascending: true});
+
+        if (error) {
+            console.error('Error fetching collection users:', error);
+            return [];
+        }
+
+        return data || [];
+    };
+
+    const getTaskCompletionStats = async (taskId: number) => {
+        const {data, error} = await client
+            .from(TASK_LOGS_TABLE)
+            .select(`user_id, completed_at, due_at`)
+            .eq('task_id', taskId);
+
+        if (error) {
+            console.error('Error fetching task completion stats:', error);
+            return [];
+        }
+
+        return data.reduce((acc, log) => {
+            const userId = log.user_id;
+            const isOnTime = !log.due_at || new Date(log.completed_at) <= new Date(log.due_at);
+            const status = isOnTime ? 'on_time' : 'overdue';
+
+            if (!acc[userId]) {
+                acc[userId] = {
+                    user: log.users,
+                    onTime: 0,
+                    overdue: 0,
+                    total: 0,
+                };
+            }
+
+            if (status === 'on_time') acc[userId].onTime++;
+            else acc[userId].overdue++;
+            acc[userId].total++;
+            return acc;
+        }, {});
+    };
 
     // -----------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------ INVITATIONS ----------------------------------------------------
@@ -568,7 +627,6 @@ export const SupabaseProvider = ({children}: any) => {
 
         return data;
     };
-
 
     // -----------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------ TO DO TASKS ----------------------------------------------------
@@ -794,8 +852,8 @@ export const SupabaseProvider = ({children}: any) => {
             .from(NOTIFICATIONS_TABLE)
             .select('*, users!notifications_about_user_id_fkey (id, first_name), collections (id, name), tasks (id, name)')
             .eq('user_id', userId)
-            .order('read_at', { ascending: true, nullsFirst: true })
-            .order('created_at', { ascending: false });
+            .order('read_at', {ascending: false, nullsFirst: true})
+            .order('created_at', {ascending: false});
 
         if (error) {
             console.error("Error retrieving user's notifications:", error);
@@ -813,6 +871,23 @@ export const SupabaseProvider = ({children}: any) => {
             .match({id: notification_id})
             .select('*')
             .single();
+
+        if (error) {
+            console.error("Error marking notification as read:", error);
+        }
+
+        return data;
+    };
+
+    const readAllNotifications = async () => {
+        const {data, error} = await client
+            .from(NOTIFICATIONS_TABLE)
+            .update({
+                read_at: new Date().toISOString(),
+            })
+            .match({user_id: userId})
+            .is('read_at', null)
+            .select('*');
 
         if (error) {
             console.error("Error marking notification as read:", error);
@@ -892,9 +967,9 @@ export const SupabaseProvider = ({children}: any) => {
     const uploadTaskPhoto = async (taskId: number, filePath: string, base64: string, contentType: string) => {
         try {
             // Upload the photo to the bucket
-            const { data: uploadData, error: uploadError } = await client.storage
+            const {data: uploadData, error: uploadError} = await client.storage
                 .from(FILES_BUCKET)
-                .upload(filePath, decode(base64), { contentType });
+                .upload(filePath, decode(base64), {contentType});
 
             if (uploadError) {
                 console.error("Error uploading file to bucket:", uploadError);
@@ -909,7 +984,7 @@ export const SupabaseProvider = ({children}: any) => {
             }
 
             // Insert a record into the task_photos table
-            const { data: photoData, error: insertError } = await client
+            const {data: photoData, error: insertError} = await client
                 .from(TASK_PHOTOS)
                 .insert({
                     task_id: taskId,
@@ -925,7 +1000,7 @@ export const SupabaseProvider = ({children}: any) => {
             }
 
             // Return the combined result
-            return { uploadedFilePath, photoData };
+            return {uploadedFilePath, photoData};
         } catch (error) {
             console.error("Unexpected error in uploadTaskPhoto:", error);
             return null;
@@ -933,23 +1008,23 @@ export const SupabaseProvider = ({children}: any) => {
     };
 
     const uploadFile = async (filePath: string, base64: string, contentType: string) => {
-        const { data } = await client.storage
+        const {data} = await client.storage
             .from(FILES_BUCKET)
-            .upload(filePath, decode(base64), { contentType });
+            .upload(filePath, decode(base64), {contentType});
 
         return data?.path;
     };
 
     const getFileFromPath = async (path: string) => {
-        const { data, error } = await client
+        const {data, error} = await client
             .storage
             .from(FILES_BUCKET)
             .createSignedUrl(path, 60 * 60, {
-            transform: {
-                width: 300,
-                height: 200,
-            },
-        });
+                transform: {
+                    width: 300,
+                    height: 200,
+                },
+            });
 
         if (error) console.error("Error generating signed URL:", error);
 
@@ -991,6 +1066,10 @@ export const SupabaseProvider = ({children}: any) => {
         archiveTask,
         unArchiveTask,
 
+        // TASK STATISTICS FUNCTIONS
+        getRelevantCollectionUsers,
+        getTaskCompletionStats,
+
         // INVITATIONS
         getPendingInvitations,
         acceptInvitation,
@@ -1017,6 +1096,7 @@ export const SupabaseProvider = ({children}: any) => {
         // NOTIFICATIONS
         getUsersNotifications,
         readNotification,
+        readAllNotifications,
 
         // OTHER
         setUserPushToken,

@@ -8,7 +8,7 @@ import {Collection, User} from "@/types/enums";
 import ActionButton from "@/components/uiComponents/ActionButton";
 import VerticalInputField from "@/components/uiComponents/VerticalInput";
 import UserListItem from "@/components/UserListItem";
-import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine";
 
 const Settings = () => {
 

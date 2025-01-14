@@ -10,6 +10,7 @@ import {Colors} from "@/constants/Colors";
 const TaskLogView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
+    const {collectionId} = useLocalSearchParams<{ collectionId: string }>()
 
     const [refreshing, setRefreshing] = useState(false);
     const [task, setTask] = useState<Task>();
@@ -46,7 +47,7 @@ const TaskLogView = () => {
                 <Stack.Screen options={{
                     headerTitle: task?.name ? `${task.name} Log` : "Task Log",
                     headerRight: () => (
-                        <Link href={`/(authenticated)/(tabs)/collections/collection/task/statistics?id=${id}`} asChild>
+                        <Link href={`/(authenticated)/(tabs)/collections/collection/task/statistics?id=${id}&collectionId=${collectionId}`} asChild>
                             <TouchableOpacity>
                                 <Ionicons name="stats-chart-outline" size={24} color={Colors.Complementary["900"]}/>
                             </TouchableOpacity>

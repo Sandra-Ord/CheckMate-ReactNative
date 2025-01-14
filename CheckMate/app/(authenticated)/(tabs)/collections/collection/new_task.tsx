@@ -28,8 +28,6 @@ import CalendarInput from "@/components/uiComponents/CalendarInput";
 
 const NewTaskView = () => {
 
-    // todo get collection id from search params for new task
-
     const router = useRouter();
     const {collectionId} = useLocalSearchParams<{ collectionId?: string }>()
     const {id} = useLocalSearchParams<{ id?: string }>()

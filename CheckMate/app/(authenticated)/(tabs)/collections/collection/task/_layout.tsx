@@ -45,11 +45,23 @@ const Layout = () => {
                           }}
             />
 
-            {/*<Stack.Screen name="statistics"*/}
-            {/*              options={{*/}
-            {/*                  headerShown: false*/}
-            {/*              }}*/}
-            {/*/>*/}
+            <Stack.Screen name="statistics"
+                          options={{
+                              headerTitle: "Task Statistics",
+                              headerShown: true,
+                              headerStyle: {backgroundColor: Colors.Complementary["400"]},
+                              headerTitleAlign: 'center',
+                              headerLeft: () => (
+                                  <Ionicons
+                                      name="arrow-back"
+                                      size={24}
+                                      color={Colors.Complementary["900"]}
+                                      onPress={() => router.back()}
+                                      className="pr-2"
+                                  />
+                              )
+                          }}
+            />
         </Stack>
     );
 };
