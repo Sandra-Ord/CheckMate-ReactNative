@@ -21,15 +21,17 @@ import TaskCard from "@/components/taskComponents/TaskCard";
 const TaskView = () => {
 
     const {id} = useLocalSearchParams<{ id: string }>();
+    const {collectionId} = useLocalSearchParams<{ collectionId?: string }>()
 
     const [refreshing, setRefreshing] = useState(false);
 
+    const [users, setUsers] = useState<[]>([]);
     const [task, setTask] = useState<Task>();
     const [photoUrls, setPhotoUrls] = useState<string[]>([]);
 
-    const {getTaskInformation, completeTask, uploadTaskPhoto, getTaskPhotos, getFileFromPath, userId} = useSupabase();
+    const {getTaskInformation, getCollectionUsers, completeTask, uploadTaskPhoto, getTaskPhotos, getFileFromPath, userId} = useSupabase();
 
-    const [assignTaskToUserId, setAssignTaskToUserId] = useState();
+    const [assignTaskToUser, setAssignTaskToUser] = useState();
     const [completeTaskModalVisible, setCompleteTaskModalVisible] = useState(false);
     const [completionComment, setCompletionComment] = useState();
     const [completeTaskDate, setCompleteTaskDate] = useState(new Date());
@@ -40,10 +42,9 @@ const TaskView = () => {
 
     const onCompleteTask = async () => {
         if (task == null) return;
-        console.log(task);
-        const data = await completeTask(task, completeTaskDate, completionComment, assignTaskToUserId);
+        const data = await completeTask(task, completeTaskDate, completionComment, assignTaskToUser?.id);
         setCompleteTaskModalVisible(false);
-        setAssignTaskToUserId(null);
+        setAssignTaskToUser(null);
         setCompletionComment("");
         await loadTasks();
     }
@@ -102,12 +103,17 @@ const TaskView = () => {
             const storagePath = await uploadTaskPhoto(task?.id, filePath, base64, contentType);
             console.log("Image uploaded successfully");
         }
+        loadPhotos();
+    };
+
+    const loadCollectionUsers = async () => {
+        if (collectionId == null) return;
+        const data = await getCollectionUsers(collectionId);
+        setUsers(data);
     };
 
     const loadTask = async () => {
-        console.log("loading task")
         const data = await getTaskInformation(id);
-        console.log(data);
         setTask(data);
     };
 
@@ -120,6 +126,7 @@ const TaskView = () => {
     useFocusEffect(
         useCallback(() => {
             loadTask();
+            loadCollectionUsers();
             loadPhotos();
         }, [])
     );
@@ -185,9 +192,10 @@ const TaskView = () => {
                     setCompleteTaskDate={setCompleteTaskDate}
                     completionComment={completionComment}
                     setCompletionComment={setCompletionComment}
-                    assignTaskToUserId={assignTaskToUserId}
-                    setAssignTaskToUserId={setAssignTaskToUserId}
+                    assignTaskToUserId={assignTaskToUser}
+                    setAssignTaskToUserId={setAssignTaskToUser}
                     onCompleteTask={onCompleteTask}
+                    users={users}
                 />
 
             </ScrollView>

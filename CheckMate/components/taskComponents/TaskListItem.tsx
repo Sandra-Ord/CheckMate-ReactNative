@@ -14,7 +14,7 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
     return (
         <View className="py-1">
             <Link
-                href={`/(authenticated)/(tabs)/collections/collection/task/${task.id}` as Href}
+                href={`/(authenticated)/(tabs)/collections/collection/task/${task.id}?collectionId=${task.collection_id}` as Href}
                 key={`new-task-${task.id}`}
                 asChild
             >

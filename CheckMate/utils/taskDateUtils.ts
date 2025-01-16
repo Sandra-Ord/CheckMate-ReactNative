@@ -1,15 +1,10 @@
 import {Collection, Tag, Task, ToDoTask} from '@/types/enums';
 
 export const calculateNextDueDate = (task, completionDate) => {
-
-    console.log("calculateNextDueDate cp 1")
-    console.log(task.recurring)
-
-    if (!task.recurring) {
+        if (!task.recurring) {
         // Non-recurring task: no next due date
         return null;
     }
-    console.log("calculateNextDueDate cp 2")
     if (!task.interval_value || !task.interval_unit) return; // Error
 
 
@@ -26,7 +21,7 @@ export const calculateNextDueDate = (task, completionDate) => {
 
     const nextDueDate = new Date(baseDate);
 
-
+    // todo: currently the next due date does not account for seasons
     switch (task.interval_unit) {
         case "day":
             nextDueDate.setDate(nextDueDate.getDate() + task.interval_value);
@@ -132,34 +127,18 @@ export const calculateNextDueDate = (task, completionDate) => {
     }
 
     return nextDueDate;
-}
+};
 
 export const calculateCompletionStartDate = (due_date, completion_window_days) => {
-    console.log("inside the calculateCompletionStartDate")
-
     let completionStart = null;
     if (due_date !== null && completion_window_days !== null && completion_window_days >= 0) {
-        console.log("if statement true")
-        console.log("due_date !== null " + (due_date !== null))
-        console.log("completion_window_days !== null " + (completion_window_days !== null))
-        console.log("completion_window_days >= 0" + (completion_window_days >= 0))
-        console.log("completion_window_days" + completion_window_days)
-        console.log()
         completionStart = new Date(due_date);
-        console.log("base date " + completionStart)
         completionStart.setDate(completionStart.getDate() - completion_window_days);
-        console.log("new date " + completionStart)
-
     }
-    console.log("value returned " + completionStart)
     return completionStart;
-}
+};
 
 export const calculateCompletionStartDateString = (due_date, completion_window_days) : string | null => {
-    console.log("inside the calculateCompletionStartDateString")
     let completionStart = calculateCompletionStartDate(due_date, completion_window_days);
-    console.log("before returning")
-    console.log("value " + completionStart)
-    console.log("returning value = " + (completionStart?.toISOString() ?? null))
     return completionStart?.toISOString() ?? null;
-}
+};

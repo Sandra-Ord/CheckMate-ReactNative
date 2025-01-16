@@ -29,7 +29,6 @@ const TaskLogView = () => {
     const loadTaskLogs = async () => {
         if (!id) return;
         const data = await getTaskLogs!(id);
-        console.log(data);
         setLogs(data);
     };
 

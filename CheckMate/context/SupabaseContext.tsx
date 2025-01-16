@@ -39,7 +39,8 @@ type ProviderProps = {
 
     addUserToCollection: (collectionId: number, invitedUserId: number) => Promise<any>;
     getCollectionUsers: (collectionId: number) => Promise<any>;
-    leaveCollection: (collectionId: string) => Promise<any>;
+    leaveCollection: (collectionId: number) => Promise<any>;
+    removeFromCollection: (collection_id: number, user_id: string) => Promise<any>;
 
     getCollectionTasks: (collectionId: number) => Promise<any>;
 
@@ -106,6 +107,7 @@ type ProviderProps = {
 
     // OTHER
     setUserPushToken: (token: string) => Promise<any>;
+    getUser: () => Promise<any>;
     getUserName: () => Promise<any>;
     setUserName: (firstName: string) => Promise<any>;
     findUsers: (search: string) => Promise<any>;
@@ -303,7 +305,7 @@ export const SupabaseProvider = ({children}: any) => {
         return result || [];
     };
 
-    const leaveCollection = async (collectionId: string) => {
+    const leaveCollection = async (collectionId: number) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({
@@ -314,11 +316,28 @@ export const SupabaseProvider = ({children}: any) => {
             .eq("status", CollectionInvitationStatus.Accepted)
             .select("*");
         if (error) {
-            console.error("Error leaving the collection: " + error);
+            console.error("Error leaving the collection:", error);
             return;
         }
         return data;
     };
+
+    const removeFromCollection = async (collection_id: number, user_id: string) => {
+        const {data, error} = await client
+            .from(COLLECTION_USERS_TABLE)
+            .update({
+                status: CollectionInvitationStatus.Removed
+            })
+            .eq("collection_id", collection_id)
+            .eq("user_id", user_id)
+            .eq("status", CollectionInvitationStatus.Accepted)
+            .select("*");
+        if (error) {
+            console.error("Error removing user from collection:", error);
+            return;
+        }
+        return data;
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -358,7 +377,7 @@ export const SupabaseProvider = ({children}: any) => {
     const getTaskInformation = async (taskId: number) => {
         const {data, error} = await client
             .from(TASKS_TABLE)
-            .select(`*, users (first_name)`)
+            .select(`*, users (*)`)
             .match({id: taskId})
             .single();
 
@@ -912,6 +931,39 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
+    const getUser = async () => {
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+        console.log("GETTING USER");
+
+        const {data, error} = await client
+            .from(USERS_TABLE)
+            .select('*')
+            .match({id: userId})
+            .single();
+        if (error) {
+            console.error("Error retrieving user:", error);
+        }
+        console.log("DATA")
+        console.log("DATA")
+        console.log("DATA")
+        console.log("DATA")
+        console.log("DATA")
+
+        console.log(data);
+        return data || null;
+    };
+
     const getUserName = async () => {
         const {data, error} = await client
             .from(USERS_TABLE)
@@ -919,7 +971,7 @@ export const SupabaseProvider = ({children}: any) => {
             .match({id: userId})
             .single();
         if (error) {
-            console.error("Error retrieving user name: " + error);
+            console.error("Error retrieving user name:", error);
         }
         return data || null;
     };
@@ -933,7 +985,7 @@ export const SupabaseProvider = ({children}: any) => {
             .match({id: userId})
             .select("*");
         if (error) {
-            console.error("Error setting user name: " + error);
+            console.error("Error setting user name:", error);
         }
         return data || null;
     };
@@ -944,7 +996,7 @@ export const SupabaseProvider = ({children}: any) => {
             .select("*")
             .ilike('email', `%${search.trim()}%`);
         if (error) {
-            console.error("Error finding users: " + error);
+            console.error("Error finding users:", error);
         }
         return data || [];
     };
@@ -958,7 +1010,7 @@ export const SupabaseProvider = ({children}: any) => {
             .match({task_id: taskId})
 
         if (error) {
-            console.error("Error fetching photos: " + error);
+            console.error("Error fetching photos:", error);
         }
 
         return data || [];
@@ -1050,6 +1102,7 @@ export const SupabaseProvider = ({children}: any) => {
         addUserToCollection,
         getCollectionUsers,
         leaveCollection,
+        removeFromCollection,
 
         getCollectionTasks,
 
@@ -1100,6 +1153,7 @@ export const SupabaseProvider = ({children}: any) => {
 
         // OTHER
         setUserPushToken,
+        getUser,
         getUserName,
         setUserName,
         findUsers,

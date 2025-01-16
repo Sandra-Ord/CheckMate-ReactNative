@@ -159,30 +159,32 @@ const TaskCard = ({task, photoUrls, onTaskComplete}: {
                             <IconText icon="archive-outline" text="Archived"/>
                         )}
 
-                        <View className=" items-center">
-                            <Carousel
-                                data={photoUrls}
-                                loop={false}
-                                width={width * 0.9}
-                                height={height * 0.6}
-                                renderItem={({item}) => (
-                                    <View className="items-center">
+                        {photoUrls.length > 0 ? (
+                            <View className="items-center">
+                                <Carousel
+                                    data={photoUrls}
+                                    loop={false}
+                                    width={width * 0.9}
+                                    height={height * 0.6}
+                                    renderItem={({item}) => (
+                                        <View className="items-center">
+                                            <Image
+                                                source={{uri: item}}
+                                                style={{
+                                                    width: width * 0.9,
+                                                    height: height * 0.6,
+                                                    borderRadius: 20,
+                                                    alignSelf: 'center',
+                                                    resizeMode: 'cover'
+                                                }}
+                                            />
+                                        </View>
+                                    )}
+                                    vertical={false}
+                                />
+                            </View>
+                        ) : (<View></View>)}
 
-                                        <Image
-                                            source={{uri: item}}
-                                            style={{
-                                                width: width * 0.9,
-                                                height: height * 0.6,
-                                                borderRadius: 20,
-                                                alignSelf: 'center',
-                                                resizeMode: 'cover'
-                                            }}
-                                        />
-                                    </View>
-                                )}
-                                vertical={false}
-                            />
-                        </View>
 
                     </View>
 

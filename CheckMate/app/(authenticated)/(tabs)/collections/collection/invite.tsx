@@ -46,7 +46,6 @@ const Invite = () => {
     };
 
     const onAddUser = async (user: User) => {
-        console.log('adding user', user);
         await addUserToCollection!(id!, user.id);
     };
 

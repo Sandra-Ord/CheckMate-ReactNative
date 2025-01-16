@@ -1,5 +1,5 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
-import {Text, TextInput, View} from "react-native";
+import {Alert, Text, TextInput, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
@@ -28,7 +28,7 @@ const NewTagModal = ({
 
     const onCreateTag = async () => {
         if (!tagName.trim()) {
-            alert('Please enter a tag name.');
+            Alert.alert("Missing Data", "Please enter a tag name.");
             return;
         }
         await createTag(tagName.trim());
@@ -38,7 +38,7 @@ const NewTagModal = ({
 
     const onUpdateTag = async () => {
         if (!tagName.trim()) {
-            alert('Please enter a tag name.');
+            Alert.alert("Missing Data", "Please enter a tag name.");
             return;
         }
         tag.tag = tagName.trim();

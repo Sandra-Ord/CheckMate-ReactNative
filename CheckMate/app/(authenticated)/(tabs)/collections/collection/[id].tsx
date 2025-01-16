@@ -29,7 +29,7 @@ const CollectionView = () => {
     const [taskToComplete, setTaskToComplete] = useState<Task>(null);  // the task selected for completion
     const [completionComment, setCompletionComment] = useState<string>("");
     const [completeTaskDate, setCompleteTaskDate] = useState(new Date());
-    const [assignTaskToUserId, setAssignTaskToUserId] = useState<string>(null);
+    const [assignTaskToUser, setAssignTaskToUser] = useState();
 
     const handleTaskCompletion = (task: Task) => {
         setTaskToComplete(task);
@@ -38,10 +38,10 @@ const CollectionView = () => {
 
     const onCompleteTask = async () => {
         if (taskToComplete == null) return;
-        const data = await completeTask(taskToComplete, completeTaskDate, completionComment, assignTaskToUserId);
+        const data = await completeTask(taskToComplete, completeTaskDate, completionComment, assignTaskToUser?.id);
         setCompleteTaskModalVisible(false);
         setTaskToComplete(null);
-        setAssignTaskToUserId(null);
+        setAssignTaskToUser(null);
         setCompletionComment("");
         await loadTasks();
     }
@@ -211,27 +211,24 @@ const CollectionView = () => {
                 </View>
 
                 <View className="flex-1 pb-3 px-5">
-                    {filteredTasks.length === 0 ? (
-                        <View className="pt-2">
+                    <FlatList
+                        className="pt-2"
+                        data={filteredTasks}
+                        renderItem={({item}) => (
+                            <TaskListItem
+                                task={item}
+                                onTaskComplete={handleTaskCompletion}
+                            />
+                        )}
+                        ListEmptyComponent={
                             <NoTasksListItem
                                 onOpenFilterMenu={() => setFilterMenuVisible(true)}
                                 newTaskLink={`/(authenticated)/(tabs)/collections/collection/new_task?collectionId=${id}`}
                             />
-                        </View>
-                    ) : (
-                        <FlatList
-                            className="pt-2"
-                            data={filteredTasks}
-                            renderItem={({item}) => (
-                                <TaskListItem
-                                    task={item}
-                                    onTaskComplete={handleTaskCompletion}
-                                />
-                            )}
-                            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
-                            keyExtractor={(item) => `${item.id.toString()}`}
-                        />
-                    )}
+                        }
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
+                        keyExtractor={(item) => `${item.id.toString()}`}
+                    />
                 </View>
 
                 {/* Modal for Responding */}
@@ -243,9 +240,10 @@ const CollectionView = () => {
                     setCompleteTaskDate={setCompleteTaskDate}
                     completionComment={completionComment}
                     setCompletionComment={setCompletionComment}
-                    assignTaskToUserId={assignTaskToUserId}
-                    setAssignTaskToUserId={setAssignTaskToUserId}
+                    assignTaskToUser={assignTaskToUser}
+                    setAssignTaskToUser={setAssignTaskToUser}
                     onCompleteTask={onCompleteTask}
+                    users={users}
                 />
 
 

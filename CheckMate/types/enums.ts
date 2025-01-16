@@ -35,7 +35,8 @@ export enum CollectionInvitationStatus {
     Pending = null,
     Rejected = 'REJECTED',
     Accepted = 'ACCEPTED',
-    Cancelled = 'CANCELLED'
+    Cancelled = 'CANCELLED',
+    Removed = 'REMOVED'
 }
 
 export enum IntervalUnit {

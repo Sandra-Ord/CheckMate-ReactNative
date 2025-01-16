@@ -25,6 +25,7 @@ const Settings = () => {
         deleteCollection,
         getCollectionUsers,
         leaveCollection,
+        removeFromCollection,
         userId
     } = useSupabase();
 
@@ -72,9 +73,49 @@ const Settings = () => {
         );
     };
 
+    const confirmRemoveUserFromCollection = (user: User) => {
+        if (userId !== collection.owner_id) {
+            Alert.alert("Permission Denied", "Only owners can remove users from the collection.");
+            return;
+        }
+        if (user.id === collection.owner_id) {
+            Alert.alert("Forbidden Action", "The owner can't be removed from the collection.");
+            return;
+        }
+
+        Alert.alert(
+            "Confirm Removal",
+            `Do you want to remove ${user.first_name} (${user.email}) from the ${collection.name} collection?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Remove",
+                    style: "destructive",
+                    onPress: async () => {
+                        await onRemoveUser(user);
+                    },
+                }
+            ]
+        );
+    };
+
+    const onRemoveUser = async (user: User) => {
+        if (userId !== collection.owner_id || user.id === collection.owner_id) {
+            return;
+        }
+        await removeFromCollection(collection.id, user.id);
+        loadCollectionInfo();
+    };
+
     const onLeaveCollection = async () => {
         if (!id) return;
-        if (userId === collection.owner_id) return;
+        if (userId === collection.owner_id){
+            console.warn("The owner can't leave their own collection.");
+            return;
+        }
         const data = await leaveCollection(id);
         router.dismissTo("/(authenticated)/(tabs)/collections");
     };
@@ -147,7 +188,11 @@ const Settings = () => {
                         keyExtractor={(item) => `${item.id}`}
                         renderItem={(item) =>
                             <UserListItem
-                                onPress={() => {}}
+                                onPress={
+                                    userId === collection.owner_id
+                                        ? () => confirmRemoveUserFromCollection(item.item)
+                                        : null
+                                }
                                 element={item}
                             />
                         }

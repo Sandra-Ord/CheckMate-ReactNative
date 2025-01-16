@@ -1,6 +1,6 @@
 import {BottomSheetView} from "@gorhom/bottom-sheet";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {Text, TextInput, View} from "react-native";
+import {Alert, Text, TextInput, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
@@ -46,7 +46,7 @@ const ToDoTaskModal = ({
 
     const onCreateToDoTask = async () => {
         if (!taskName.trim()) {
-            alert('Please enter a task name.');
+            Alert.alert("Missing Data", "Please enter a task name.");
             return;
         }
         await createToDoTask(taskName.trim(), comment, dueDate);
@@ -56,7 +56,7 @@ const ToDoTaskModal = ({
 
     const onUpdateToDoTask = async () => {
         if (!taskName.trim()) {
-            alert('Please enter a task name.');
+            Alert.alert("Missing Data", "Please enter a task name.");
             return;
         }
         task.name = taskName.trim();

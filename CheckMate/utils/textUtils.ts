@@ -115,7 +115,6 @@ export const getNotificationText = (notification: Notification) => {
 };
 
 export const getNotificationLink = (notification: Notification) => {
-    console.log(new Date())
     switch (notification.type) {
         case NotificationType.Invitation:
             return `/(authenticated)/(tabs)/collections/invitations`;
