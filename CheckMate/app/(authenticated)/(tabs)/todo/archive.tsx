@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import ToDoListItem from "@/components/todoComponents/ToDoListItem";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
 
 const ArchiveView = () => {
 
@@ -47,13 +48,17 @@ const ArchiveView = () => {
                             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
                             keyExtractor={(item) => `${item.id.toString()}`}
                             ItemSeparatorComponent={() => (
-                                <View
-                                    style={{
-                                        height: 0.5,
-                                        backgroundColor: Colors.Complementary["800"],
-                                    }}
-                                />
+                                <SeparatorLine height={0.5} margin={1} color={Colors.Complementary["800"]}/>
                             )}
+                            ListEmptyComponent={
+                                <View className="py-3 px-1">
+                                    <View className="items-center">
+                                        <Text className="text-base font-medium" style={{color: Colors.Primary["600"]}}>
+                                            You have not completed any tasks yet.
+                                        </Text>
+                                    </View>
+                                </View>
+                            }
                         />
                     </View>
 

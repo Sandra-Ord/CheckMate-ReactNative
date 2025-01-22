@@ -55,7 +55,7 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
 
                 {data.showDueDate ? (
                     <Text className="text-sm text-primary-800 mr-3">
-                        {formatDateWithDay(data.task.due_date)}
+                        {data.task.due_date ? formatDateWithDay(data.task.due_date) : null}
                     </Text>
                 ) : (
                     <Text className="text-sm text-primary-800 mr-3">
@@ -63,6 +63,7 @@ const ToDoListItem = (data: ToDoListItemInterface) => {
                     </Text>
                 )}
 
+                {/* to do add the tag icons here*/}
                 {/*<Ionicons name="notifications" size={24} style={{color: Colors.Primary["800"]}}/>*/}
             </View>
         </View>

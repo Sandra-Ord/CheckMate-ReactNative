@@ -49,19 +49,19 @@ const ToDoTaskModal = ({
             Alert.alert("Missing Data", "Please enter a task name.");
             return;
         }
-        await createToDoTask(taskName.trim(), comment, dueDate);
+        await createToDoTask(taskName.trim(), comment, dueDate || null);
         reload();
         closeModal();
     };
 
     const onUpdateToDoTask = async () => {
-        if (!taskName.trim()) {
+        if (!taskName.trim() || !task.due_date) {
             Alert.alert("Missing Data", "Please enter a task name.");
             return;
         }
         task.name = taskName.trim();
         task.comment = comment.trim();
-        task.due_date = dueDate;
+        task.due_date = dueDate || null;
         await updateToDoTask(task);
         reload();
         closeModal();

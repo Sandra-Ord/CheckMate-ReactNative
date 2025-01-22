@@ -8,6 +8,9 @@ import {Colors} from "@/constants/Colors";
 import {ToDoTask} from "@/types/enums";
 import ToDoListItem from "@/components/todoComponents/ToDoListItem";
 import ToDoTaskModal from "@/components/todoComponents/ToDoTaskModal";
+import NoTasksListItem from "@/components/taskComponents/NoTasksListItem.tsx";
+import {formatDateWithDay} from "@/utils/textUtils.ts";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
 
 const ToDoView = () => {
 
@@ -78,13 +81,17 @@ const ToDoView = () => {
                                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadTasks}/>}
                                 keyExtractor={(item) => `${item.id.toString()}`}
                                 ItemSeparatorComponent={() => (
-                                    <View
-                                        style={{
-                                            height: 0.5,
-                                            backgroundColor: Colors.Complementary["800"],
-                                        }}
-                                    />
+                                    <SeparatorLine height={0.5} margin={1} color={Colors.Complementary["800"]}/>
                                 )}
+                                ListEmptyComponent={
+                                    <View className="py-3 px-1">
+                                        <View className="items-center">
+                                            <Text className="text-base font-medium" style={{color: Colors.Primary["600"]}}>
+                                                You don't have any uncompleted tasks.
+                                            </Text>
+                                        </View>
+                                    </View>
+                                }
                             />
                         </View>
 
