@@ -100,7 +100,7 @@ export const getNotificationText = (notification: Notification) => {
         case NotificationType.UserLeftCollection:
             return `${notification.users.first_name} left the ${notification.collections.name} Collection`;
         case NotificationType.TaskAssigned:
-            return `The ${notification.tasks.name} task has been assigned to you in the ${notification.collections.name} Collection`;
+            return `The task ${notification.tasks.name} has been assigned to you in the ${notification.collections.name} Collection`;
         case NotificationType.TaskCompletionWindow:
             return `The completion window for a task in the ${notification.collections.name} Collection is now open`;
         case NotificationType.TaskDueSoon:

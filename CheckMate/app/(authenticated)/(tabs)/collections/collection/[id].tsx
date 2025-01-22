@@ -9,6 +9,7 @@ import TaskListItem from "@/components/taskComponents/TaskListItem";
 import FilterMenu from "@/components/collectionComponents/CollectionFilterMenu";
 import CompleteTaskModal from "@/components/taskComponents/CompleteTaskModal";
 import NoTasksListItem from "@/components/taskComponents/NoTasksListItem";
+import {getTaskState} from "@/utils/taskUtils.ts";
 
 const CollectionView = () => {
 
@@ -110,9 +111,13 @@ const CollectionView = () => {
         notAssigned: true,
         selectedUsers: users.map((user) => user.id),
     });
+    const [sortOption, setSortOption] = useState<string>("dueDate");
 
-    const filteredTasks = useMemo(() => {
-        return tasks.filter((task) => {
+    //
+    const filteredAndSortedTasks = useMemo(() => {
+
+        // Apply filtering
+        const filtered = tasks.filter((task) => {
             const now = new Date();
 
             // Check conditions
@@ -164,7 +169,23 @@ const CollectionView = () => {
                 (isUserSelected || isNotAssigned)
             );
         });
-    }, [tasks, filters]);
+
+
+        // Apply sorting
+        return filtered.sort((a, b) => {
+            if (sortOption === "dueDate") {
+                return 0;
+            } else if (sortOption === "state") {
+                const stateOrder = ["Overdue", "Open", "Not Open", "Out of Season", "Archived"];
+                const stateA = getTaskState(a).state;
+                const stateB = getTaskState(b).state;
+                return stateOrder.indexOf(stateA) - stateOrder.indexOf(stateB);
+            } else if (sortOption === "aToZ") {
+                return a.name.localeCompare(b.name);
+            }
+            return 0; // Default fallback
+        });
+    }, [tasks, filters, sortOption]);
 
     return (
         <SafeAreaView className="flex-1">
@@ -213,7 +234,7 @@ const CollectionView = () => {
                 <View className="flex-1 pb-3 px-5">
                     <FlatList
                         className="pt-2"
-                        data={filteredTasks}
+                        data={filteredAndSortedTasks}
                         renderItem={({item}) => (
                             <TaskListItem
                                 task={item}
@@ -267,6 +288,8 @@ const CollectionView = () => {
                             filters={filters}
                             toggleFilter={toggleFilter}
                             toggleUserFilter={toggleUserFilter}
+                            sortOption={sortOption}
+                            setSortOption={setSortOption}
                         />
                     </View>
                 </Modal>

@@ -75,7 +75,7 @@ const Settings = () => {
 
     const confirmRemoveUserFromCollection = (user: User) => {
         if (userId !== collection.owner_id) {
-            Alert.alert("Permission Denied", "Only owners can remove users from the collection.");
+            Alert.alert("Permission Denied", "Only the owner can remove users from the collection.");
             return;
         }
         if (user.id === collection.owner_id) {
@@ -188,11 +188,7 @@ const Settings = () => {
                         keyExtractor={(item) => `${item.id}`}
                         renderItem={(item) =>
                             <UserListItem
-                                onPress={
-                                    userId === collection.owner_id
-                                        ? () => confirmRemoveUserFromCollection(item.item)
-                                        : null
-                                }
+                                onPress={() => confirmRemoveUserFromCollection(item.item)}
                                 element={item}
                             />
                         }

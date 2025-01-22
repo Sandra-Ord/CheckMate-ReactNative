@@ -12,6 +12,7 @@ const NotificationsView = () => {
     const [notifications, setNotifications] = useState<[]>([]);
 
     const [allSelected, setAllSelected] = useState<boolean>(false);
+    const [hasUnreadNotifications, setHasUnreadNotifications] = useState<boolean>(false);
 
     const {getUsersNotifications, readAllNotifications} = useSupabase();
 
@@ -22,6 +23,7 @@ const NotificationsView = () => {
     const loadNotifications = async () => {
         const data = await getUsersNotifications();
         setNotifications(data);
+        setHasUnreadNotifications(data.some(notification => notification.read_at === null));
     };
 
     const toggleAllSelected = () => {
@@ -30,6 +32,7 @@ const NotificationsView = () => {
 
     const onReadAll = async () => {
         const data = await readAllNotifications();
+        setAllSelected(false);
         await loadNotifications();
     };
 
@@ -44,19 +47,27 @@ const NotificationsView = () => {
             <View className="w-full h-full" style={{backgroundColor: Colors.Complementary["300"]}}>
 
                 <View className="flex-row w-full items-center justify-between px-4 py-2">
-                    <TouchableOpacity className="flex-row items-center" onPress={() => toggleAllSelected()}>
-                        <Ionicons name={allSelected ? 'checkbox-outline' : 'square-outline'} size={20} style={{color: Colors.primaryGray}}/>
-                        <Text className="pl-3">{allSelected ? 'Unselect All' : 'Select All Unread'}</Text>
-                    </TouchableOpacity>
 
-                    {allSelected ? (
-                        <TouchableOpacity className="flex-row items-center" onPress={() => onReadAll()}>
-                            <Text className="pr-2">Mark as Read</Text>
-                            <Ionicons name='checkmark-done-outline' size={20} style={{color: Colors.primaryGray}}/>
-                        </TouchableOpacity>
-                    ) : (
-                        <></>
+                    {hasUnreadNotifications && (
+                        <>
+                            <TouchableOpacity className="flex-row items-center" onPress={() => toggleAllSelected()}>
+                                <Ionicons name={allSelected ? 'checkbox-outline' : 'square-outline'} size={20}
+                                          style={{color: Colors.primaryGray}}/>
+                                <Text className="pl-3">{allSelected ? 'Unselect All' : 'Select All Unread'}</Text>
+                            </TouchableOpacity>
+
+                            {allSelected ? (
+                                <TouchableOpacity className="flex-row items-center" onPress={() => onReadAll()}>
+                                    <Text className="pr-2">Mark as Read</Text>
+                                    <Ionicons name='checkmark-done-outline' size={20}
+                                              style={{color: Colors.primaryGray}}/>
+                                </TouchableOpacity>
+                            ) : (
+                                <></>
+                            )}
+                        </>
                     )}
+
                 </View>
 
                 <View className="flex-1 justify-center items-center pb-3 px-5">

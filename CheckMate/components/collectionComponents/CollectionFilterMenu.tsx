@@ -9,6 +9,8 @@ const FilterMenu = ({
                         filters,
                         toggleFilter,
                         toggleUserFilter,
+                        sortOption,
+                        setSortOption,
                     }) => {
     return (
         <View
@@ -31,22 +33,24 @@ const FilterMenu = ({
                 {/* Example Filter Options */}
                 <View className="gap-y-2 pb-2">
                     <Text className="font-bold mb-2" style={{color: Colors.Complementary["800"]}}>Sort By:</Text>
-                    <TouchableOpacity className="flex-row gap-x-2">
-                        <Ionicons name="square-outline" size={16} style={{color: Colors.Primary["800"]}}/>
-                        <Text style={{color: Colors.Primary["800"]}}>Due Date</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row gap-x-2">
-                        <Ionicons name="square-outline" size={16} style={{color: Colors.Primary["800"]}}/>
-                        <Text style={{color: Colors.Primary["800"]}}>Open for Completion</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row gap-x-2">
-                        <Ionicons name="square-outline" size={16} style={{color: Colors.Primary["800"]}}/>
-                        <Text style={{color: Colors.Primary["800"]}}>Assignment</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="flex-row gap-x-2">
-                        <Ionicons name="square-outline" size={16} style={{color: Colors.Primary["800"]}}/>
-                        <Text style={{color: Colors.Primary["800"]}}>A - Z</Text>
-                    </TouchableOpacity>
+                    {[
+                        {key: "dueDate", label: "Due Date"},
+                        {key: "state", label: "Status"},
+                        {key: "aToZ", label: "A - Z"},
+                    ].map(({key, label}) => (
+                        <TouchableOpacity
+                            key={key}
+                            onPress={() => setSortOption(key)}
+                            className="flex-row gap-x-2"
+                        >
+                            <Ionicons
+                                name={sortOption === key ? "radio-button-on-outline" : "radio-button-off-outline"}
+                                size={16}
+                                style={{color: Colors.Primary["800"]}}
+                            />
+                            <Text style={{color: Colors.Primary["800"]}}>{label}</Text>
+                        </TouchableOpacity>
+                    ))}
                 </View>
 
                 <View className="gap-y-2 pt-2">

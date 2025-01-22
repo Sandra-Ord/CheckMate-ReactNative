@@ -932,20 +932,6 @@ export const SupabaseProvider = ({children}: any) => {
     };
 
     const getUser = async () => {
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-        console.log("GETTING USER");
-
         const {data, error} = await client
             .from(USERS_TABLE)
             .select('*')
@@ -954,13 +940,7 @@ export const SupabaseProvider = ({children}: any) => {
         if (error) {
             console.error("Error retrieving user:", error);
         }
-        console.log("DATA")
-        console.log("DATA")
-        console.log("DATA")
-        console.log("DATA")
-        console.log("DATA")
 
-        console.log(data);
         return data || null;
     };
 
