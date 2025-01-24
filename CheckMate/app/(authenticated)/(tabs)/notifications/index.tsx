@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import NotificationListItem from "@/components/notificationComponents/NotificationListItem";
+import EmptyNotificationListItem from "@/components/notificationComponents/EmptyNotificationListItem.tsx";
 
 const NotificationsView = () => {
 
@@ -77,6 +78,7 @@ const NotificationsView = () => {
                         renderItem={({item}) => <NotificationListItem notification={item} allSelected={allSelected}/>}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadNotifications}/>}
                         keyExtractor={(item) => `${item.id}`}
+                        ListEmptyComponent={<EmptyNotificationListItem/>}
                     />
                 </View>
 

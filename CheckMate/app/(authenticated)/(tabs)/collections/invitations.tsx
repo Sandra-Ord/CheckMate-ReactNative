@@ -10,6 +10,7 @@ import {useSupabase} from "@/context/SupabaseContext";
 import {Colors} from "@/constants/Colors";
 import InvitationListItem from "@/components/invitationComponents/InvitationListItem";
 import InvitationResponseModal from "@/components/invitationComponents/InvitationResponseModal";
+import EmptyInvitationListItem from "@/components/invitationComponents/EmptyInvitationListItem";
 
 const InvitationsView = () => {
 
@@ -25,11 +26,13 @@ const InvitationsView = () => {
     const onAcceptInvitation = async () => {
         await acceptInvitation(invitationId);
         setIsRespondingModalOpen(false);
+        await loadInvitations();
     }
 
     const onRejectInvitation = async () => {
         await rejectInvitation(invitationId);
         setIsRespondingModalOpen(false);
+        await loadInvitations();
     }
 
     const loadInvitations = async () => {
@@ -60,6 +63,7 @@ const InvitationsView = () => {
                         }
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadInvitations}/>}
                         keyExtractor={(item) => `${item.id.toString()}`}
+                        ListEmptyComponent={<EmptyInvitationListItem/>}
                     />
 
                 </View>

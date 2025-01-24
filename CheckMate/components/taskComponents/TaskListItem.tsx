@@ -6,6 +6,7 @@ import {Colors} from "@/constants/Colors";
 import {Task} from "@/types/enums";
 import {formatShortDate, getBasicRecurrenceDescriptions} from "@/utils/textUtils";
 import {getTaskState, isCompleted} from "@/utils/taskUtils";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
 
 const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (task: Task) => void }) => {
 
@@ -90,13 +91,7 @@ const TaskListItem = ({task, onTaskComplete}: { task: Task, onTaskComplete: (tas
                         </View>
 
                         {/* separator line */}
-                        <View
-                            style={{
-                                height: 1,
-                                backgroundColor: Colors.Complementary["800"],
-                            }}
-                            className="my-2"
-                        />
+                        <SeparatorLine height={1} margin={8} color={Colors.Complementary["800"]}/>
 
                         {/* under the separator line */}
                         <View className="flex-row px-1 gap-x-2">

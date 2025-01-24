@@ -1,4 +1,5 @@
 import {Colors} from "@/constants/Colors";
+import {Notification, NotificationType} from "@/types/enums.ts";
 
 export const isInSeason = (task, now = new Date()) => {
     if (!task.season_start || !task.season_end) return true;
@@ -59,4 +60,24 @@ export const getTaskState = (task) => {
     if (overdue) return {state: "Overdue", icon: "warning-outline", color: Colors.Red["600"]};
     if (openForCompletion) return {state: "Open", icon: "timer-outline", color: Colors.Green["600"]};
     return {state: "Not Open", icon: "pause-circle-outline", color: Colors.Yellow["600"]};
+};
+
+export const checkTaskAccess = (notification: Notification) => {
+    switch (notification.type) {
+        case NotificationType.Invitation:
+        case NotificationType.ToDoTaskDueSoon:
+            return true;
+        case NotificationType.InvitationAccepted:
+        case NotificationType.InvitationRejected:
+        case NotificationType.UserJoinedCollection:
+        case NotificationType.UserLeftCollection:
+            return !!notification.collections?.id;
+        case NotificationType.TaskAssigned:
+        case NotificationType.TaskCompletionWindow:
+        case NotificationType.TaskDueSoon:
+        case NotificationType.TaskInSeason:
+            return !!(notification.tasks?.id && notification.collections?.id);
+        default:
+            return false;
+    }
 };

@@ -27,9 +27,9 @@ type ProviderProps = {
     // COLLECTION LIST VIEW FUNCTIONS
     createCollection: (name: string) => Promise<any>;
     getCollections: () => Promise<any>;
-    getAcceptedUsersCount: (collectionId) => Promise<any>;
-    getActiveTasksCount: (collectionId) => Promise<any>;
-    getPendingTaskCount: (collectionId) => Promise<any>;
+    getAcceptedUsersCount: (collectionId: number) => Promise<any>;
+    getActiveTasksCount: (collectionId: number) => Promise<any>;
+    getPendingTaskCount: (collectionId: number) => Promise<any>;
 
     // COLLECTION FUNCTIONS
     getCollection: (collectionId: number) => Promise<any>;
@@ -37,7 +37,7 @@ type ProviderProps = {
     updateCollection: (collection: Collection) => Promise<any>;
     deleteCollection: (collectionId: number) => Promise<any>;
 
-    addUserToCollection: (collectionId: number, invitedUserId: number) => Promise<any>;
+    addUserToCollection: (collectionId: number, invitedUserId: string) => Promise<any>;
     getCollectionUsers: (collectionId: number) => Promise<any>;
     leaveCollection: (collectionId: number) => Promise<any>;
     removeFromCollection: (collection_id: number, user_id: string) => Promise<any>;
@@ -79,8 +79,8 @@ type ProviderProps = {
 
     // INVITATIONS
     getPendingInvitations: () => Promise<any>;
-    acceptInvitation: (invitationId) => Promise<any>;
-    rejectInvitation: (invitationId) => Promise<any>;
+    acceptInvitation: (invitationId: number) => Promise<any>;
+    rejectInvitation: (invitationId: number) => Promise<any>;
 
     // TO DO TASKS
     getToDoTasks: () => Promise<any>;
@@ -102,7 +102,7 @@ type ProviderProps = {
 
     // NOTIFICATIONS
     getUsersNotifications: () => Promise<any>;
-    readNotification: (notification_id) => Promise<any>;
+    readNotification: (notification_id: number) => Promise<any>;
     readAllNotifications: () => Promise<any>;
 
     // OTHER
@@ -172,7 +172,7 @@ export const SupabaseProvider = ({children}: any) => {
         return result || [];
     }
 
-    const getAcceptedUsersCount = async (collectionId) => {
+    const getAcceptedUsersCount = async (collectionId: number) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('user_id, status')
@@ -191,7 +191,7 @@ export const SupabaseProvider = ({children}: any) => {
         return uniqueUserIds.size;
     };
 
-    const getActiveTasksCount = async (collectionId) => {
+    const getActiveTasksCount = async (collectionId: number) => {
         const currentTime = new Date().toISOString(); // Current time in ISO format
 
         const {data, error} = await client
@@ -210,7 +210,7 @@ export const SupabaseProvider = ({children}: any) => {
         return data.length || 0;
     };
 
-    const getPendingTaskCount = async (collectionId) => {
+    const getPendingTaskCount = async (collectionId: number) => {
         const currentTime = new Date().toISOString(); // Current time in ISO format
 
         const {data, error} = await client
@@ -270,26 +270,32 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
-    const deleteCollection = async (collectionId: string) => {
+    const deleteCollection = async (collectionId: number) => {
         return await client.from(COLLECTIONS_TABLE).delete().match({id: collectionId});
     };
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    const addUserToCollection = async (collectionId: string, invitedUserId, string) => {
-        return await client
+    const addUserToCollection = async (collectionId: number, invitedUserId: string) => {
+        const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .insert({
                 user_id: invitedUserId,
                 collection_id: collectionId,
                 role: "EDITOR",
                 invited_at: new Date().toISOString(),
-                invited_by_id: userId,
-                invited_by_email: "owner@gmail.com",
+                invited_by_id: userId
             });
+
+        if (error) {
+            console.error('Error adding user to collection:', error);
+            return;
+        }
+
+        return data;
     };
 
-    const getCollectionUsers = async (collectionId) => {
+    const getCollectionUsers = async (collectionId: number) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .select('users!collection_users_user_id_fkey (id, first_name, email, avatar_url)')
@@ -602,7 +608,7 @@ export const SupabaseProvider = ({children}: any) => {
     const getPendingInvitations = async () => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
-            .select('id, collections (name, users (first_name)), users!collection_users_invited_by_id_fkey (id, first_name), invited_by_email, invited_at, responded_at')
+            .select('id, collections (name, users (first_name)), users!collection_users_invited_by_id_fkey (id, first_name), invited_at, responded_at')
             .match({user_id: userId})
             .is('status', null);
 
@@ -613,7 +619,7 @@ export const SupabaseProvider = ({children}: any) => {
         return data || [];
     };
 
-    const acceptInvitation = async (invitationId) => {
+    const acceptInvitation = async (invitationId: number) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({
@@ -629,7 +635,7 @@ export const SupabaseProvider = ({children}: any) => {
         return data;
     };
 
-    const rejectInvitation = async (invitationId) => {
+    const rejectInvitation = async (invitationId: number) => {
         const {data, error} = await client
             .from(COLLECTION_USERS_TABLE)
             .update({
@@ -881,7 +887,7 @@ export const SupabaseProvider = ({children}: any) => {
         return data || [];
     };
 
-    const readNotification = async (notification_id) => {
+    const readNotification = async (notification_id: number) => {
         const {data, error} = await client
             .from(NOTIFICATIONS_TABLE)
             .update({

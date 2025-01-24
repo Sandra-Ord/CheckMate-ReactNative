@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {Colors} from "@/constants/Colors";
 import {formatShortDate} from "@/utils/textUtils";
+import SeparatorLine from "@/components/uiComponents/SeparatorLine.tsx";
 
 const InvitationListItem = ({
                                 invitation,
@@ -26,7 +27,7 @@ const InvitationListItem = ({
                     <View className="flex-row justify-between">
 
                         <Text className="text-lg font-bold">
-                            {invitation.collections.name}
+                            {invitation.collections?.name}
                         </Text>
                         <TouchableOpacity onPress={handlePress}>
 
@@ -35,14 +36,7 @@ const InvitationListItem = ({
 
                     </View>
 
-                    {/* separator line */}
-                    <View
-                        style={{
-                            height: 1,
-                            backgroundColor: Colors.Complementary["800"],
-                        }}
-                        className="my-2"
-                    />
+                    <SeparatorLine height={1} margin={8} color={Colors.Complementary["800"]}/>
 
                     {/* under the separator line */}
                     <View className="flex-row justify-between px-1">
@@ -51,7 +45,7 @@ const InvitationListItem = ({
                             <View className="flex-row items-center pb-1">
                                 <Ionicons className="pr-2" name="person-circle-outline" size={16}
                                           style={{color: Colors.Primary["800"]}}/>
-                                <Text>Invited by: {invitation.users.first_name}</Text>
+                                <Text>Invited by: {invitation.users?.first_name ?? ""}</Text>
                             </View>
                             <View className="flex-row items-center">
                                 <Ionicons className="pr-2" name="person-circle-outline" size={16}

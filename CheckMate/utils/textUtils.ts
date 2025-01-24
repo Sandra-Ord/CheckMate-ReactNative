@@ -88,33 +88,38 @@ export const formatDateWithDay = (dateString) => {
 };
 
 export const getNotificationText = (notification: Notification) => {
+
+    const collectionName = notification.collections?.name ?? notification.data?.collection_name ?? "";
+    const taskName = notification.tasks?.name ?? notification.data?.task_name ?? "";
+
     switch (notification.type) {
         case NotificationType.Invitation:
-            return `You were invited to the ${notification.collections.name} Collection by ${notification.users.first_name}`;
+            return `You were invited to the ${collectionName} Collection by ${notification.users?.first_name ?? "User"}`;
         case NotificationType.InvitationAccepted:
-            return `${notification.users.first_name} accepted your invitation to the ${notification.collections.name} Collection`;
+            return `${notification.users?.first_name ?? "User"} accepted your invitation to the ${collectionName} Collection`;
         case NotificationType.InvitationRejected:
-            return `${notification.users.first_name} rejected your invitation to the ${notification.collections.name} Collection`;
+            return `${notification.users?.first_name ?? "User"} rejected your invitation to the ${collectionName} Collection`;
         case NotificationType.UserJoinedCollection:
-            return `${notification.users.first_name} joined the ${notification.collections.name} Collection`;
+            return `${notification.users.first_name} joined the ${collectionName} Collection`;
         case NotificationType.UserLeftCollection:
-            return `${notification.users.first_name} left the ${notification.collections.name} Collection`;
+            return `${notification.users.first_name} left the ${collectionName} Collection`;
         case NotificationType.TaskAssigned:
-            return `The task ${notification.tasks.name} has been assigned to you in the ${notification.collections.name} Collection`;
+            return `The task ${taskName} has been assigned to you in the ${collectionName} Collection`;
         case NotificationType.TaskCompletionWindow:
-            return `The completion window for a task in the ${notification.collections.name} Collection is now open`;
+            return `The completion window for the task ${taskName} in the ${collectionName} Collection is now open`;
         case NotificationType.TaskDueSoon:
-            return `A task in the ${notification.collections.name} Collection is due soon`;
+            return `The task ${taskName} in the ${collectionName} Collection is due soon`;
         case NotificationType.TaskInSeason:
-            return `A task in the ${notification.collections.name} Collection is now in season`;
+            return `The task ${taskName} in the ${collectionName} Collection is now in season`;
         case NotificationType.ToDoTaskDueSoon:
-            return `A to-do task in the ${notification.collections.name} Collection is due soon`;
+            return `A to-do task is due soon`;
         default:
             return 'You have a new notification';
     }
 };
 
 export const getNotificationLink = (notification: Notification) => {
+
     switch (notification.type) {
         case NotificationType.Invitation:
             return `/(authenticated)/(tabs)/collections/invitations`;
@@ -127,13 +132,13 @@ export const getNotificationLink = (notification: Notification) => {
         case NotificationType.UserLeftCollection:
             return `/(authenticated)/(tabs)/collections/collection/settings?id=${notification.collection_id}`;
         case NotificationType.TaskAssigned:
-            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}`;
+            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}?collectionId=${notification.collection_id}`;
         case NotificationType.TaskCompletionWindow:
-            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}`;
+            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}?collectionId=${notification.collection_id}`;
         case NotificationType.TaskDueSoon:
-            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}`;
+            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}?collectionId=${notification.collection_id}`;
         case NotificationType.TaskInSeason:
-            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}`;
+            return `/(authenticated)/(tabs)/collections/collection/task/${notification.task_id}?collectionId=${notification.collection_id}`;
         case NotificationType.ToDoTaskDueSoon:
             return `/(authenticated)/(tabs)/todo/index`;
         default:

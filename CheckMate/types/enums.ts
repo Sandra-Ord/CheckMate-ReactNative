@@ -64,7 +64,6 @@ export interface CollectionUser {
     collection_id: ID,
     invited_by_id: UserID,
     user_id: UserID,
-    invited_by_email: string,
     role: CollectionRole,
     invited_at: Date,
     responded_at: Date,
@@ -102,8 +101,8 @@ export interface Task {
 
 export interface TaskLog {
     id: ID,
-    completed_task_id: ID,
-    completed_by_user_id: UserID,
+    task_id: ID,
+    user_id: UserID,
     completed_at: Date,
     due_at: Date,
     comment: string | null
@@ -117,8 +116,8 @@ export interface Notification {
     task_id: ID | null,
     about_user_id: UserID | null,
     created_at: Date,
-    read_at: Date | null,
-    is_critical: boolean
+    data,
+    read_at: Date | null
 }
 
 export interface TaskPhoto {
@@ -149,6 +148,6 @@ export interface Tag {
 
 export interface ToDoTag {
     id: ID,
-    to_to_task_id: ID,
+    to_do_task_id: ID,
     tag_id: ID,
 }
